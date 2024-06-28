@@ -17,4 +17,5 @@ public class Teachers extends UsersAbstract {
     @NotNull
     @Enumerated(EnumType.STRING)
     private Teachers_status status;
+
 }

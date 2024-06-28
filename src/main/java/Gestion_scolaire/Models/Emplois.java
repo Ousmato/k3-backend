@@ -22,10 +22,12 @@ public class Emplois {
     private LocalDate dateFin;
 
     @ManyToOne
-    private ClasseModule idClasseModule;
+    private StudentsClasse idClasse;
 
     @ManyToOne
     private Semestres idSemestre;
+
+    private boolean valid = false;
 
 
 }

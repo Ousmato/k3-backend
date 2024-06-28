@@ -50,6 +50,34 @@ public class Ue_service {
             }
         return ueNewList;
     }
+//    -------------------------------------------
+    public List<UE> readAllAssociated(long idClasse){
+        List<UE> list = ue_repositorie.findAll();
+        List<UE> ueNewList = new ArrayList<>();
+
+        for (UE ue : list) {
+            ClasseModule cm = classeModule_repositorie.findByIdStudentClasseIdAndIdUEId(idClasse, ue.getId());
+            if (cm != null){
+                ueNewList.add(ue);
+            }
+        }
+        return ueNewList;
+    }
+
+//    ------------------------methode get all modules in classe-----------------------
+    public  List<Modules> listModule(long idClass){
+        List<UE> list = readAllAssociated(idClass);
+        System.out.println("----------list ue-----" + list);
+        List<Modules> modulesList = new ArrayList<>();
+        for (UE ue : list){
+         List<Modules> modulesForUe = modules_repositories.findByIdUeId(ue.getId());
+            if (modulesForUe != null) {
+                modulesList.addAll(modulesForUe);
+            }
+          System.out.println("--------list module-------" + modulesList);
+        }
+        return modulesList;
+    }
 //    ----------------------------------------------------------supprimer une UE------------
     public String delete(long id){
         UE UeExist = ue_repositorie.findById(id);
@@ -75,7 +103,9 @@ public class Ue_service {
         }else {
             throw new RuntimeException("UE n'existe pas");
         }
-
     }
-
+//--------------------------method get all ue-------------------------
+    public List<UE> getListUe(){
+        return ue_repositorie.findAll();
+    }
 }

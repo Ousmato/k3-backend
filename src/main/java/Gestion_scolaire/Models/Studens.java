@@ -13,8 +13,7 @@ public class Studens extends UsersAbstract {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idEtudiant;
 
-    @NotNull
-    private String sexe;
+
 
 
     @NotNull

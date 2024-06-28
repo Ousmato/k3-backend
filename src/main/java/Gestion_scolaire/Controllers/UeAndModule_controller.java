@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 @Slf4j
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api-class")
 public class UeAndModule_controller {
     @Autowired
     private Ue_service ue_service;
@@ -58,8 +58,8 @@ public class UeAndModule_controller {
         }
     }
 //    --------------------------------------------method get list all eu----------------------
-    @GetMapping("/list-ue")
-    public ResponseEntity<List<UE>> getAllUe(@RequestParam long idClasse){
+    @GetMapping("/list-ue/{idClasse}")
+    public ResponseEntity<List<UE>> getAllUe(@PathVariable long idClasse){
         try {
             List<UE> ueList = ue_service.readAll(idClasse);
             return ResponseEntity.status(HttpStatus.OK).body(ueList);
@@ -74,6 +74,28 @@ public class UeAndModule_controller {
             List<Modules> modulesList = modules_service.readAll();
             return ResponseEntity.status(HttpStatus.OK).body(modulesList);
         }catch (Exception  e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+//    --------------------------methode get all module in class-----------------------
+    @GetMapping("/all-module/{idClasse}")
+    public ResponseEntity<List<Modules>> getListModule(@PathVariable long idClasse){
+        try{
+            List<Modules> list = ue_service.listModule(idClasse);
+            return ResponseEntity.ok(list);
+        }catch (Exception e){
+            log.info(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+//    -----------------------------------methode get list ue---------------------
+    @GetMapping("/all-ue")
+    public ResponseEntity<List<UE>> getListUe(){
+        try {
+            List<UE> list = ue_service.getListUe();
+            return ResponseEntity.ok(list);
+        }catch (Exception e){
+            log.info(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

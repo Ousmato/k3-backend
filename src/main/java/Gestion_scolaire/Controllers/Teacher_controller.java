@@ -1,8 +1,10 @@
 package Gestion_scolaire.Controllers;
 
+import Gestion_scolaire.Dto_classe.TeacherSeancesDTO;
 import Gestion_scolaire.Models.Paie;
 import Gestion_scolaire.Models.Teachers;
 import Gestion_scolaire.Models.TeachersPresence;
+import Gestion_scolaire.Services.Seance_service;
 import Gestion_scolaire.Services.Teachers_service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -22,30 +24,35 @@ public class Teacher_controller {
     @Autowired
     private Teachers_service teachers_service;
 
+    @Autowired
+    private Seance_service seance_service;
+
     @PostMapping("/add")
     private ResponseEntity<Teachers> addTeacher(
             @RequestParam("teacher") String teacherString,
-            @RequestParam("file") MultipartFile urlFile) {
-         try {
+            @RequestParam(value = "file", required = false) MultipartFile urlFile) {
+        try {
             ObjectMapper objectMapper = new ObjectMapper();
             Teachers t = objectMapper.readValue(teacherString, Teachers.class);
             log.info("Store JSON converted: {}", t);
 
-//            if (!urlFile.isEmpty()) {
+            // Vérifie si urlFile est null ou vide
+            if (urlFile == null || urlFile.isEmpty()) {
+                // Si pas de fichier photo, ajoute l'enseignant sans spécifier de photo
+                Teachers teacher = teachers_service.add(t, null);
+                return ResponseEntity.ok(teacher);
+            } else {
+                // Si un fichier photo est fourni, ajoute l'enseignant avec la photo
                 Teachers teacher = teachers_service.add(t, urlFile);
-//                if (teacher != null) {
-                    return ResponseEntity.ok(teacher);
-//                } else {
-//                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // or any other appropriate response
-//                }
-//                throw new RuntimeException("file no exist");
-//            }
+                return ResponseEntity.ok(teacher);
+            }
         } catch (Exception e) {
             log.error("Internal server error: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-//    --------------------------------------method get all teachers--------------------------
+
+    //    --------------------------------------method get all teachers--------------------------
     @GetMapping("/list")
     private ResponseEntity<List<Teachers>> getList(){
         try {
@@ -159,5 +166,27 @@ public class Teacher_controller {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
+    }
+    //    -----------------------------method get all enseignants qui on des emplois actif--------------------
+    @GetMapping("/all_teacher_seance_actif")
+    public ResponseEntity<List<TeacherSeancesDTO>> allTeacherEmploisActif() {
+        try {
+            List<TeacherSeancesDTO> list = seance_service.all_teacher();
+            return ResponseEntity.ok(list);
+        } catch (Exception e) {
+            e.printStackTrace(); // Pour des fins de débogage, à retirer en production
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+//------------------------------------------------
+    @GetMapping("/detaille/{idTeacher}")
+    public ResponseEntity<TeacherSeancesDTO> getDetail_t_s(@PathVariable long idTeacher) {
+        try {
+            TeacherSeancesDTO tsDto = seance_service.getDetail(idTeacher);
+            return ResponseEntity.ok(tsDto);
+        } catch (Exception e) {
+            e.printStackTrace(); // Pour des fins de débogage, à retirer en production
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

@@ -3,6 +3,7 @@ package Gestion_scolaire.Services;
 import Gestion_scolaire.Models.ClasseModule;
 import Gestion_scolaire.Models.NiveauFilieres;
 import Gestion_scolaire.Models.StudentsClasse;
+import Gestion_scolaire.Models.UE;
 import Gestion_scolaire.Repositories.ClasseModule_repositorie;
 import Gestion_scolaire.Repositories.Classe_repositorie;
 import Gestion_scolaire.Repositories.NiveauFiliere_repositorie;
@@ -44,6 +45,7 @@ public class Classe_service {
         List<ClasseModule> uEslist = classeModule_repositorie.findAllByIdStudentClasseId(id);
         return uEslist;
     }
+
 //    ------------------------------------------------------------------------------------------
 
     public String create(StudentsClasse classe){
@@ -56,6 +58,10 @@ public class Classe_service {
         }
         return "ajout avec success";
     }
+//    ---------------------------------------get class in class Module-----------------------------
+//    public ClasseModule getClass(long id){
+//
+//    }
 
 //    =====================================method pour fermer une classe====================================================
 
@@ -75,5 +81,8 @@ public class Classe_service {
     public StudentsClasse readByIdClasse(long id){
         return classe_repositorie.findById(id);
     }
-//
+// ----------------------------------------get ue list by idclass in classe module---------------
+    public ClasseModule getClass(long id){
+        return classeModule_repositorie.findStudentsClasseWithUEsById(id);
+    }
 }

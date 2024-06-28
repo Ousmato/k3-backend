@@ -19,10 +19,10 @@ public class Seance_controller {
     private Seance_service seance_service;
 
     @PostMapping("/add")
-    public ResponseEntity<List<Seances>> addSeance(@RequestBody List<Seances> seancesList){
+    public ResponseEntity<Seances> addSeance(@RequestBody Seances seancesList){
         try {
-            List<Seances> list = seance_service.addMultiple(seancesList);
-            return new ResponseEntity<>(list, HttpStatus.OK);
+            Seances seance = seance_service.createSeance(seancesList);
+            return new ResponseEntity<>(seance, HttpStatus.OK);
         }catch (Exception e){
             log.info(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -33,6 +33,7 @@ public class Seance_controller {
     public ResponseEntity<List<Seances>> getAllByIdEmlois(@PathVariable long idEmplois){
         try {
             List<Seances> list = seance_service.readByIdEmplois(idEmplois);
+//            System.out.println(list+ "seaces");
             return new ResponseEntity<>(list,HttpStatus.OK);
         }catch (Exception e){
             log.info(e.getMessage());

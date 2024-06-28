@@ -6,6 +6,7 @@ import Gestion_scolaire.Models.NiveauFilieres;
 import Gestion_scolaire.Models.StudentsClasse;
 import Gestion_scolaire.Services.Classe_service;
 import Gestion_scolaire.Services.StudentsClasse_service;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/class")
+@Slf4j
+@RequestMapping("/api-class")
 public class Classe_controller {
 
     @Autowired
@@ -50,4 +52,16 @@ public class Classe_controller {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+//    ---------------------------------------------method get by id----------------------------------
+    @GetMapping("/class/{id}")
+    public ResponseEntity<StudentsClasse> getClass(@PathVariable long id){
+        try{
+            StudentsClasse cls = classe_service.readByIdClasse(id);
+            return ResponseEntity.ok().body(cls);
+        }catch (Exception e){
+            log.info(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

@@ -1,13 +1,11 @@
 package Gestion_scolaire.Services;
 
 import Gestion_scolaire.Models.*;
-import Gestion_scolaire.Repositories.Emplois_repositorie;
-import Gestion_scolaire.Repositories.Modules_repositories;
-import Gestion_scolaire.Repositories.Notes_repositorie;
-import Gestion_scolaire.Repositories.Students_repositorie;
+import Gestion_scolaire.Repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -26,6 +24,12 @@ public class Note_service {
 
     @Autowired
     private Modules_repositories modules_repositories;
+
+    @Autowired
+    private Ue_repositorie ue_repositorie;
+
+    @Autowired
+    private ClasseModule_repositorie classeModule_repositorie;
 
     public double calculerMoyenneGenerale(long idStudent, long idSemestre) {
         // Récupérer toutes les notes de l'étudiant pour le semestre spécifié
@@ -106,11 +110,15 @@ public class Note_service {
 //--------------------------------------methode pour appeler tout les module de la
 //    classe de l'etudiant qui on deja etait programmer pour un emplois du temps
     public ArrayList<Modules> readAllByAllEmplois(long idClasse){
-        List<Emplois> emploisList = emplois_repositorie.findByIdClasseModuleIdStudentClasseId(idClasse);
+//        Emplois emploisList = emplois_repositorie.getEmploisByDateFinAfterAndIdClasseId(LocalDate.now(), idClasse);
+        List<ClasseModule> classeModuleList = classeModule_repositorie.findByIdStudentClasseId(idClasse);
         Set<Modules> modulesSet = new HashSet<>();
 
-        for(Emplois emplois : emploisList){
-            UE ue = emplois.getIdClasseModule().getIdUE();
+//        for(Emplois emplois : emploisList){
+            for (ClasseModule clm : classeModuleList){
+                UE ue = clm.getIdUE();
+
+
 
             if (ue != null) {
                 List<Modules> toutModule = modules_repositories.findByIdUeId(ue.getId());
@@ -119,6 +127,7 @@ public class Note_service {
             }
 
         }
+//        }
         return new ArrayList<>(modulesSet);
     }
 }

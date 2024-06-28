@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class Emplois_service {
@@ -21,8 +23,8 @@ public class Emplois_service {
     private Seance_repositorie seance_repositorie;
 
     public Emplois add(Emplois emplois){
-        Emplois emplois_de_la_classe = emplois_repositorie.findByIdClasseModule(emplois.getIdClasseModule());
-        Emplois empliExist = emplois_repositorie.findByIdClasseModuleAndDateDebutAndDateFin(emplois.getIdClasseModule(), emplois.getDateDebut(), emplois.getDateFin());
+        Emplois emplois_de_la_classe = emplois_repositorie.findByIdClasseId(emplois.getIdClasse().getId());
+        Emplois empliExist = emplois_repositorie.findByIdClasseIdAndDateDebutAndDateFin(emplois.getIdClasse().getId(), emplois.getDateDebut(), emplois.getDateFin());
 
             LocalDate dateDebut = emplois.getDateDebut();
             LocalDate dateFin = emplois.getDateFin();
@@ -63,7 +65,7 @@ public class Emplois_service {
             emploisExist.setDateDebut(emplois.getDateDebut());
             emploisExist.setDateFin(emplois.getDateFin());
             emplois.setIdSemestre(emplois.getIdSemestre());
-            emplois.setIdClasseModule(emplois.getIdClasseModule());
+            emplois.setIdClasse(emplois.getIdClasse());
 
             return emplois_repositorie.save(emploisExist);
         }
@@ -72,13 +74,37 @@ public class Emplois_service {
 
 //---------------------------method get current emplois by idClasse-------------------------
     public Emplois getByIdClasse(long idClasse){
-        Emplois emplois = emplois_repositorie.findEmploisActifByIdClass(LocalDate.now(),idClasse);
+
+        Emplois emplois = emplois_repositorie.getEmploisByDateFinAfterAndIdClasseId(LocalDate.now(),idClasse);
         if (emplois != null){
-            return emplois;
+           return emplois;
         }
         throw new RuntimeException("Auccun emplois pour le moment");
     }
-//    --------------------------method get all emplois of teacher-------------------------
+//    ---------------------------------------methode pour retourner un boolean if emplois exist pour une classe
+    public Object hasEmplois(long idClasse) {
+        // Vérifie si des emplois existent pour la classe spécifiée avec une date de fin après la date actuelle
+        Emplois emplois = emplois_repositorie.findByIdClasseIdAndDateFinIsAfter(idClasse, LocalDate.now());
+
+        if (emplois == null) {
+            return false;
+        }
+
+        // Vérifie s'il y a des séances associées à cet emploi
+        List<Seances> seances = seance_repositorie.findByIdEmploisId(emplois.getId());
+
+        if (seances.isEmpty()) {
+            return true;
+        }
+
+        // Sinon, retourne l'objet contenant l'emploi et les séances
+        Map<String, Object> result = new HashMap<>();
+        result.put("emplois", emplois);
+        result.put("seances", seances);
+        return result;
+    }
+
+    //    --------------------------method get all emplois of teacher-------------------------
     public List<Emplois> findAllEmploisByTeacher(long idteacher) {
         List<Seances> seancesList = seance_repositorie.findAll_ByIdTeacher( idteacher, LocalDate.now());
         List<Emplois> emploisList = new ArrayList<>();
@@ -90,4 +116,38 @@ public class Emplois_service {
         }
         return emploisList;
     }
+//    --------------------------------method get by id emplois--------------------
+    public Emplois getById(long id){
+        Emplois emplois = emplois_repositorie.findById(id);
+        if (emplois != null){
+            return emplois;
+        }
+        throw new RuntimeException("Auccune correspondance");
+    }
+//    ----------------------methode pour verifier l'existence des seances sur l'emplois du temps
+    public boolean hasSeances(long idEmplois){
+        return seance_repositorie.existsByIdEmploisId(idEmplois);
+    }
+//    -------------------------------method to validate emplois
+    public boolean validated(long idEmplois){
+        Emplois emploiExist =emplois_repositorie.findById(idEmplois);
+        if(emploiExist !=null){
+               emploiExist.setValid(!emploiExist.isValid());
+                emplois_repositorie.save(emploiExist);
+                return  true;
+
+        }
+        return  false;
+    }
+//    -------------------methode de verification if emplois is valid or no
+    public boolean isValid(long idEmplois) {
+        Emplois emploiExist = emplois_repositorie.findById(idEmplois);
+
+        if (emploiExist != null) {
+            return emploiExist.isValid();
+        }
+
+        return false;
+    }
+
 }

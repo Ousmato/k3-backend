@@ -35,22 +35,24 @@ public class Teachers_service {
     @Autowired
     private fileManagers fileManagers;
 
-    public Teachers add(Teachers teachers, MultipartFile file) throws  IOException{
+    public Teachers add(Teachers teachers, MultipartFile file) throws IOException {
         Teachers teachersExist = teacher_repositorie.findByEmail(teachers.getEmail());
-        if(teachersExist == null){
-            if(file.isEmpty()){
-                teachers.setUrlPhoto("no image");
-                return teacher_repositorie.save(teachers);
-            }
+
+        if (teachersExist != null) {
+            throw new RuntimeException("L'adresse email existe déjà");
+        }
+
+        if (file != null && !file.isEmpty()) {
             String urlPhoto = fileManagers.saveFile(file);
             teachers.setUrlPhoto(urlPhoto);
-            return teacher_repositorie.save(teachers);
-        }else {
-            throw new RuntimeException("l'address email existe deja");
-
+        } else {
+            teachers.setUrlPhoto("no_image.jpg"); // Exemple de valeur par défaut pour l'image
         }
+
+        return teacher_repositorie.save(teachers);
     }
-//    ---------------------------------------method pour desactiver un enseignant-------------------------
+
+    //    ---------------------------------------method pour desactiver un enseignant-------------------------
     public String desactive(long id){
         Teachers teachersExist = teacher_repositorie.findByIdEnseignantAndActive(id, true);
         if (teachersExist != null){
@@ -93,6 +95,7 @@ public class Teachers_service {
 
 
     }
+
 //    -----------------------------------------------------mehod pour appeler un enseignant-------------
     public Teachers teachById(long id){
         return teacher_repositorie.findByIdEnseignantAndActive(id, true);
@@ -100,7 +103,8 @@ public class Teachers_service {
 
 //    -----------------------------------method to add teacher in presence list------------------
     public TeachersPresence addPresence(TeachersPresence presence){
-        TeachersPresence teachersPresence = listPresenceTeacher_repositorie.findByIdSeanceIdTeacherIdEnseignantAndIdSeanceId(
+        System.out.println(presence+"----------------------");
+        TeachersPresence teachersPresence = listPresenceTeacher_repositorie.findByIdSeanceIdAndIdSeanceIdTeacherIdEnseignant(
                 presence.getIdSeance().getId(), presence.getIdSeance().getIdTeacher().getIdEnseignant()
         );
         if (teachersPresence ==null){
@@ -108,7 +112,7 @@ public class Teachers_service {
             return listPresenceTeacher_repositorie.save(presence);
         }
 
-        teachersPresence.setObservation(!teachersPresence.isObservation());
+        teachersPresence.setObservation(true);
         return   listPresenceTeacher_repositorie.save(teachersPresence);
 
     }

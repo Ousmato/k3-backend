@@ -15,5 +15,5 @@ Notifications findById(long id);
 Notifications findByIdTeachersIdEnseignantAndDateAndIdEmploisId(long idTeacher, LocalDate date, long idEmplois);
 Notifications findByIdDoc(Documents idDoc);
 
-Notifications findByIdAdminIdAdministraAndDateAndIdEmploisIdClasseModuleIdStudentClasseId(long idAdmin, LocalDate date, long idClasse);
+Notifications findByIdAdminIdAdministraAndDateAndIdEmploisIdClasseId(long idAdmin, LocalDate date, long idClasse);
 }

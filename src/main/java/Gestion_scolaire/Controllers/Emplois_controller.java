@@ -61,5 +61,50 @@ public class Emplois_controller {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-//    -------------------------------------
+//    -------------------------------------get emplois by id ----------------------
+    @GetMapping("/emplois/{id}")
+    public ResponseEntity<Emplois> getById(@PathVariable long id){
+        try{
+            Emplois emp = emplois_service.getById(id);
+            return ResponseEntity.ok(emp);
+        }catch (Exception e){
+            log.info(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+//    ------------------------------------------verifier l'existence d'un emplois pour la classe
+    @GetMapping("/hasEmplois/{classId}")
+    public ResponseEntity<Object> hasEmplois(@PathVariable long classId) {
+        Object hasEmplois = emplois_service.hasEmplois(classId);
+        return ResponseEntity.ok(hasEmplois);
+    }
+//    -----------------------methode pour verifier l'existence des seances pour un emplois
+        @GetMapping("/hasSeance/{idEmplois}")
+        public ResponseEntity<Boolean> hasSeance(@PathVariable long idEmplois) {
+            boolean hasEmplois = emplois_service.hasSeances(idEmplois);
+            return ResponseEntity.ok(hasEmplois);
+        }
+
+//        ---------------------------------method for validated
+    @GetMapping("/valid/{idEmplois}")
+    public ResponseEntity<Boolean> validEmplois(@PathVariable long idEmplois) {
+        try {
+          boolean vld =  emplois_service.validated(idEmplois);
+            return ResponseEntity.ok(vld);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+//    ----------------------------------method to verifier emplois is valid or no
+    @GetMapping("/is-valid/{idEmplois}")
+    public ResponseEntity<Boolean> isValid(@PathVariable long idEmplois){
+        try {
+            boolean isV = emplois_service.isValid(idEmplois);
+            return ResponseEntity.ok(isV);
+        }catch (Exception e){
+            log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }

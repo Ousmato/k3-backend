@@ -39,8 +39,8 @@ public class Notification_service {
 //    -------------------------------------------------method add notification for admin-------------------------
     public Notifications addAmin(Notifications notifications){
         notifications.setDate(LocalDate.now());
-        Notifications notifiExist = notification_repositorie.findByIdAdminIdAdministraAndDateAndIdEmploisIdClasseModuleIdStudentClasseId(
-                notifications.getIdAdmin().getIdAdministra(),notifications.getDate(),notifications.getIdEmplois().getIdClasseModule().getIdStudentClasse().getId());
+        Notifications notifiExist = notification_repositorie.findByIdAdminIdAdministraAndDateAndIdEmploisIdClasseId(
+                notifications.getIdAdmin().getIdAdministra(),notifications.getDate(),notifications.getIdEmplois().getIdClasse().getId());
         if (notifiExist != null){
             throw new RuntimeException("notification avec cette date pour cette classe exist deja");
         }

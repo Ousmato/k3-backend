@@ -17,7 +17,7 @@ public interface ListPresenceTeacher_repositorie extends JpaRepository<TeachersP
 
 //    @Query(value = "SELECT SUM(TIMESTAMPDIFF(MINUTE, s.heureDebut, s.heureFin) / 60.0) FROM Seances AS s JOIN s.idTeacher t WHERE t.idEnseignant = :idT", nativeQuery = true)
 //    Double findTotalHoursByTeacher(@Param("idT") Long idT);
-    TeachersPresence findByIdSeanceIdTeacherIdEnseignantAndIdSeanceId(long idTeacher, long idSeance);
+    TeachersPresence findByIdSeanceIdAndIdSeanceIdTeacherIdEnseignant(long idSeance, long idTeacher);
    List<TeachersPresence> findByObservationAndIdSeanceDateBetween(boolean isPre, LocalDate debut, LocalDate fin);
 
     TeachersPresence findByIdSeanceIdTeacherIdEnseignant(long idTeacher);

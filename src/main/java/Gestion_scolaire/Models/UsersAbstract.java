@@ -33,4 +33,7 @@ public abstract class UsersAbstract {
 
     @NotNull
     private String urlPhoto;
+
+    @NotNull
+    private String sexe;
 }

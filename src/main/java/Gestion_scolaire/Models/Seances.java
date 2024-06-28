@@ -22,9 +22,6 @@ public class Seances {
     private LocalTime heureFin;
 
     @NotNull
-    private String jour;
-
-    @NotNull
     private LocalDate date;
 
     @ManyToOne
@@ -33,4 +30,7 @@ public class Seances {
 
     @ManyToOne
     private Teachers idTeacher;
+
+    @ManyToOne
+    private Modules idModule;
 }
