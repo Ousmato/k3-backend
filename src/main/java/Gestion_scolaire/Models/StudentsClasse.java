@@ -19,7 +19,7 @@ public class StudentsClasse {
     private double scolarite;
 
     @NotNull
-    private boolean fermer = false;
+    private boolean fermer;
 
     @OneToOne
     private NiveauFilieres idFiliere;

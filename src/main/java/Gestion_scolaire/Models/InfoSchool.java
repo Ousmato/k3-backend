@@ -35,4 +35,7 @@ public class InfoSchool {
     @NotNull
     private String localite;
 
+    @NotNull
+    private String urlPhoto;
+
 }

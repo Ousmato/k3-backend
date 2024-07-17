@@ -1,7 +1,10 @@
 package Gestion_scolaire.Services;
 
+import Gestion_scolaire.Models.Emplois;
 import Gestion_scolaire.Models.Semestres;
+import Gestion_scolaire.Repositories.Emplois_repositorie;
 import Gestion_scolaire.Repositories.Semestre_repositorie;
+import Gestion_scolaire.configuration.NoteFundException;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +17,9 @@ import java.util.List;
 public class Semestre_service {
     @Autowired
     private Semestre_repositorie semestre_repositorie;
+
+    @Autowired
+    private Emplois_repositorie emplois_repositorie;
 
     @PostConstruct
     public void init(){
@@ -47,5 +53,24 @@ public class Semestre_service {
 //    -----------------------------------------get current semestre-----------------------
     public Semestres currentSemestre(){
         return semestre_repositorie.getCurrentSemestre(LocalDate.now());
+    }
+//    ---------------------------------------method update semestre
+    public Semestres update(Semestres semestre){
+        Semestres smExist = semestre_repositorie.findById(semestre.getId());
+        Semestres currentSemestre = semestre_repositorie.getCurrentSemestre(LocalDate.now());
+        List<Emplois> emploisExist = emplois_repositorie.getByIdSemestreId(semestre.getId());
+        if (!emploisExist.isEmpty()){
+            throw new NoteFundException(" Impossible de modifier, Il existe deja des emplois pour ce semestre");
+        }
+
+        if (semestre.getDatFin().isBefore(semestre.getDateDebut())){
+            throw new NoteFundException("La date debut ne pas etre inferieur a la date de fin");
+        }
+        if (semestre.getDatFin().isBefore(currentSemestre.getDateDebut())){
+            throw  new NoteFundException("La date du "+ semestre.getNomSemetre() + "ne doit pas etre inferieur a la date de fin du semestre acctuel");
+        }
+        smExist.setDateDebut(semestre.getDateDebut());
+        smExist.setDatFin(semestre.getDatFin());
+       return semestre_repositorie.save(smExist);
     }
 }

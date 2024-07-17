@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NiveauFiliere_repositorie extends JpaRepository<NiveauFilieres, Long> {
     NiveauFilieres findByIdFiliereAndIdNiveau(Filiere idFiliere, Niveau idNiveau);
+    NiveauFilieres findByIdFiliereIdAndIdNiveauId(long idFiliere, long idNiveau);
 }

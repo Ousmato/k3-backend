@@ -22,43 +22,37 @@ public class Emplois_service {
     @Autowired
     private Seance_repositorie seance_repositorie;
 
-    public Emplois add(Emplois emplois){
-        Emplois emplois_de_la_classe = emplois_repositorie.findByIdClasseId(emplois.getIdClasse().getId());
-        Emplois empliExist = emplois_repositorie.findByIdClasseIdAndDateDebutAndDateFin(emplois.getIdClasse().getId(), emplois.getDateDebut(), emplois.getDateFin());
+    public Emplois add(Emplois emplois) {
+        System.out.println("------------------------------------je suis la ");
+        // Recherche d'un emploi pour la classe spécifiée
+        List<Emplois> emplois_de_la_classe = emplois_repositorie.findEmploisActifByIdClass(LocalDate.now(), emplois.getIdClasse().getId());
 
-            LocalDate dateDebut = emplois.getDateDebut();
-            LocalDate dateFin = emplois.getDateFin();
-            LocalDate dateDebutSemestre = emplois.getIdSemestre().getDateDebut();
-            LocalDate dateFinSemestre = emplois.getIdSemestre().getDatFin();
+//        // Vérification des dates par rapport au semestre
+        LocalDate dateDebut = emplois.getDateDebut();
+        LocalDate dateFin = emplois.getDateFin();
+        LocalDate dateDebutSemestre = emplois.getIdSemestre().getDateDebut();
+        LocalDate dateFinSemestre = emplois.getIdSemestre().getDatFin();
 
-        // Vérification des dates
         if (dateDebut.isBefore(dateDebutSemestre) || dateFin.isAfter(dateFinSemestre)) {
             throw new RuntimeException("Les dates de l'emploi doivent être comprises entre les dates du semestre.");
         }
 
-        if (emplois_de_la_classe != null) {
-            if(dateDebut.isBefore(emplois_de_la_classe.getDateFin())){
-                throw new RuntimeException("Il existe deja un emplois en cours veillez attendre cette date "+emplois_de_la_classe.getDateFin()+" ou modifier l'emplois du temps");
-
-            }else {
-                if (dateFin.isBefore(dateDebut)) {
-                    throw new RuntimeException("Date de fin ne peut pas être avant la date de début");
-                }
-                return emplois_repositorie.save(emplois);
+        // Vérification de l'existence d'un emploi pour la classe
+        if (!emplois_de_la_classe.isEmpty()) {
+            if (dateDebut.isBefore(emplois_de_la_classe.getLast().getDateFin())) {
+                throw new RuntimeException("Il existe déjà un emploi en cours. Veuillez attendre cette date " + emplois_de_la_classe.getLast().getDateFin() + " ou modifier l'emploi du temps.");
             }
-        }else {
-            if (dateFin.isBefore(dateDebut)) {
-                throw new RuntimeException("Date de fin ne peut pas être avant la date de début");
-            }
-            return emplois_repositorie.save(emplois);
+        }
+        // Vérification finale sur les dates de début et de fin
+        if (dateFin.isBefore(dateDebut)) {
+            throw new RuntimeException("La date de fin ne peut pas être avant la date de début.");
         }
 
+        // Si toutes les vérifications sont passées, enregistrez l'emploi
+        return emplois_repositorie.save(emplois);
     }
-//    ------------------------------------------------------methode pour appeler les emplois----------
-    public List<Emplois> readAll(){
-        return emplois_repositorie.findAllEmploisActif(LocalDate.now());
-    }
-//    -----------------------------------------mehode pour modifier-------------------------
+
+    //    -----------------------------------------mehode pour modifier-------------------------
     public  Emplois update(Emplois emplois) {
         Emplois emploisExist = emplois_repositorie.findById(emplois.getId());
         if (emploisExist != null) {
@@ -96,7 +90,6 @@ public class Emplois_service {
         if (seances.isEmpty()) {
             return true;
         }
-
         // Sinon, retourne l'objet contenant l'emploi et les séances
         Map<String, Object> result = new HashMap<>();
         result.put("emplois", emplois);
@@ -146,8 +139,14 @@ public class Emplois_service {
         if (emploiExist != null) {
             return emploiExist.isValid();
         }
-
         return false;
     }
-
+//--------------------------------get all emplois
+    public List<Emplois> listEmploisActifs(){
+        List<Emplois>  list = emplois_repositorie.findAllEmploisActif(LocalDate.now());
+        if (list.isEmpty()){
+            return  new ArrayList<>();
+        }
+        return list;
+    }
 }

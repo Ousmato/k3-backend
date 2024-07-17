@@ -26,7 +26,7 @@ public class Note_service {
     private Modules_repositories modules_repositories;
 
     @Autowired
-    private Ue_repositorie ue_repositorie;
+    private Semestre_repositorie semestre_repositorie;
 
     @Autowired
     private ClasseModule_repositorie classeModule_repositorie;
@@ -90,22 +90,14 @@ public class Note_service {
         return list;
     }
 //    ---------------------------------------------mehode pour ajouter une note----------------------
-    public List<Notes> addNote(List<Notes> notes) {
-        List<Notes> listNoteSaved = new ArrayList<>();
-
-        for (Notes note : notes) {
-            // Vérifiez l'existence de l'étudiant pour chaque note
-            Studens studentExist = students_repositorie.findByIdEtudiant(note.getIdStudents().getIdEtudiant());
-
-            if (studentExist == null) {
-                throw new RuntimeException("Aucun étudiant n'est associé à cette note : " + note);
-            }
-
-            listNoteSaved.add(note);
+    public Notes addNote(Notes notes) {
+       Notes noteExist = notes_repositorie.findByIdStudentsIdEtudiantAndIdModuleIdAndIdSemestreId(
+               notes.getIdStudents().getIdEtudiant(),notes.getIdModule().getId(),notes.getIdSemestre().getId());
+        if(noteExist != null){
+            throw new RuntimeException("cet etudian a deja de note pour ce module dans cette semestre");
         }
 
-        // Sauvegarder toutes les notes après avoir vérifié l'existence de l'étudiant pour chaque note
-        return notes_repositorie.saveAll(listNoteSaved);
+        return notes_repositorie.save(notes);
     }
 //--------------------------------------methode pour appeler tout les module de la
 //    classe de l'etudiant qui on deja etait programmer pour un emplois du temps
@@ -114,12 +106,8 @@ public class Note_service {
         List<ClasseModule> classeModuleList = classeModule_repositorie.findByIdStudentClasseId(idClasse);
         Set<Modules> modulesSet = new HashSet<>();
 
-//        for(Emplois emplois : emploisList){
             for (ClasseModule clm : classeModuleList){
                 UE ue = clm.getIdUE();
-
-
-
             if (ue != null) {
                 List<Modules> toutModule = modules_repositories.findByIdUeId(ue.getId());
                 modulesSet.addAll(toutModule);
@@ -127,7 +115,25 @@ public class Note_service {
             }
 
         }
-//        }
         return new ArrayList<>(modulesSet);
     }
+//    ----------------------------------method get all notes by idClasse and current semestre
+    public List<Notes> listNotes(long idClasse){
+        Semestres currentSemestre = semestre_repositorie.getCurrentSemestre(LocalDate.now());
+        List<Notes> list = notes_repositorie.getByIdSemestreIdAndIdStudentsIdClasseId(currentSemestre.getId(),idClasse);
+        if(list.isEmpty()){
+            return new ArrayList<>();
+        }
+        return list;
+    }
+//    ----------------------------------------methode pour appler les notes par id du module
+    public List<Notes> getNotesByIdModule(long idModule){
+        Semestres currentSemestre = semestre_repositorie.getCurrentSemestre(LocalDate.now());
+        List<Notes> notesList = notes_repositorie.getByIdSemestreIdAndIdModuleId(currentSemestre.getId(), idModule);
+        if(!notesList.isEmpty()){
+            return notesList;
+        }
+        return new ArrayList<>();
+    }
+
 }

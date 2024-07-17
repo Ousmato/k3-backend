@@ -98,7 +98,7 @@ public class fileManagers {
         // Enregistrer le nouveau fichier sur le système de fichiers
         Files.copy(multipartFile.getInputStream(), filePath);
 
-        return filePath.toString();
+        return fileName;
     }
 
 }

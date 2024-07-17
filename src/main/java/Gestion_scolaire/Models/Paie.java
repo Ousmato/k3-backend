@@ -20,11 +20,11 @@ public class Paie {
     @NotNull
     private int nbreHeures;
 
-    @NotNull
-    private double montant;
+//    @NotNull
+//    private double montant;
 
     @NotNull
-    private LocalDate date = LocalDate.now();
+    private LocalDate date;
 
     @ManyToOne
     private TeachersPresence idPresenceTeachers;

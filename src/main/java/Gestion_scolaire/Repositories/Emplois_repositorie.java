@@ -19,13 +19,14 @@ public interface Emplois_repositorie extends JpaRepository<Emplois, Long> {
     @Query("select e from Emplois AS e where e.dateFin < :date")
     Emplois findEmploisActif(LocalDate date);
 
-    @Query("select e from Emplois AS e where e.dateFin < :date AND e.idClasse.id = :idClasse")
-    Emplois findEmploisActifByIdClass(LocalDate date, long idClasse);
+    @Query("select e from Emplois AS e where e.dateFin > :date AND e.idClasse.id = :idClasse")
+    List<Emplois> findEmploisActifByIdClass(LocalDate date, long idClasse);
 
     Emplois getEmploisByDateFinAfterAndIdClasseId(LocalDate date, long id);
 
     Emplois findByIdClasseId(long idClasse);
 
+    List<Emplois> getByIdSemestreId(long idSemestre);
 
     boolean existsByIdClasseIdAndDateFinIsAfter(long id, LocalDate dateFin);
 

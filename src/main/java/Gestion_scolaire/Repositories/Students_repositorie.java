@@ -10,7 +10,9 @@ import java.util.List;
 public interface Students_repositorie extends JpaRepository<Studens, Long> {
    Studens findByEmailAndPassword(String email, String password);
    Studens findByEmail(String password);
-   Studens findByMatricule(String matricule);
+
+   Studens findByMatriculeAndTelephone(String matricule, int telephone);
+
    Studens findByIdEtudiant (long id);
 //   List<Studens> findByDeleted(boolean t);
    List<Studens> findByIdClasseIdAndActive(long idClasse, boolean isActive);

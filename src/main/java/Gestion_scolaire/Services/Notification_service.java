@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -14,9 +15,6 @@ public class Notification_service {
     @Autowired
     private Notification_repositorie notification_repositorie;
 
-    public List<Notifications> getListNotification(){
-        return notification_repositorie.findAll();
-    }
 //    -------------------------------------------------methode pour supprimer une notification--------------
     public String deleteNotification(long id){
         Notifications notifiExist = notification_repositorie.findById(id);
@@ -39,8 +37,8 @@ public class Notification_service {
 //    -------------------------------------------------method add notification for admin-------------------------
     public Notifications addAmin(Notifications notifications){
         notifications.setDate(LocalDate.now());
-        Notifications notifiExist = notification_repositorie.findByIdAdminIdAdministraAndDateAndIdEmploisIdClasseId(
-                notifications.getIdAdmin().getIdAdministra(),notifications.getDate(),notifications.getIdEmplois().getIdClasse().getId());
+        Notifications notifiExist = notification_repositorie.findByIdAdminIdAdministraAndDateAndTitre(
+                notifications.getIdAdmin().getIdAdministra(),notifications.getDate(),notifications.getTitre());
         if (notifiExist != null){
             throw new RuntimeException("notification avec cette date pour cette classe exist deja");
         }
@@ -66,4 +64,19 @@ public class Notification_service {
         throw new RuntimeException("cette notification n'exist pas");
         }
 
+//        --------------------------------------get all notification
+    public List<Notifications> getListNotification(){
+        List<Notifications> notifSemaine = new ArrayList<>();
+        List<Notifications> list = notification_repositorie.findAll();
+
+        LocalDate ecart = LocalDate.now().plusDays(7);
+        for (Notifications nt : list){
+            LocalDate datesNotif = nt.getDate();
+
+            if(!datesNotif.isAfter(ecart)){
+                notifSemaine.add(nt);
+            }
+        }
+        return notifSemaine;
+    }
 }

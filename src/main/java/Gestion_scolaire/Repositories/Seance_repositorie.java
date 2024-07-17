@@ -18,20 +18,26 @@ public interface Seance_repositorie extends JpaRepository<Seances, Long> {
 
     boolean existsByIdEmploisId(long idEmplois);
 
-    Seances getByDateAndIdModuleId(LocalDate date, long idModule);
+    Seances getById(long idSeance);
+
+    Seances getByDateAndIdModuleIdAndIdEmploisId(LocalDate date, long idModule, long idEmpl);
 
     Seances findByHeureDebutAndHeureFinAndDate(LocalTime debut, LocalTime fin, LocalDate date);
 
     @Query("SELECT s FROM Seances s WHERE s.idTeacher.idEnseignant = :idTeacher AND s.idEmplois.dateFin > :currentDate")
     List<Seances> findAll_ByIdTeacher(@Param("idTeacher") long idTeacher, @Param("currentDate") LocalDate currentDate);
 
-    @Query( value = "SELECT SUM(TIMESTAMPDIFF(MINUTE, s.heureDebut, s.heureFin) / 60.0) FROM Seances AS s WHERE s.idTeacher.idEnseignant = :idT", nativeQuery = true)
-    int findTotalHoursByTeacher(@Param("idT") long idT);
+    @Query( value = "SELECT TIMESTAMPDIFF(MINUTE, s.heure_debut, s.heure_fin)/60 FROM seances AS s WHERE s.id_teacher_id_enseignant =:idT AND s.id =:idS;", nativeQuery = true)
+    int findTotalHoursByTeacher(@Param("idT") long idT, @Param("idS") long idS);
 
     @Query(value = "SELECT SUM(TIMESTAMPDIFF(MINUTE, s.heureDebut, s.heureFin) / 60.0) FROM Seances AS s WHERE s.idTeacher.idEnseignant = :idTeacher AND MONTH(s.date) = :month", nativeQuery = true)
     List<Integer> findNbreHeureBySeanceIdTeacher(@Param("idTeacher") long idTeacher, @Param("month") int month);
 
 
-    List<Seances>  getAllByDateIsBetween(LocalDate debut, LocalDate fin);
+    List<Seances>  getAllByDateAndIdTeacherIdEnseignant(LocalDate date, long idTeacher);
+
+    List<Seances> getAllByDate(LocalDate date);
+
+    Seances getAllByHeureDebutIsBetween(LocalTime debut, LocalTime fin);
 
 }

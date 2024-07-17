@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Entity
 public class UE {
@@ -13,6 +15,7 @@ public class UE {
 
     @NotNull
     private String nomUE;
+
 
 
 

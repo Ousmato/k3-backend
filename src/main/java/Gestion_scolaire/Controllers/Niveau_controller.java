@@ -19,8 +19,7 @@ public class Niveau_controller {
     private Niveau_service niveau_service;
 
     @GetMapping("/readAll")
-    public ResponseEntity<List<Niveau>> getAll(){
-        List<Niveau> listNiveau = niveau_service.readAll();
-        return new ResponseEntity<>(listNiveau, HttpStatus.OK);
+    public List<Niveau> getAll(){
+       return niveau_service.readAll();
     }
 }

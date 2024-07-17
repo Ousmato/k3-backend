@@ -19,37 +19,29 @@ public class Seance_controller {
     private Seance_service seance_service;
 
     @PostMapping("/add")
-    public ResponseEntity<Seances> addSeance(@RequestBody Seances seancesList){
-        try {
-            Seances seance = seance_service.createSeance(seancesList);
-            return new ResponseEntity<>(seance, HttpStatus.OK);
-        }catch (Exception e){
-            log.info(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public Object addSeance(@RequestBody Seances seancesList){
+            return seance_service.createSeance(seancesList);
     }
 //    ------------------------method get All seance by emplois---------------------------------
     @GetMapping("/list/{idEmplois}")
-    public ResponseEntity<List<Seances>> getAllByIdEmlois(@PathVariable long idEmplois){
-        try {
-            List<Seances> list = seance_service.readByIdEmplois(idEmplois);
-//            System.out.println(list+ "seaces");
-            return new ResponseEntity<>(list,HttpStatus.OK);
-        }catch (Exception e){
-            log.info(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public List<Seances> getAllByIdEmlois(@PathVariable long idEmplois){
+            return seance_service.readByIdEmplois(idEmplois);
     }
 //    ---------------------------------------method calculate nombre heure for month--------------------------
     @GetMapping("/nbre-heure/{idTeacher}")
-    public ResponseEntity<List<Integer>> getNobreHeureByMonth(@PathVariable long idTeacher){
-        try {
-            List<Integer> list = seance_service.getNbreBySeance(idTeacher);
-            return new ResponseEntity<>(list,HttpStatus.OK);
-        }catch (Exception e){
-            log.info(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public List<Integer> getNobreHeureByMonth(@PathVariable long idTeacher){
+            return seance_service.getNbreBySeance(idTeacher);
+
     }
-//    ------------------------------------
+//    ------------------------------------method delete seance
+    @DeleteMapping("/delete/{idSeance}")
+    public Object deletedSeance(@PathVariable long idSeance){
+            return seance_service.deletedSeance(idSeance);
+    }
+//    ------------------------------------update seance
+    @PutMapping("/update")
+    public Object updateSeance(@RequestBody Seances seance){
+       return seance_service.update(seance);
+
+    }
 }

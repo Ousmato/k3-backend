@@ -14,8 +14,11 @@ public class TeachersPresence {
     @NotNull
     private boolean observation = true;
 
+
     @ManyToOne
     private Seances idSeance;
+
+
 
 
 }

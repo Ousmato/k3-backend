@@ -1,16 +1,14 @@
 package Gestion_scolaire.Services;
 
-import Gestion_scolaire.Models.ClasseModule;
-import Gestion_scolaire.Models.Modules;
-import Gestion_scolaire.Models.StudentsClasse;
-import Gestion_scolaire.Models.UE;
-import Gestion_scolaire.Repositories.ClasseModule_repositorie;
-import Gestion_scolaire.Repositories.Classe_repositorie;
-import Gestion_scolaire.Repositories.Modules_repositories;
-import Gestion_scolaire.Repositories.Ue_repositorie;
+import Gestion_scolaire.Dto_classe.DTO_response_string;
+import Gestion_scolaire.Models.*;
+import Gestion_scolaire.Repositories.*;
+import Gestion_scolaire.configuration.NoteFundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +25,15 @@ public class Ue_service {
     private ClasseModule_repositorie classeModule_repositorie;
 
     @Autowired
-    private Classe_repositorie classe_repositorie;
+    private Notes_repositorie notes_repositorie;
+
+    @Autowired
+    private Semestre_repositorie semestre_repositorie;
+
+    @Autowired
+    private  Note_service note_service;
+
+
 
     public UE add(UE ue){
         UE uEexist = ue_repositorie.findByNomUE(ue.getNomUE());
@@ -78,22 +84,81 @@ public class Ue_service {
         }
         return modulesList;
     }
-//    ----------------------------------------------------------supprimer une UE------------
-    public String delete(long id){
-        UE UeExist = ue_repositorie.findById(id);
-        if (UeExist != null){
-            List<Modules> modulesList = modules_repositories.findByIdUeId(UeExist.getId());
-            if (modulesList.isEmpty()){
-                ue_repositorie.delete(UeExist);
-                return "delete sucessfly";
-            }else {
-                throw new RuntimeException("cette UE a deja des module impossible de le supprimer");
-            }
+//    -----------------------------------------------method get all module without note
+    public  List<Modules> listModule_without_note(long idClass){
+        List<UE> list = readAllAssociated(idClass);
+        List<Modules> modulesList = new ArrayList<>();
+        Semestres semestre = semestre_repositorie.getCurrentSemestre(LocalDate.now());
 
-        }else {
-            throw new RuntimeException("UE non valid");
+        for (UE ue : list) {
+            List<Modules> modulesForUe = modules_repositories.findByIdUeId(ue.getId());
+            List<Notes> notesList = notes_repositorie.findByIdSemestreId(semestre.getId());
+            if (modulesForUe != null) {
+                for (Modules modules: modulesForUe){
+                    boolean hasNote = false;
+                    for (Notes note : notesList){
+                        if(note.getIdModule().equals(modules)){
+                            hasNote = true;
+                            break;
+                        }
+                    }
+                    if (!hasNote) {
+                        modulesList.add(modules);
+                    }
+                }
+            }
+            System.out.println("--------list module-------" + modulesList);
         }
+
+        return modulesList;
     }
+//----------------------liste des tout les modules sans note pour modifier dans le parameter
+public  List<Modules> listModule_without_note_all(){
+    List<UE> list = ue_repositorie.findAll();
+    List<Modules> modulesListExist = new ArrayList<>();
+    Semestres semestre = semestre_repositorie.getCurrentSemestre(LocalDate.now());
+
+    for (UE ue : list) {
+        List<Modules> modulesForUe = modules_repositories.findByIdUeId(ue.getId());
+        List<Notes> notesList = notes_repositorie.findByIdSemestreId(semestre.getId());
+        if (modulesForUe != null) {
+            for (Modules modules: modulesForUe){
+                boolean hasNote = false;
+                for (Notes note : notesList){
+                    if(note.getIdModule().equals(modules)){
+                        hasNote = true;
+                        break;
+                    }
+                }
+                if (!hasNote) {
+                    modulesListExist.add(modules);
+                }
+            }
+        }
+        System.out.println("--------list module-------" + modulesListExist);
+    }
+
+    return modulesListExist;
+}
+
+    //    --------------------------get module of student without note for a student
+    public  List<Modules> getByIdStudentAndIdClasse(long idStudent, long idClasse){
+        List<Modules> listSanNote = listModule(idClasse);
+
+        Semestres semestre = semestre_repositorie.getCurrentSemestre(LocalDate.now());
+        List<Notes> notesList = notes_repositorie.getByIdSemestreIdAndIdStudentsIdEtudiant(semestre.getId(), idStudent);
+
+
+        for (Notes notes : notesList) {
+            // Filtrer les modules avec note pour cet étudiant et les retirer de la liste sans note
+            listSanNote.removeIf(module -> module.getId() == notes.getIdModule().getId());
+        }
+    if(listSanNote.isEmpty()){
+        return new ArrayList<>();
+    }
+    return listSanNote;
+    }
+
 //    ---------------------------------method pour modifier l'ue---------------------------
     public UE update(UE ue){
         UE ueExist = ue_repositorie.findById(ue.getId());
@@ -108,4 +173,93 @@ public class Ue_service {
     public List<UE> getListUe(){
         return ue_repositorie.findAll();
     }
+//    ----------------------------liste des ues dont les modules n'ont pas de note-----------
+    public List<UE> ueList_without_note_all(){
+        List<UE> list = ue_repositorie.findAll();
+        List<UE> newListUes = new ArrayList<>();
+        List<Modules> modulesList = listModule_without_note_all();
+        for (UE ue : list) {
+            boolean hasNote = true;
+            for (Modules modules : modulesList) {
+
+                if(modules.getIdUe().equals(ue)){
+                    hasNote = false;
+                    break;
+                }
+
+            }
+            if (hasNote) {
+                newListUes.add(ue); // Ajouter cette UE à la liste des UE sans note
+            }
+        }
+        return newListUes;
+    }
+//    --------------------------------methode to delete ue
+    public Object deleteUe_by_id(long idUe) {
+        UE ueExist = ue_repositorie.findById(idUe);
+        if (ueExist == null) {
+            return DTO_response_string.fromMessage("Ue doesn't exist", 404);
+        }
+        List<UE> uesWithout_module = getAllUe_without_modules();
+        if (uesWithout_module.contains(ueExist)) {
+
+            ue_repositorie.delete(ueExist);
+            return DTO_response_string.fromMessage("Suppression effectuée avec succès", 200);
+        } else {
+            return DTO_response_string.fromMessage("Suppression a échoué, il existe des modules associés", 400);
+        }
+    }
+//    -------------------------------------method delete module
+    public Object delete_module_by_id(long idModule) {
+        Modules modules = modules_repositories.findById(idModule);
+        if (modules == null) {
+            throw new  NoteFundException("Module doesn't exist");
+
+        }
+        modules_repositories.delete(modules);
+        return DTO_response_string.fromMessage("Suppression effectue avec success", 200);
+    }
+
+    //    -------------------------------method liste des ues dont les modules n'ont pas de notes associe
+    public List<UE> getAllUe_without_modules() {
+        List<UE> list = ue_repositorie.findAll();
+        List<UE> newListUes = new ArrayList<>();
+
+        for (UE ue : list) {
+            boolean hasModuleWithoutNotes = false;
+            List<Modules> modulesForUe = modules_repositories.findByIdUeId(ue.getId());
+            if(modulesForUe.isEmpty()){
+                hasModuleWithoutNotes = true;
+            }
+            if(hasModuleWithoutNotes){
+                newListUes.add(ue);
+            }
+        }
+
+        return newListUes;
+    }
+//---------------------------------nethode pour appeller tous les ues qui n'ont pas de notes ni des classes
+    public List<UE> getAll_ue_without_modules_and_classes() {
+        // Obtenir toutes les UEs
+        List<UE> allUes = ue_repositorie.findAll();
+        List<UE> ues_without_modules_and_classes = new ArrayList<>();
+
+        for (UE ue : allUes) {
+            // Vérifier si l'UE n'a pas de modules
+            List<Modules> modulesForUe = modules_repositories.findByIdUeId(ue.getId());
+            boolean hasNoModules = modulesForUe.isEmpty();
+
+            // Vérifier si l'UE n'a pas de classes
+            List<ClasseModule> classeModulesForUe = classeModule_repositorie.getClasseModuleByIdUEId(ue.getId());
+            boolean hasNoClasses = classeModulesForUe.isEmpty();
+
+            // Ajouter à la liste si l'UE n'a ni modules ni classes
+            if (hasNoModules && hasNoClasses) {
+                ues_without_modules_and_classes.add(ue);
+            }
+        }
+
+        return ues_without_modules_and_classes;
+    }
+
 }

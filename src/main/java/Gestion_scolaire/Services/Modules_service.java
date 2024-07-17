@@ -1,7 +1,9 @@
 package Gestion_scolaire.Services;
 
 import Gestion_scolaire.Models.Modules;
+import Gestion_scolaire.Models.Notes;
 import Gestion_scolaire.Repositories.Modules_repositories;
+import Gestion_scolaire.configuration.NoteFundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,9 @@ public class Modules_service {
 
     @Autowired
     private Modules_repositories modules_repositories;
+
+    @Autowired
+    private Note_service note_service;
 
     public List<Modules> add(List<Modules> modules){
         List<Modules> list = new ArrayList<>();
@@ -35,19 +40,6 @@ public class Modules_service {
         throw new RuntimeException("ce module existe deja");
     }
 
-//    -------------------------------------------------method pour modifier------------------------------
-    public Modules update(Modules modules){
-        Modules modulesExist = modules_repositories.findByIdUeAndNomModule(modules.getIdUe(), modules.getNomModule());
-        if(modulesExist != null){
-            modulesExist.setNomModule(modules.getNomModule());
-            modulesExist.setCoefficient(modules.getCoefficient());
-            modulesExist.setIdUe(modules.getIdUe());
-            return modules_repositories.save(modulesExist);
-        }else {
-            throw new RuntimeException("module n'existe pas");
-        }
-
-    }
 //    ---------------------------------------method pour appeler la liste-----------------------------
     public List<Modules> readAll(){
       return  modules_repositories.findAll();
@@ -56,7 +48,23 @@ public class Modules_service {
 //    ----------------------------------------------methode pour appeler les modules par Ue----------------
     public List<Modules> readByUe(long idUe){
         List<Modules> modulesList = modules_repositories.findByIdUeId(idUe);
+        if (modulesList.isEmpty()){
+            return new ArrayList<>();
+        }
         return  modulesList;
     }
-//    -------------------------------------
+//    -------------------------------------methode pour modifier le module qui n'as pas encore des notes
+    public Modules update(Modules module){
+        List<Notes> notesList = note_service.getNotesByIdModule(module.getId());
+        if(notesList.isEmpty()){
+            Modules moduleExist = modules_repositories.findModulesByIdUeIdAndId(module.getIdUe().getId(), module.getId());
+            if(moduleExist !=null){
+                moduleExist.setNomModule(module.getNomModule());
+                moduleExist.setCoefficient(module.getCoefficient());
+                return modules_repositories.save(moduleExist);
+            }
+
+        }
+        throw new NoteFundException("Le module n'est peut pas etre modifier en raison de notes deja associer");
+    }
 }

@@ -13,9 +13,6 @@ public class Studens extends UsersAbstract {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idEtudiant;
 
-
-
-
     @NotNull
     private double scolarite = 0;
 
@@ -29,7 +26,7 @@ public class Studens extends UsersAbstract {
     private String lieuNaissance;
 
     @NotNull
-    private String dateNaissance;
+    private LocalDate dateNaissance;
 
 
     @ManyToOne

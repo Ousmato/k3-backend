@@ -10,10 +10,13 @@ import java.util.List;
 
 @Repository
 public interface Notification_repositorie extends JpaRepository<Notifications, Long> {
-List<Notifications> findByIdEmploisId(long id);
-Notifications findById(long id);
-Notifications findByIdTeachersIdEnseignantAndDateAndIdEmploisId(long idTeacher, LocalDate date, long idEmplois);
-Notifications findByIdDoc(Documents idDoc);
+    List<Notifications> findByIdEmploisId(long id);
+    Notifications findById(long id);
+    Notifications findByIdTeachersIdEnseignantAndDateAndIdEmploisId(long idTeacher, LocalDate date, long idEmplois);
+    Notifications findByIdDoc(Documents idDoc);
 
-Notifications findByIdAdminIdAdministraAndDateAndIdEmploisIdClasseId(long idAdmin, LocalDate date, long idClasse);
+    Notifications findByIdAdminIdAdministraAndDateAndIdEmploisIdClasseId(long idAdmin, LocalDate date, long idClasse);
+
+    Notifications findByIdAdminIdAdministraAndDateAndTitre(long idAmin, LocalDate date, String titre);
+//    List<Notifications> getByDateBetween
 }

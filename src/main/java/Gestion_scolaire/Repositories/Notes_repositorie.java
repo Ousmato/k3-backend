@@ -22,7 +22,14 @@ public interface Notes_repositorie extends JpaRepository<Notes, Long> {
     @Query(value = "SELECT SUM(n.classeNote) FROM Notes n WHERE n.idStudents.idEtudiant = :idStudent", nativeQuery = true)
     int findTotalClassByIdStudent(@Param("idStudent") long idStudent);
 
-Notes findById(long idNote);
+    Notes findById(long idNote);
 
+    List<Notes> findByIdSemestreIdAndClasseNoteAndExamNote(long idSemestre, double classNote, double examenNote);
 
+    List<Notes> findByIdSemestreId(long idSemeatre);
+    List<Notes> getByIdSemestreIdAndIdStudentsIdEtudiant(long idSemestre, long idStudent);
+
+    List<Notes> getByIdSemestreIdAndIdStudentsIdClasseId(long idSemestre, long idClass);
+
+    List<Notes> getByIdSemestreIdAndIdModuleId(long idSemestre, long idModule);
 }

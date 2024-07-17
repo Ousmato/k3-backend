@@ -27,76 +27,87 @@ public class UeAndModule_controller {
     private Classe_service classe_service;
 
     @PostMapping("/add-ue")
-    public ResponseEntity<UE> addUe(@RequestBody UE ue){
-        try {
-            UE ue1 = ue_service.add(ue);
-            return ResponseEntity.status(HttpStatus.OK).body(ue1);
-        }catch (Exception  e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public UE addUe(@RequestBody UE ue){
+        return ue_service.add(ue);
     }
 //    ---------------------------------------methode add modules-------------------------------
     @PostMapping("/add-module-class")
-    public ResponseEntity<List<ClasseModule>> addClassModule(@RequestBody List<ClasseModule> cm){
-        try {
-            List<ClasseModule> modulesList = classe_service.add(cm);
-            return ResponseEntity.status(HttpStatus.OK).body(modulesList);
-        }catch (Exception  e){
-            log.info(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public List<ClasseModule> addClassModule(@RequestBody List<ClasseModule> cm){
+       return classe_service.add(cm);
     }
 //    -----------------------------------------methode add module in module---------------
     @PostMapping("/add-module")
-    public ResponseEntity<Modules> addModule(@RequestBody Modules module){
-        try {
-            Modules m = modules_service.addModule(module);
-            return ResponseEntity.status(HttpStatus.OK).body(m);
-        }catch (Exception  e){
-            log.info(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public Modules addModule(@RequestBody Modules module){
+       return modules_service.addModule(module);
     }
 //    --------------------------------------------method get list all eu----------------------
     @GetMapping("/list-ue/{idClasse}")
-    public ResponseEntity<List<UE>> getAllUe(@PathVariable long idClasse){
-        try {
-            List<UE> ueList = ue_service.readAll(idClasse);
-            return ResponseEntity.status(HttpStatus.OK).body(ueList);
-        }catch (Exception  e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public List<UE> getAllUe(@PathVariable long idClasse){
+        return ue_service.readAll(idClasse);
     }
 //    -----------------------------------method get list module -----------
     @GetMapping("/list-module")
-    public ResponseEntity<List<Modules>> getAllModule(){
-        try {
-            List<Modules> modulesList = modules_service.readAll();
-            return ResponseEntity.status(HttpStatus.OK).body(modulesList);
-        }catch (Exception  e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public List<Modules> getAllModule(){
+        return modules_service.readAll();
     }
 //    --------------------------methode get all module in class-----------------------
     @GetMapping("/all-module/{idClasse}")
-    public ResponseEntity<List<Modules>> getListModule(@PathVariable long idClasse){
-        try{
-            List<Modules> list = ue_service.listModule(idClasse);
-            return ResponseEntity.ok(list);
-        }catch (Exception e){
-            log.info(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public List<Modules> getListModule(@PathVariable long idClasse){
+        return ue_service.listModule(idClasse);
     }
 //    -----------------------------------methode get list ue---------------------
     @GetMapping("/all-ue")
-    public ResponseEntity<List<UE>> getListUe(){
-        try {
-            List<UE> list = ue_service.getListUe();
-            return ResponseEntity.ok(list);
-        }catch (Exception e){
-            log.info(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public List<UE> getListUe(){
+        return ue_service.getListUe();
     }
+//    ----------------------------------------method get all module of classe without note
+    @GetMapping("/all-module-without-note/{idClasse}")
+    public List<Modules> allModule_without_note(@PathVariable long idClasse){
+        return ue_service.listModule_without_note(idClasse);
+    }
+//---------------------------------------------tout les modules sans notes
+@GetMapping("/all-module-without-note_all")
+public List<Modules> allModule_without_note_all(){
+    return ue_service.listModule_without_note_all();
+}
+
+//    ----------------------------------------method modifier un ue
+    @PutMapping("/update-ue")
+    public UE update_ue(@RequestBody UE ue){
+       return ue_service.update(ue);
+    }
+
+//    ------------------------------methode get all ue by idUe
+    @GetMapping("/list-by-idUe/{idUe}")
+    public List<Modules> modulesByUe(@PathVariable long idUe){
+        return modules_service.readByUe(idUe);
+    }
+
+//------------------------------------------------------method update module
+    @PutMapping("/update-module")
+    public Modules update(@RequestBody Modules modules){
+       return modules_service.update(modules);
+    }
+//    ----------------------method pour appeler tous les modules
+    @GetMapping("/list-ues-without-modules-notes")
+    public List<UE> getListUesWithoutModulesNotes(){
+        return ue_service.ueList_without_note_all();
+    }
+//    ---------------------------method delete ue
+    @DeleteMapping("/delete-ue-by-id/{idUe}")
+    public Object delete(@PathVariable long idUe){
+        return ue_service.deleteUe_by_id(idUe);
+    }
+
+    //    ----------------------method pour appeler tous les ues sans classe ni modules
+    @GetMapping("/all-ues-without-modules-and-classe")
+    public List<UE> all_ue_null_associate(){
+        return ue_service.getAll_ue_without_modules_and_classes();
+    }
+//    -------------------------method delete module
+    @DeleteMapping("/delete-module-by-id/{idModule}")
+    public Object delete_module(@PathVariable long idModule){
+        return ue_service.delete_module_by_id(idModule);
+    }
+
 }

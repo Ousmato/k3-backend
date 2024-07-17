@@ -18,8 +18,8 @@ public class Notes {
     @NotNull
     private double examNote;
 
-    @NotNull
-    private int coefficient;
+//    @NotNull
+//    private int coefficient;
 
     @ManyToOne
     private Studens idStudents;

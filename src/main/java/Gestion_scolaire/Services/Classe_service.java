@@ -1,12 +1,10 @@
 package Gestion_scolaire.Services;
 
-import Gestion_scolaire.Models.ClasseModule;
-import Gestion_scolaire.Models.NiveauFilieres;
-import Gestion_scolaire.Models.StudentsClasse;
-import Gestion_scolaire.Models.UE;
+import Gestion_scolaire.Models.*;
 import Gestion_scolaire.Repositories.ClasseModule_repositorie;
 import Gestion_scolaire.Repositories.Classe_repositorie;
 import Gestion_scolaire.Repositories.NiveauFiliere_repositorie;
+import Gestion_scolaire.Repositories.Students_repositorie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +18,9 @@ public class Classe_service {
 
     @Autowired
     private Classe_repositorie classe_repositorie;
+
+    @Autowired
+    private Students_repositorie students_repositorie;
 
     @Autowired
     private NiveauFiliere_repositorie niveauFiliere_repositorie;
@@ -40,7 +41,7 @@ public class Classe_service {
         return addedModules;
     }
 
-    //        ----------------------------------------mehod pour appeller tout les module de la class----------------
+    //        ----------------------------------------methode pour appeler tout les module de la class----------------
     public List<ClasseModule> readById(long id){
         List<ClasseModule> uEslist = classeModule_repositorie.findAllByIdStudentClasseId(id);
         return uEslist;
@@ -81,8 +82,33 @@ public class Classe_service {
     public StudentsClasse readByIdClasse(long id){
         return classe_repositorie.findById(id);
     }
-// ----------------------------------------get ue list by idclass in classe module---------------
+// ----------------------------------------get ue list by id class in classe module---------------
     public ClasseModule getClass(long id){
         return classeModule_repositorie.findStudentsClasseWithUEsById(id);
+    }
+
+//    ------------------------------------------------------update student classe methode
+    public StudentsClasse update(StudentsClasse classe){
+        StudentsClasse classExist = classe_repositorie.findById(classe.getId());
+        if (classExist != null){
+            List<Studens> list = students_repositorie.findByIdClasseIdAndActive(classExist.getId(), true);
+            if(!list.isEmpty()){
+                Studens studentscolariteMax = list.get(0);
+
+                for (Studens st: list){
+                    if(st.getScolarite() > studentscolariteMax.getScolarite());
+                    studentscolariteMax = st;
+
+                }
+                if (studentscolariteMax.getScolarite() > classe.getScolarite()) {
+                    throw new RuntimeException("La scolarité ne doit pas être inférieure à la scolarité maximale des étudiants");
+                }
+
+            }
+
+            classExist.setScolarite(classe.getScolarite());
+           return classe_repositorie.save(classExist);
+        }
+        throw new RuntimeException("classe does not exist");
     }
 }

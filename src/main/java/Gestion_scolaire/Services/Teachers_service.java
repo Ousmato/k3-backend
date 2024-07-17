@@ -1,7 +1,6 @@
 package Gestion_scolaire.Services;
 
 import Gestion_scolaire.Models.Paie;
-import Gestion_scolaire.Models.StudentsPresence;
 import Gestion_scolaire.Models.Teachers;
 import Gestion_scolaire.Models.TeachersPresence;
 import Gestion_scolaire.Repositories.ListPresenceTeacher_repositorie;
@@ -14,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +53,7 @@ public class Teachers_service {
     }
 
     //    ---------------------------------------method pour desactiver un enseignant-------------------------
-    public String desactive(long id){
+    public Object desactive(long id){
         Teachers teachersExist = teacher_repositorie.findByIdEnseignantAndActive(id, true);
         if (teachersExist != null){
             teachersExist.setActive(!teachersExist.isActive());
@@ -102,19 +102,51 @@ public class Teachers_service {
     }
 
 //    -----------------------------------method to add teacher in presence list------------------
-    public TeachersPresence addPresence(TeachersPresence presence){
-        System.out.println(presence+"----------------------");
-        TeachersPresence teachersPresence = listPresenceTeacher_repositorie.findByIdSeanceIdAndIdSeanceIdTeacherIdEnseignant(
-                presence.getIdSeance().getId(), presence.getIdSeance().getIdTeacher().getIdEnseignant()
+    public TeachersPresence addPresence(TeachersPresence presence) {
+        // Recherche de la présence existante
+        TeachersPresence teachersPresenceExist = listPresenceTeacher_repositorie.findByIdSeanceIdAndIdSeanceIdTeacherIdEnseignantAndIdSeanceDateAndIdSeanceHeureFin(
+                presence.getIdSeance().getId(),
+                presence.getIdSeance().getIdTeacher().getIdEnseignant(),
+                LocalDate.now(),
+                presence.getIdSeance().getHeureFin()
         );
-        if (teachersPresence ==null){
 
-            return listPresenceTeacher_repositorie.save(presence);
+        // Si aucune présence n'existe encore, ajouter la présence avec observation à true
+        if (teachersPresenceExist != null) {
+            if(!teachersPresenceExist.isObservation()){
+                teachersPresenceExist.setObservation(true);
+               return listPresenceTeacher_repositorie.save(teachersPresenceExist);
+            }
+
         }
+        presence.setObservation(true);
 
-        teachersPresence.setObservation(true);
-        return   listPresenceTeacher_repositorie.save(teachersPresence);
+        // Sauvegarde de la présence dans tous les cas
+        return listPresenceTeacher_repositorie.save(presence);
+    }
 
+
+
+    //    --------------------------------------------method absenter un teacher
+    public boolean abscenter(TeachersPresence presence){
+        TeachersPresence presenceExist = listPresenceTeacher_repositorie.findByIdSeanceIdTeacherIdEnseignantAndObservationAndIdSeanceDateAndIdSeanceHeureFin(
+                presence.getIdSeance().getIdTeacher().getIdEnseignant(), true, LocalDate.now(),presence.getIdSeance().getHeureFin()
+        );
+        if(presenceExist != null){
+            presenceExist.setObservation(false);
+            listPresenceTeacher_repositorie.save(presenceExist);
+            return true;
+        }
+        return false;
+    }
+
+//    ----------------------------------------method get status of teacher
+    public List<TeachersPresence> getStatus(long idTeacher){
+        List<TeachersPresence> list = listPresenceTeacher_repositorie.findByIdSeanceIdTeacherIdEnseignantAndIdSeanceDate(idTeacher, LocalDate.now());
+        if(!list.isEmpty()){
+            return list;
+        }
+       return new ArrayList<>();
     }
 
     //    ----------------------------------- method pour appeler laliste de presences------------------------------
@@ -123,10 +155,25 @@ public class Teachers_service {
         LocalDate startOfMonth = LocalDate.of(today.getYear(), today.getMonth(), 1);
         LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
         List<TeachersPresence> list = listPresenceTeacher_repositorie.findByObservationAndIdSeanceDateBetween(true,startOfMonth,endOfMonth);
-        if (list.isEmpty()){
+        List<Paie> listPaie = readAllPaie();
+        List<TeachersPresence> newListPresence = new ArrayList<>();
+        for(TeachersPresence presence: list){
+            boolean hasPaie = false;
+            for (Paie paie: listPaie){
+                if(paie.getIdPresenceTeachers().getIdSeance().equals(presence.getIdSeance())){
+//                    LocalTime hourValid = LocalTime.now().withHour(23);
+                   hasPaie = true;
+                   break;
+                }
+            }
+            if (!hasPaie) {
+                newListPresence.add(presence);
+            }
+        }
+        if (newListPresence.isEmpty()){
             return new ArrayList<>();
         }
-        return list;
+        return newListPresence;
     }
 //    ----------------------------------method get all teachers paie----------------------------------
     public List<Paie> readAllPaie(){
@@ -141,13 +188,18 @@ public class Teachers_service {
     }
 //    ---------------------------------mehod add paie-----------------------------------
     public Paie addPaie(Paie paie){
+
+        paie.setDate(LocalDate.now());
         Paie paieExist = paie_repositorie.findByDateAndIdPresenceTeachersIdSeanceIdTeacherIdEnseignant(
                 paie.getDate(), paie.getIdPresenceTeachers().getIdSeance().getIdTeacher().getIdEnseignant());
-        if(paieExist != null){
-            throw  new RuntimeException("cet enseignant est deja paiyer a cette date");
+        if(paieExist !=null) {
+            long idSeanceExist = paieExist.getIdPresenceTeachers().getIdSeance().getId();
+            long idSeanceNew = paie.getIdPresenceTeachers().getIdSeance().getId();
+
+            if (idSeanceExist == idSeanceNew) {
+                throw new RuntimeException("cet enseignant est deja paiyer a cette date");
+            }
         }
-        int heure =   seance_service.nbreHeure(paie.getIdPresenceTeachers().getIdSeance().getIdTeacher());
-        paie.setNbreHeures(heure);
         return paie_repositorie.save(paie);
     }
 //    -----------------------------------------methode update paiement--------------------
@@ -160,8 +212,8 @@ public class Teachers_service {
         paieExist.setCoutHeure(paie.getCoutHeure());
         paieExist.setDate(LocalDate.now());
 
-        int heure =   seance_service.nbreHeure(paie.getIdPresenceTeachers().getIdSeance().getIdTeacher());
-        paieExist.setNbreHeures(heure);
+//        int heure =   seance_service.nbreHeure(paie.getIdPresenceTeachers().getIdSeance().getIdTeacher());
+//        paieExist.setNbreHeures(heure);
         return paie_repositorie.save(paieExist);
     }
 }
