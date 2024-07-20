@@ -1,15 +1,19 @@
 package Gestion_scolaire.Services;
 
+import Gestion_scolaire.Dto_classe.DTO_ClassModule;
+import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Models.*;
 import Gestion_scolaire.Repositories.ClasseModule_repositorie;
 import Gestion_scolaire.Repositories.Classe_repositorie;
 import Gestion_scolaire.Repositories.NiveauFiliere_repositorie;
 import Gestion_scolaire.Repositories.Students_repositorie;
+import Gestion_scolaire.configuration.NoteFundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class Classe_service {
@@ -20,28 +24,47 @@ public class Classe_service {
     private Classe_repositorie classe_repositorie;
 
     @Autowired
+    private Ue_service ueService;
+
+    @Autowired
     private Students_repositorie students_repositorie;
 
     @Autowired
     private NiveauFiliere_repositorie niveauFiliere_repositorie;
 
 
-    public List<ClasseModule> add(List<ClasseModule> classeModules) {
-        List<ClasseModule> addedModules = new ArrayList<>();
+    public Object add(DTO_ClassModule dto) {
 
-        for (ClasseModule module : classeModules) {
-            ClasseModule existingModule = classeModule_repositorie.findByIdStudentClasseIdAndIdUEId(
-                    module.getIdStudentClasse().getId(), module.getIdUE().getId());
+        StudentsClasse clm = classe_repositorie.findById(
+                dto.getIdStudentClasse().getId());
 
-            if (existingModule == null) {
-                addedModules.add(classeModule_repositorie.save(module));
+        List<UE> ues = classeModule_repositorie.findAllByIdStudentClasseId(clm.getId())
+                .stream()
+                .map(ClasseModule::getIdUE)
+                .toList();
+
+        List<UE> listeUE = dto.getIdUE();
+        List<UE> uesToAdd = new ArrayList<>();
+
+        for (UE ueDto : listeUE) {
+            if (!ues.contains(ueDto)) {
+                uesToAdd.add(ueDto);
             }
         }
 
-        return addedModules;
+        for (UE ue : uesToAdd) {
+            ClasseModule clmodule = new ClasseModule();
+            clmodule.setIdStudentClasse(clm);
+            clmodule.setIdUE(ue);
+            classeModule_repositorie.save(clmodule);
+
+        }
+
+
+        return DTO_response_string.fromMessage("Ajout effectuer avec succé", 200);
     }
 
-    //        ----------------------------------------methode pour appeler tout les module de la class----------------
+    //        ----------------------------------------methode pour appeler tous les modules de la class----------------
     public List<ClasseModule> readById(long id){
         List<ClasseModule> uEslist = classeModule_repositorie.findAllByIdStudentClasseId(id);
         return uEslist;
@@ -49,7 +72,7 @@ public class Classe_service {
 
 //    ------------------------------------------------------------------------------------------
 
-    public String create(StudentsClasse classe){
+    public Object create(StudentsClasse classe){
         NiveauFilieres filiereExist = niveauFiliere_repositorie.findByIdFiliereAndIdNiveau(classe.getIdFiliere().getIdFiliere(),classe.getIdFiliere().getIdNiveau());
         if(filiereExist != null){
             System.out.println("je suis la hoo");
@@ -88,12 +111,12 @@ public class Classe_service {
     }
 
 //    ------------------------------------------------------update student classe methode
-    public StudentsClasse update(StudentsClasse classe){
+    public Object update(StudentsClasse classe){
         StudentsClasse classExist = classe_repositorie.findById(classe.getId());
         if (classExist != null){
             List<Studens> list = students_repositorie.findByIdClasseIdAndActive(classExist.getId(), true);
             if(!list.isEmpty()){
-                Studens studentscolariteMax = list.get(0);
+                Studens studentscolariteMax = list.getFirst();
 
                 for (Studens st: list){
                     if(st.getScolarite() > studentscolariteMax.getScolarite());
@@ -101,14 +124,16 @@ public class Classe_service {
 
                 }
                 if (studentscolariteMax.getScolarite() > classe.getScolarite()) {
-                    throw new RuntimeException("La scolarité ne doit pas être inférieure à la scolarité maximale des étudiants");
+                    throw new NoteFundException("La scolarité ne doit pas être inférieure à la scolarité maximale des étudiants");
                 }
 
             }
 
             classExist.setScolarite(classe.getScolarite());
-           return classe_repositorie.save(classExist);
+          classe_repositorie.save(classExist);
+
+            return DTO_response_string.fromMessage("Ajout effectuer avec succé", 200);
         }
-        throw new RuntimeException("classe does not exist");
+        throw new NoteFundException("classe does not exist");
     }
 }

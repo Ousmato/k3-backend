@@ -1,5 +1,6 @@
 package Gestion_scolaire.Services;
 
+import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Models.Emplois;
 import Gestion_scolaire.Models.Semestres;
 import Gestion_scolaire.Repositories.Emplois_repositorie;
@@ -55,7 +56,7 @@ public class Semestre_service {
         return semestre_repositorie.getCurrentSemestre(LocalDate.now());
     }
 //    ---------------------------------------method update semestre
-    public Semestres update(Semestres semestre){
+    public Object update(Semestres semestre){
         Semestres smExist = semestre_repositorie.findById(semestre.getId());
         Semestres currentSemestre = semestre_repositorie.getCurrentSemestre(LocalDate.now());
         List<Emplois> emploisExist = emplois_repositorie.getByIdSemestreId(semestre.getId());
@@ -66,11 +67,15 @@ public class Semestre_service {
         if (semestre.getDatFin().isBefore(semestre.getDateDebut())){
             throw new NoteFundException("La date debut ne pas etre inferieur a la date de fin");
         }
+
         if (semestre.getDatFin().isBefore(currentSemestre.getDateDebut())){
-            throw  new NoteFundException("La date du "+ semestre.getNomSemetre() + "ne doit pas etre inferieur a la date de fin du semestre acctuel");
+            throw  new NoteFundException("La date du %sne doit pas etre inferieur a la date de fin du semestre acctuel".formatted(semestre.getNomSemetre()));
         }
+
         smExist.setDateDebut(semestre.getDateDebut());
         smExist.setDatFin(semestre.getDatFin());
-       return semestre_repositorie.save(smExist);
+       semestre_repositorie.save(smExist);
+
+        return DTO_response_string.fromMessage("Modification effectuer avec succé", 200);
     }
 }

@@ -49,10 +49,10 @@ public class Ue_service {
         List<UE> ueNewList = new ArrayList<>();
 
             for (UE ue : list) {
-                        ClasseModule cm = classeModule_repositorie.findByIdStudentClasseIdAndIdUEId(idClasse, ue.getId());
-                     if (cm == null){
-                            ueNewList.add(ue);
-                     }
+                ClasseModule cm = classeModule_repositorie.findByIdStudentClasseIdAndIdUEId(idClasse, ue.getId());
+                 if (cm == null){
+                        ueNewList.add(ue);
+                 }
             }
         return ueNewList;
     }

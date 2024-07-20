@@ -10,7 +10,7 @@ public class EmailRetryTask {
     @Autowired
     private MessaSender messaSender;
 
-    @Scheduled(fixedRate = 60000) // retry every 60 seconds
+    @Scheduled(fixedRate = 1800000) // retry every 30 minute seconds
     public void retryPendingEmails() {
         messaSender.retryPendingEmails();
     }

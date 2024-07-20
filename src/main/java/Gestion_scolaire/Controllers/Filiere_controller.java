@@ -42,7 +42,7 @@ public class Filiere_controller {
     }
 //    ----------------------------update niveau filiere
     @PutMapping("/update-niveau-filiere")
-    public NiveauFilieres update(@RequestBody NiveauFilieres niveauFilieres){
+    public Object update(@RequestBody NiveauFilieres niveauFilieres){
        return filieres_service.update(niveauFilieres);
 
     }

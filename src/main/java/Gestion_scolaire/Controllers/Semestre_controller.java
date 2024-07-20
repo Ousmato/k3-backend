@@ -29,7 +29,7 @@ public class Semestre_controller {
     }
 //    -----------------------------------------update semestre
     @PutMapping("/update")
-    public Semestres update(@RequestBody Semestres semestre){
+    public Object update(@RequestBody Semestres semestre){
        return semestre_service.update(semestre);
     }
 }

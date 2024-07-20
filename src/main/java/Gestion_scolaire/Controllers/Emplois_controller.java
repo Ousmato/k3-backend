@@ -29,7 +29,7 @@ public class Emplois_controller {
     }
 //    -----------------------------method update emplois-----------------------------------
     @PutMapping("/update")
-    public Emplois update(@RequestBody Emplois emplois){
+    public Object update(@RequestBody Emplois emplois){
             return emplois_service.update(emplois);
     }
 //    --------------------------methode get all emplois- teacher--------------------

@@ -6,6 +6,7 @@ import Gestion_scolaire.Models.InfoSchool;
 import Gestion_scolaire.Models.Studens;
 import Gestion_scolaire.Models.UsersAbstract;
 import Gestion_scolaire.Services.InfoScool_service;
+import Gestion_scolaire.configuration.NoteFundException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -44,7 +45,7 @@ public class Auth_controller {
             String token = jetonAuth.generateToken(userDetails);
             return userDetails;
         } else {
-            return "Invalid email or password";
+            throw  new NoteFundException("Address mail ou mot de passe est incorrect");
         }
     }
 //    ----------------------------------------methode get admin
@@ -75,28 +76,6 @@ public class Auth_controller {
     }
 //    ---------------------------------------
 
-//    @PostMapping("/login")
-//    public ResponseEntity<Object> login(@RequestBody LoginRequest loginRequest) {
-//        System.out.println(loginRequest.getEmail());
-//        Object authenticatedUser = authService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
-//        if (authenticatedUser != null) {
-//            System.out.println(authenticatedUser);
-//            return ResponseEntity.ok(authenticatedUser);
-//        } else {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
-//        }
-//    }
-//    @PostMapping("/login")
-//    public ResponseEntity<Object> login(@RequestParam("email") String email, @RequestParam("password") String password) {
-//        System.out.println(email);
-//        Object authenticatedUser = authService.authenticate(email, password);
-//        if (authenticatedUser != null) {
-//            System.out.println(authenticatedUser);
-//            return ResponseEntity.ok(authenticatedUser);
-//        } else {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
-//        }
-//    }
 
     @Data
     static class LoginRequest {

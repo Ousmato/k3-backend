@@ -1,5 +1,6 @@
 package Gestion_scolaire.Services;
 
+import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Models.Filiere;
 import Gestion_scolaire.Models.Niveau;
 import Gestion_scolaire.Models.NiveauFilieres;
@@ -28,16 +29,16 @@ public class Filieres_service {
          // Vérification de la duplication de la relation NiveauFilieres
         NiveauFilieres existingNivFiliere = niveauFiliere_repositorie.findByIdFiliereAndIdNiveau(filiere, niveau);
         if (existingNivFiliere != null) {
-            throw new RuntimeException("Attention duplication de filiere");
+            throw new NoteFundException("Attention duplication de filiere");
         }
         // Créer une nouvelle relation NiveauFilieres
         NiveauFilieres niveauFilieres = new NiveauFilieres();
-        System.out.println("create new nivFiliere---------------------------------------------");
         niveauFilieres.setIdNiveau(niveau);
         niveauFilieres.setIdFiliere(filiere);
 
         // Sauvegarder la nouvelle relation
-        return niveauFiliere_repositorie.save(niveauFilieres);
+        niveauFiliere_repositorie.save(niveauFilieres);
+        return DTO_response_string.fromMessage("Ajout effectuer avec succé", 200);
     }
 //    -------------------------------------------list of all niveau filiere-----------------------
     public List<NiveauFilieres> readNivFil(){
@@ -57,13 +58,11 @@ public class Filieres_service {
     }
 
 //----------------------------------------method update niveau filiere
-    public NiveauFilieres update(NiveauFilieres niveauFilieres){
+    public Object update(NiveauFilieres niveauFilieres){
 
                 System.out.println(niveauFilieres+ "--------+++++----------");
          NiveauFilieres niveauExist = niveauFiliere_repositorie.findByIdFiliereIdAndIdNiveauId(
                 niveauFilieres.getIdFiliere().getId(),niveauFilieres.getIdNiveau().getId());
-
-
 
         if(niveauExist != null){
 
@@ -71,7 +70,7 @@ public class Filieres_service {
 
             if(filiereExist != null){
                 filiereExist.setNomFiliere(niveauFilieres.getIdFiliere().getNomFiliere());
-                System.out.println(filiereExist.getNomFiliere()+"---------------------------");
+//                System.out.println(filiereExist.getNomFiliere()+"---------------------------");
                 filiere_repositorie.save(niveauFilieres.getIdFiliere());
                 niveauExist.setIdFiliere(filiereExist);
             }
@@ -82,7 +81,9 @@ public class Filieres_service {
                 niveauExist.setIdNiveau(nvExist);
             }
 
-            return niveauFiliere_repositorie.save(niveauExist);
+            niveauFiliere_repositorie.save(niveauExist);
+
+            return DTO_response_string.fromMessage("Ajout effectuer avec succé", 200);
         }
         throw new NoteFundException("object does not exist ");
 

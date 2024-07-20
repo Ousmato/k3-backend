@@ -1,5 +1,6 @@
 package Gestion_scolaire.Controllers;
 
+import Gestion_scolaire.Dto_classe.DTO_scolarite;
 import Gestion_scolaire.Models.Studens;
 import Gestion_scolaire.Models.StudentsPresence;
 import Gestion_scolaire.Models.Teachers;
@@ -48,75 +49,56 @@ public class Student_controller {
     }
 //    -----------------------method update----------------------------------------
     @PutMapping("/update")
-    private Studens update(
+    private Object update(
             @RequestParam("student") String studensString,
             @RequestParam(value = "file", required = false) MultipartFile urlFile) throws IOException {
 //        System.out.println("------------------" + urlFile.getOriginalFilename() + "--------------" + studensString + "---------------------------");
 
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
         Studens studens = objectMapper.readValue(studensString, Studens.class);
         // Vérifie si urlFile est null ou vide
-        if (urlFile == null || urlFile.isEmpty()) {
-            // Si pas de fichier photo, ajoute  sans spécifier de photo
+        if (urlFile == null) {
+            System.out.println("file is ");
             return student_service.update(studens, null);
-        } else {
-            // Si un fichier photo est fourni, ajoute  avec la photo
+        }
             return student_service.update(studens, urlFile);
 
-        }
     }
 //    --------------------method desabled student-----------------------
     @GetMapping("/desable/{idStudent}")
-    public ResponseEntity<Studens> delete(@PathVariable long idStudent){
-        try{
-            Studens student = student_service.desable(idStudent);
-            return new ResponseEntity<>(student, HttpStatus.OK);
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public Object delete(@PathVariable long idStudent){
+        return student_service.desable(idStudent);
+
     }
 //    ------------------------method get all student in classe------------------
     @GetMapping("/list-student-by-classe/{idClasse}")
-    public ResponseEntity<List<Studens>> AllStudentClass(@PathVariable long idClasse){
-        try {
-            List<Studens> listStudent = student_service.readAllByClassId(idClasse);
-            return new ResponseEntity<>(listStudent, HttpStatus.OK);
+    public List<Studens> AllStudentClass(@PathVariable long idClasse){
+        return student_service.readAllByClassId(idClasse);
 
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
     }
 //    ------------------------methode call studend by id------------------------------
-    @GetMapping("/student/{idStudent}")
-    private ResponseEntity<Studens> getStudent(@PathVariable long idStudent){
-        try {
-            Studens Student = student_service.studenById(idStudent);
-            return new ResponseEntity<>(Student, HttpStatus.OK);
+    @GetMapping("/student-by-id/{idStudent}")
+    public Studens getStudent(@PathVariable long idStudent){
+        return student_service.studenById(idStudent);
 
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
     }
 //   -------------------- method add presence--------------------------------
     @PostMapping("/add-presence")
-    public ResponseEntity<StudentsPresence> addPresence(@RequestBody StudentsPresence presence){
-        try {
-            StudentsPresence sp = student_service.addPresence(presence);
-            return new ResponseEntity<>(sp, HttpStatus.OK);
-
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public StudentsPresence addPresence(@RequestBody StudentsPresence presence){
+        return student_service.addPresence(presence);
     }
 //    ----------------------------------method get all presence-----------------------------
     @GetMapping("/list-presence")
-    public ResponseEntity<List<StudentsPresence>> getListPresence(){
-        try {
-            List<StudentsPresence> splist = student_service.getListPresence();
-            return new ResponseEntity<>(splist, HttpStatus.OK);
+    public List<StudentsPresence> getListPresence(){
+        return student_service.getListPresence();
 
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    }
+//    --------------------------update scolarite
+    @PutMapping("/update-scolarite/{idStudent}")
+    public Object updateScolarite(@PathVariable long idStudent, @RequestBody DTO_scolarite dtoScolarite){
+//        double scolarite = Double.parseDouble(scolariteString);
+        System.out.println(idStudent+" ;;;;;;;;;;;;;;;;;;;;;;;;;;;"+dtoScolarite);
+        return student_service.update_scolarite(idStudent, dtoScolarite.getScolarite());
     }
 }

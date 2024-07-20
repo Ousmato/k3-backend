@@ -20,5 +20,7 @@ public interface ClasseModule_repositorie extends JpaRepository<ClasseModule, Lo
 
     List<ClasseModule> getClasseModuleByIdUEId(long idUE);
 
+    ClasseModule  getClasseModuleByIdStudentClasseId(long idStudentClasse);
+
 
 }

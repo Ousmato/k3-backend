@@ -28,7 +28,6 @@ public class MessaSender {
                    // Creating a simple mail message
                 SimpleMailMessage mailMessage = new SimpleMailMessage();
 
-                // Setting up necessary details
             try {
                 mailMessage.setFrom(pendingEmail.getFromAdmin());
                 mailMessage.setTo(pendingEmail.getToSend());

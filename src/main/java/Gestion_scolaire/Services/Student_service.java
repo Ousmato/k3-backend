@@ -93,40 +93,56 @@ public class Student_service {
 
     }
 //    -----------------------------------------------------------------------------------
-    public Studens update(Studens studens, MultipartFile file) throws IOException{
-        Studens studentExist = students_repositorie.findByIdEtudiant(studens.getIdEtudiant());
-        if(studentExist != null){
-
-                studentExist.setDate(LocalDate.now());
-                studentExist.setMatricule(studens.getMatricule());
-                studentExist.setScolarite(studens.getScolarite());
-                studentExist.setSexe(studens.getSexe());
-                studentExist.setEmail(studens.getEmail());
-                studentExist.setDateNaissance(studens.getDateNaissance());
-                studentExist.setLieuNaissance(studens.getLieuNaissance());
-                studentExist.setNom(studens.getNom());
-                studentExist.setPrenom(studens.getPrenom());
-                studentExist.setPassword(studens.getPassword());
-
-            if (!file.isEmpty()){
-
-                String urlPhoto = fileManagers.updateFile(file,studentExist.getUrlPhoto());
-                studentExist.setUrlPhoto(urlPhoto);
-            }
-            return students_repositorie.save(studentExist);
-        }else {
-            throw new RemoteException("l'etudiant n'existe pas");
+    public Object update(Studens studens, MultipartFile file) throws IOException{
+System.out.println(studens +" ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;"+ file);
+        String telephone = String.valueOf(studens.getTelephone());
+        if(telephone.length() > 8) {
+            throw new NoteFundException("Le numéro de téléphone ne doit pas dépasser 8 chiffres");
         }
+        LocalDate dateNaissance = LocalDate.now().minusYears(15);
+        if(dateNaissance.isBefore(studens.getDateNaissance())) {
+            throw new NoteFundException("La date de naissance n'est pas valide. L'étudiant doit avoir au moins 15 ans.");
+        }
+        if(studens.getMatricule().length() != 12){
+            throw new NoteFundException("Le matricule n'est pas valide");
+        }
+
+        Studens studentExist = students_repositorie.findByIdEtudiant(studens.getIdEtudiant());
+        if (studentExist == null) {
+            throw new NoteFundException("L'étudiant n'existe pas");
+        }
+
+        // Mise à jour de la photo si le fichier est fourni
+        if (file != null && !file.isEmpty()) {
+            String urlPhoto = fileManagers.updateFile(file, studentExist.getUrlPhoto());
+            studentExist.setUrlPhoto(urlPhoto);
+        }
+
+            studentExist.setDate(LocalDate.now());
+            studentExist.setMatricule(studens.getMatricule());
+            studentExist.setScolarite(studens.getScolarite());
+            studentExist.setSexe(studens.getSexe());
+            studentExist.setEmail(studens.getEmail());
+            studentExist.setDateNaissance(studens.getDateNaissance());
+            studentExist.setLieuNaissance(studens.getLieuNaissance());
+            studentExist.setNom(studens.getNom());
+            studentExist.setPrenom(studens.getPrenom());
+            studentExist.setPassword(passwordEncoder.encode(studens.getPassword()));
+
+            students_repositorie.save(studentExist);
+            return DTO_response_string.fromMessage("Modification effectuée avec succé",200);
+
 
     }
 //    -----------------------------methode pour desactiver un etudiant-------------------------------------------
-    public Studens desable(long id){
+    public Object desable(long id){
         Studens studensExist = students_repositorie.findByIdEtudiant(id);
         if(studensExist != null){
             studensExist.setActive(!studensExist.isActive());
-           return students_repositorie.save(studensExist);
+           students_repositorie.save(studensExist);
+           return DTO_response_string.fromMessage("Changement d'etat effectué avec succé", 200);
         }
-       throw new NoteFundException("does not exist");
+       throw new NoteFundException("Student does not exist");
     }
 //    -----------------------------------------------------methode pour appeller tout les etudiants active----------------
     public List<Studens> readAll(){
@@ -143,7 +159,7 @@ public class Student_service {
         if (studensExist != null){
             return studensExist;
         }else {
-            throw new RuntimeException("l'etudiant intro");
+            throw new NoteFundException("l'etudiant est introuvable");
         }
     }
 //    ---------------------------method les etudiant de la classe-----------------------------------
@@ -178,5 +194,15 @@ public class Student_service {
         }
         return list;
     }
-
+//-----------------------------update scolarite
+    public Object update_scolarite(long idStudent, double scolarite){
+        Studens studensExist = students_repositorie.findByIdEtudiant(idStudent);
+        if (studensExist != null){
+            double montant = studensExist.getScolarite() + scolarite; // Par exemple, simple addition
+            studensExist.setScolarite(montant);
+            students_repositorie.save(studensExist);
+          return DTO_response_string.fromMessage("Modification effectuer avec succé", 200);
+        }
+        throw new NoteFundException("Student does not exist");
+    }
 }

@@ -32,11 +32,6 @@ public class Classe_controller {
             return classe_service.readAllClass();
 
     }
-//    -------------------------------method add module--------------------
-    @PostMapping("/add-modules")
-    public List<ClasseModule> addModuleClass(@RequestBody List<ClasseModule> modules){
-            return classe_service.add(modules);
-    }
 //    ---------------------------------------------method get by id----------------------------------
     @GetMapping("/class/{id}")
     public StudentsClasse getClass(@PathVariable long id){
@@ -44,7 +39,7 @@ public class Classe_controller {
     }
 //-------------------------------------update methode
     @PutMapping("/update-class")
-    public  StudentsClasse update(@RequestBody StudentsClasse classe){
+    public  Object update(@RequestBody StudentsClasse classe){
             return classe_service.update(classe);
     }
 }
