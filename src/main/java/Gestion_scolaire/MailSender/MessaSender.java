@@ -1,7 +1,9 @@
 package Gestion_scolaire.MailSender;
 
 import Gestion_scolaire.Dto_classe.DTO_response_string;
+import Gestion_scolaire.Models.Admin;
 import Gestion_scolaire.Models.Studens;
+import Gestion_scolaire.Models.Teachers;
 import Gestion_scolaire.Repositories.PendingEmailRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +73,16 @@ public class MessaSender {
     }
     public String message(Studens studens, String password){
         return  ", Vous êtes invité à vous connecter à votre compte avec votre adresse email : %s et votre mot de passe : %s".formatted(studens.getEmail(), password);
+
+    }
+//    -------------------------message teacher
+    public String messageTeacher(Teachers teacher, String password){
+        return  ", Vous êtes invité à vous connecter à votre compte avec votre adresse email : %s et votre mot de passe : %s".formatted(teacher.getEmail(), password);
+
+    }
+
+    public String messageAdmin(Admin admin, String password){
+        return  ", Vous êtes invité à vous connecter à votre compte avec votre adresse email : %s et votre mot de passe : %s".formatted(admin.getEmail(), password);
 
     }
 }

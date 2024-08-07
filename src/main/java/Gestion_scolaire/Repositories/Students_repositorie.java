@@ -1,6 +1,8 @@
 package Gestion_scolaire.Repositories;
 
 import Gestion_scolaire.Models.Studens;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,8 +16,13 @@ public interface Students_repositorie extends JpaRepository<Studens, Long> {
    Studens findByMatriculeAndTelephone(String matricule, int telephone);
 
    Studens findByIdEtudiant (long id);
-//   List<Studens> findByDeleted(boolean t);
+
    List<Studens> findByIdClasseIdAndActive(long idClasse, boolean isActive);
+
    List<Studens> findByActive(boolean Active);
+
+
+   Page<Studens> findByIdClasseId(long idClasse, Pageable pageable);
+
 
 }

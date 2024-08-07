@@ -11,5 +11,7 @@ public interface Teacher_repositorie extends JpaRepository<Teachers, Long> {
     Teachers findByEmailAndPassword(String email, String password);
     Teachers findByEmail(String email);
     Teachers findByIdEnseignantAndActive(long id, boolean isActive);
+
+    Teachers findByIdEnseignant(long id);
     List<Teachers> findByActive(boolean isActive);
 }

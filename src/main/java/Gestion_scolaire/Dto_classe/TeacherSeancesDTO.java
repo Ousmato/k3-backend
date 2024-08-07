@@ -12,6 +12,7 @@ public class TeacherSeancesDTO {
     private List<EmploisDTO> emplois;
     private List<ClasseDTO> classRoom;
     private List<SeanceDTO> seances;
+    private boolean Observation;
 
 
 }

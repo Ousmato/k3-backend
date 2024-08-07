@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.time.LocalDate;
+
 @Data
 @Entity
 public class TeachersPresence {
@@ -12,13 +14,14 @@ public class TeachersPresence {
     private long id;
 
     @NotNull
-    private boolean observation = true;
+    private boolean observation;
 
 
     @ManyToOne
     private Seances idSeance;
 
-
+    @NotNull
+    private LocalDate date;
 
 
 }

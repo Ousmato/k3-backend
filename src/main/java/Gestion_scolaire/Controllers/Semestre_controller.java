@@ -32,4 +32,15 @@ public class Semestre_controller {
     public Object update(@RequestBody Semestres semestre){
        return semestre_service.update(semestre);
     }
+
+    @GetMapping("/semestre-by-classe-id/{idClasse}")
+    public Semestres get_semesre(@PathVariable int idClasse){
+        return semestre_service.semestre_classe_id(idClasse);
+    }
+
+//    ----------------------------------add semestre
+    @PostMapping("/add-semestre")
+    public Object addSemestre(@RequestBody Semestres semestre){
+        return  semestre_service.add_semestre(semestre);
+    }
 }

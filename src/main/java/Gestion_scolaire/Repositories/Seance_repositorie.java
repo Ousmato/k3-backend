@@ -38,6 +38,7 @@ public interface Seance_repositorie extends JpaRepository<Seances, Long> {
 
     List<Seances> getAllByDate(LocalDate date);
 
-    Seances getAllByHeureDebutIsBetween(LocalTime debut, LocalTime fin);
+    @Query("SELECT s FROM Seances s WHERE s.idSalle.id = :idSalle AND s.date = :currentDate")
+    List<Seances> getAllByIdSalle_Id(@Param("idSalle") long idSalle, LocalDate currentDate);
 
 }

@@ -1,16 +1,18 @@
 package Gestion_scolaire.Services;
 
+import Gestion_scolaire.Dto_classe.ClasseDTO;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
+import Gestion_scolaire.Dto_classe.NivauFilierDTO;
 import Gestion_scolaire.Models.Filiere;
 import Gestion_scolaire.Models.Niveau;
 import Gestion_scolaire.Models.NiveauFilieres;
-import Gestion_scolaire.Repositories.Filiere_repositorie;
-import Gestion_scolaire.Repositories.NiveauFiliere_repositorie;
-import Gestion_scolaire.Repositories.Niveau_repositorie;
+import Gestion_scolaire.Models.StudentsClasse;
+import Gestion_scolaire.Repositories.*;
 import Gestion_scolaire.configuration.NoteFundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,6 +27,12 @@ public class Filieres_service {
     @Autowired
     private Niveau_repositorie niveau_repositorie;
 
+    @Autowired
+    private Classe_repositorie classe_repositorie;
+
+    @Autowired
+    private Semestre_repositorie semestreRepositorie;
+
     public Object add(Filiere filiere, Niveau niveau){
          // Vérification de la duplication de la relation NiveauFilieres
         NiveauFilieres existingNivFiliere = niveauFiliere_repositorie.findByIdFiliereAndIdNiveau(filiere, niveau);
@@ -38,11 +46,27 @@ public class Filieres_service {
 
         // Sauvegarder la nouvelle relation
         niveauFiliere_repositorie.save(niveauFilieres);
-        return DTO_response_string.fromMessage("Ajout effectuer avec succé", 200);
+        return DTO_response_string.fromMessage("Ajout effectué avec succès", 200);
     }
 //    -------------------------------------------list of all niveau filiere-----------------------
     public List<NiveauFilieres> readNivFil(){
-        return niveauFiliere_repositorie.findAll();
+        List<NiveauFilieres> list =  niveauFiliere_repositorie.findAll();
+        List<StudentsClasse> classesS = classe_repositorie.findAll();
+        List<NiveauFilieres> newClasses = new ArrayList<>();
+
+        for (NiveauFilieres nivFiliere : list) {
+            boolean hasClass = false;
+            for (StudentsClasse studentsClasse : classesS) {
+                if(nivFiliere.getIdFiliere().getId() == studentsClasse.getIdFiliere().getId()){
+                    hasClass = true;
+                    break;
+                }
+            }
+            if (!hasClass) {
+                newClasses.add(nivFiliere);  // Ajouter seulement si aucune association n'est trouvée
+            }
+        }
+        return newClasses;
     }
 //----------------------------------------------------methode create filiere-----------------------------
     public Filiere create(Filiere filiere){
@@ -50,7 +74,6 @@ public class Filieres_service {
         if (filiereExist != null){
             filiereExist.setNomFiliere(filiere.getNomFiliere());
             return filiere_repositorie.save(filiereExist);
-//            throw  new  RuntimeException("ce nom de Filiere existe deja");
 
         }else {
             return filiere_repositorie.save(filiere);
@@ -60,7 +83,6 @@ public class Filieres_service {
 //----------------------------------------method update niveau filiere
     public Object update(NiveauFilieres niveauFilieres){
 
-                System.out.println(niveauFilieres+ "--------+++++----------");
          NiveauFilieres niveauExist = niveauFiliere_repositorie.findByIdFiliereIdAndIdNiveauId(
                 niveauFilieres.getIdFiliere().getId(),niveauFilieres.getIdNiveau().getId());
 
@@ -70,7 +92,6 @@ public class Filieres_service {
 
             if(filiereExist != null){
                 filiereExist.setNomFiliere(niveauFilieres.getIdFiliere().getNomFiliere());
-//                System.out.println(filiereExist.getNomFiliere()+"---------------------------");
                 filiere_repositorie.save(niveauFilieres.getIdFiliere());
                 niveauExist.setIdFiliere(filiereExist);
             }
@@ -83,9 +104,9 @@ public class Filieres_service {
 
             niveauFiliere_repositorie.save(niveauExist);
 
-            return DTO_response_string.fromMessage("Ajout effectuer avec succé", 200);
+            return DTO_response_string.fromMessage("Ajout effectué avec succès", 200);
         }
-        throw new NoteFundException("object does not exist ");
+        throw new NoteFundException("Element n'existe pas ");
 
     }
 }

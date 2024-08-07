@@ -2,6 +2,8 @@ package Gestion_scolaire.Repositories;
 
 import Gestion_scolaire.Models.Teachers;
 import Gestion_scolaire.Models.TeachersPresence;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,6 +15,7 @@ import java.util.List;
 public interface ListPresenceTeacher_repositorie extends JpaRepository<TeachersPresence, Long> {
     List<TeachersPresence> findByObservation(boolean isPresents);
     List<TeachersPresence> getByIdSeanceId(long idSeance);
+    TeachersPresence findByIdSeanceId(long idSeance);
 
     List<TeachersPresence> findByObservationAndIdSeanceIdTeacher(boolean isP, Teachers idTeacher);
 
@@ -21,12 +24,13 @@ public interface ListPresenceTeacher_repositorie extends JpaRepository<TeachersP
     TeachersPresence findByIdSeanceIdAndIdSeanceIdTeacherIdEnseignant(long idSeance, long idTeacher);
 
     List<TeachersPresence> findByObservationAndIdSeanceDateBetween(boolean isPre, LocalDate debut, LocalDate fin);
+    Page<TeachersPresence> getByObservationAndIdSeanceDateBetween(boolean isPre, LocalDate debut, LocalDate fin, Pageable pageable);
 
     TeachersPresence findByIdSeanceIdAndIdSeanceIdTeacherIdEnseignantAndIdSeanceDateAndIdSeanceHeureFin(long idSeance,long idTeacher, LocalDate date, LocalTime heureFin);
 
-    TeachersPresence findByIdSeanceIdTeacherIdEnseignantAndObservationAndIdSeanceDateAndIdSeanceHeureFin(long idTeacher, boolean isPresent, LocalDate date, LocalTime heufin);
+    TeachersPresence findByIdSeanceIdTeacherIdEnseignantAndIdSeanceDateAndIdSeanceHeureFin(long idTeacher, LocalDate date, LocalTime heufin);
 
-   List<TeachersPresence> findByIdSeanceIdTeacherIdEnseignantAndIdSeanceDate(long idTeacher, LocalDate date);
+   List<TeachersPresence> getByIdSeanceIdTeacherIdEnseignantAndIdSeanceDateBetween(long idTeacher, LocalDate startDate, LocalDate endDate);
 
 }
 

@@ -24,7 +24,7 @@ public class Emplois_service {
     @Autowired
     private Seance_repositorie seance_repositorie;
 
-    public Emplois add(Emplois emplois) {
+    public Object add(Emplois emplois) {
         List<Emplois> emplois_de_la_classe = emplois_repositorie.findEmploisActifByIdClass(LocalDate.now(), emplois.getIdClasse().getId());
 
 //        // Vérification des dates par rapport au semestre
@@ -49,7 +49,8 @@ public class Emplois_service {
         }
 
         // Si toutes les vérifications sont passées, enregistrez l'emploi
-        return emplois_repositorie.save(emplois);
+        emplois_repositorie.save(emplois);
+        return DTO_response_string.fromMessage("Ajout effectué avec succès", 200);
     }
 
     //    -----------------------------------------mehode pour modifier-------------------------
@@ -167,4 +168,5 @@ public class Emplois_service {
         }
         return list;
     }
+//    ------------------------------get em
 }

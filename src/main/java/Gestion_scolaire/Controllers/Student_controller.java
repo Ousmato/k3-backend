@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,8 +45,15 @@ public class Student_controller {
 
     //    ----------------------------------------method get all students----------------------------------
     @GetMapping("/list")
-    private List<Studens> getAllStudent(){
-        return student_service.readAll();
+    public Page<Studens> getAllStudents(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return student_service.readAll(page, size);
+    }
+//    ----------------------------methode find all student
+    @GetMapping("/find-all")
+    public List<Studens> getAllStudents() {
+        return student_service.find_all();
     }
 //    -----------------------method update----------------------------------------
     @PutMapping("/update")
@@ -73,8 +81,11 @@ public class Student_controller {
     }
 //    ------------------------method get all student in classe------------------
     @GetMapping("/list-student-by-classe/{idClasse}")
-    public List<Studens> AllStudentClass(@PathVariable long idClasse){
-        return student_service.readAllByClassId(idClasse);
+    public Page<Studens> AllStudentClass(
+            @RequestParam (defaultValue = "0") int page,
+            @RequestParam (defaultValue = "10") int size,
+            @PathVariable long idClasse){
+        return student_service.readAllByClassId(page, size, idClasse);
 
     }
 //    ------------------------methode call studend by id------------------------------

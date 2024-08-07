@@ -28,7 +28,7 @@ public class UeAndModule_controller {
     private Classe_service classe_service;
 
     @PostMapping("/add-ue")
-    public UE addUe(@RequestBody UE ue){
+    public Object addUe(@RequestBody UE ue){
         return ue_service.add(ue);
     }
 //    ---------------------------------------methode add modules-------------------------------
@@ -39,7 +39,7 @@ public class UeAndModule_controller {
     }
 //    -----------------------------------------methode add module in module---------------
     @PostMapping("/add-module")
-    public Modules addModule(@RequestBody Modules module){
+    public Object addModule(@RequestBody Modules module){
        return modules_service.addModule(module);
     }
 //    --------------------------------------------method get list all eu----------------------
@@ -75,7 +75,7 @@ public List<Modules> allModule_without_note_all(){
 
 //    ----------------------------------------method modifier un ue
     @PutMapping("/update-ue")
-    public UE update_ue(@RequestBody UE ue){
+    public Object update_ue(@RequestBody UE ue){
        return ue_service.update(ue);
     }
 
@@ -87,7 +87,7 @@ public List<Modules> allModule_without_note_all(){
 
 //------------------------------------------------------method update module
     @PutMapping("/update-module")
-    public Modules update(@RequestBody Modules modules){
+    public Object update(@RequestBody Modules modules){
        return modules_service.update(modules);
     }
 //    ----------------------method pour appeler tous les modules

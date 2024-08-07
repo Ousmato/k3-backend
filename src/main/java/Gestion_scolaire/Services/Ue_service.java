@@ -35,12 +35,13 @@ public class Ue_service {
 
 
 
-    public UE add(UE ue){
+    public Object add(UE ue){
         UE uEexist = ue_repositorie.findByNomUE(ue.getNomUE());
         if (uEexist != null){
             throw new RuntimeException("Ce nom Existe deja");
         }else {
-            return ue_repositorie.save(ue);
+            ue_repositorie.save(ue);
+            return DTO_response_string.fromMessage("Ajout effectué avec succè", 200);
         }
     }
 //    ------------------------------------------------methode pour appeler la liste des ues-------------
@@ -160,11 +161,12 @@ public  List<Modules> listModule_without_note_all(){
     }
 
 //    ---------------------------------method pour modifier l'ue---------------------------
-    public UE update(UE ue){
+    public Object update(UE ue){
         UE ueExist = ue_repositorie.findById(ue.getId());
         if (ueExist != null){
             ueExist.setNomUE(ue.getNomUE());
-            return ue_repositorie.save(ueExist);
+            ue_repositorie.save(ueExist);
+            return DTO_response_string.fromMessage("Mise à jour effectué avec succè", 200);
         }else {
             throw new RuntimeException("UE n'existe pas");
         }

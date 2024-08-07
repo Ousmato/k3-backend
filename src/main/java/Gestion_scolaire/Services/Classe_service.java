@@ -11,6 +11,7 @@ import Gestion_scolaire.configuration.NoteFundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,8 +24,6 @@ public class Classe_service {
     @Autowired
     private Classe_repositorie classe_repositorie;
 
-    @Autowired
-    private Ue_service ueService;
 
     @Autowired
     private Students_repositorie students_repositorie;
@@ -61,7 +60,7 @@ public class Classe_service {
         }
 
 
-        return DTO_response_string.fromMessage("Ajout effectuer avec succé", 200);
+        return DTO_response_string.fromMessage("Ajout effectué  avec succès", 200);
     }
 
     //        ----------------------------------------methode pour appeler tous les modules de la class----------------
@@ -73,19 +72,24 @@ public class Classe_service {
 //    ------------------------------------------------------------------------------------------
 
     public Object create(StudentsClasse classe){
-        NiveauFilieres filiereExist = niveauFiliere_repositorie.findByIdFiliereAndIdNiveau(classe.getIdFiliere().getIdFiliere(),classe.getIdFiliere().getIdNiveau());
+        NiveauFilieres filiereExist = niveauFiliere_repositorie.findByIdFiliereAndIdNiveau(
+                classe.getIdFiliere().getIdFiliere(),classe.getIdFiliere().getIdNiveau());
+
+        StudentsClasse classExist = classe_repositorie.findByIdFiliereIdAndIdFiliereIdNiveauId(
+                classe.getIdFiliere().getId(),classe.getIdFiliere().getIdNiveau().getId());
+        if(classExist != null){
+            throw new NoteFundException("La mention avec cette filière existe déjà");
+        }
         if(filiereExist != null){
-            System.out.println("je suis la hoo");
             classe.setIdFiliere(classe.getIdFiliere());
+            classe.setAnneeScolaire(LocalDate.now().getYear());
             classe_repositorie.save(classe);
+            return DTO_response_string.fromMessage("Ajout effectué  avec succès", 200);
 
         }
-        return "ajout avec success";
+        throw new NoteFundException("La classe avec cette filière  n'existe pas");
     }
-//    ---------------------------------------get class in class Module-----------------------------
-//    public ClasseModule getClass(long id){
-//
-//    }
+
 
 //    =====================================method pour fermer une classe====================================================
 
@@ -95,9 +99,9 @@ public class Classe_service {
             classeExist.setFermer(!classeExist.isFermer());
             classe_repositorie.save(classeExist);
         }
-        return "Successful";
+        return "Ajout effectué  avec succès";
     }
-    //    ------------------------------------------------------method pour appeler tout les classe ouverte-------
+    //    ------------------------------------------------------method pour appeler tout les classes ouverte-------
     public List<StudentsClasse> readAllClass(){
         return classe_repositorie.findAll();
     }
@@ -132,8 +136,8 @@ public class Classe_service {
             classExist.setScolarite(classe.getScolarite());
           classe_repositorie.save(classExist);
 
-            return DTO_response_string.fromMessage("Ajout effectuer avec succé", 200);
+            return DTO_response_string.fromMessage("Mise à effectué  avec succès", 200);
         }
-        throw new NoteFundException("classe does not exist");
+        throw new NoteFundException("classe  exist pas");
     }
 }

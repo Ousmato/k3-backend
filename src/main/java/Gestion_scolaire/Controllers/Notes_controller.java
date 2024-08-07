@@ -6,6 +6,7 @@ import Gestion_scolaire.Services.Note_service;
 import Gestion_scolaire.Services.Ue_service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,9 +28,9 @@ public class Notes_controller {
 
     Notes noteReturn = new Notes();
     @PostMapping("/add-note")
-    private Notes addNote(@RequestBody Notes notes){
-            noteReturn =  note_service.addNote(notes);
-            return noteReturn;
+    private Object addNote(@RequestBody Notes notes){
+            return  note_service.addNote(notes);
+
     }
 //    ----------------------------------methode get AllNote by student-------------
     @GetMapping("/read/{idStudent}/{idSemestre}")
@@ -47,15 +48,15 @@ public class Notes_controller {
     public Double getMoyenStudent(@PathVariable long idStudent, @PathVariable long idSemestre){
         return note_service.calculerMoyenneGenerale(idStudent, idSemestre);
     }
-//--------------------------------------methode pour appeler tout les module de la
-//    classe de l'étudiant qui on deja ete programmer pour un emplois du temps
+//--------------------------------------methode pour appeler tout le module de la
+//    classe de l'étudiant qui on deja ete programmer pour un emploi du temps
     @GetMapping("/allModules/{idClasse}")
     public ArrayList<Modules> getAllModuleProgrammed(@PathVariable long idClasse){
         return note_service.readAllByAllEmplois(idClasse);
     }
 //    ---------------------------------method update --------------------------------------
-    @PutMapping("/update")
-    public Notes update(@RequestBody Notes notes){
+    @PutMapping("/update-note")
+    public Object update(@RequestBody Notes notes){
         return note_service.update(notes);
     }
 //    ----------------------------liste de  modules par etudiant qui n'ont pas encore eu de note
@@ -65,7 +66,10 @@ public class Notes_controller {
     }
 //    --------------------------------------read all notes of current semestre
     @GetMapping("/read-all-of-semestre/{idClasse}")
-    public List<Notes> semestreNote(@PathVariable long idClasse){
-        return note_service.listNotes(idClasse);
+    public Page<Notes> semestreNote(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @PathVariable long idClasse){
+        return note_service.listNotes(page, size, idClasse);
     }
 }

@@ -57,7 +57,7 @@ public class Auth_controller {
 
 //    ----------------------------------methode update
     @PutMapping("/update")
-    public InfoSchool update(
+    public Object update(
             @RequestParam("InfoSchool") String infoScool,
             @RequestParam(value = "file", required = false) MultipartFile urlFile) throws IOException {
 //        System.out.println("------------------" + urlFile.getOriginalFilename() + "-----------------------------------------");

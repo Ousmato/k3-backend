@@ -1,6 +1,5 @@
 package Gestion_scolaire.Models;
 
-import Gestion_scolaire.EnumClasse.Admin_role;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,13 +9,17 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Admin extends UsersAbstract{
+public class Salles {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private  long idAdministra;
+    private long id;
 
     @NotNull
-    private Admin_role role;
+    private String nom;
 
+    @NotNull
+    private int nombrePlace;
+
+    private boolean etat = false;
 }

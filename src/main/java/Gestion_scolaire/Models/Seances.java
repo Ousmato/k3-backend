@@ -33,4 +33,8 @@ public class Seances {
 
     @ManyToOne
     private Modules idModule;
+
+    @ManyToOne
+    private Salles idSalle;
+
 }

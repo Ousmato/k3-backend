@@ -11,6 +11,9 @@ import Gestion_scolaire.Repositories.StudentsPresene_repositorie;
 import Gestion_scolaire.Repositories.Students_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -94,7 +97,7 @@ public class Student_service {
     }
 //    -----------------------------------------------------------------------------------
     public Object update(Studens studens, MultipartFile file) throws IOException{
-System.out.println(studens +" ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;"+ file);
+//System.out.println(studens +" ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;"+ file);
         String telephone = String.valueOf(studens.getTelephone());
         if(telephone.length() > 8) {
             throw new NoteFundException("Le numéro de téléphone ne doit pas dépasser 8 chiffres");
@@ -144,14 +147,19 @@ System.out.println(studens +" ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;"+ file);
         }
        throw new NoteFundException("Student does not exist");
     }
-//    -----------------------------------------------------methode pour appeller tout les etudiants active----------------
-    public List<Studens> readAll(){
-        List<Studens> studensList = students_repositorie.findAll();
-        if(studensList.isEmpty()){
-            return new ArrayList<>();
-              }else {
+//    -----------------------------------------------------methode pour appeller tous les etudiants active----------------
+    public Page<Studens> readAll(int page, int pageSize){
+        Pageable pageable = PageRequest.of(page,pageSize);
+        Page<Studens> studensList = students_repositorie.findAll(pageable);
+        if (studensList.isEmpty()) {
+            return Page.empty(pageable);
+        } else {
             return studensList;
         }
+    }
+//    ----------------------------find all student
+    public List<Studens> find_all(){
+        return students_repositorie.findAll();
     }
 //    --------------------------------------------------methode appeler un etudiant par id----------------------
     public Studens studenById(long id){
@@ -163,10 +171,11 @@ System.out.println(studens +" ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;"+ file);
         }
     }
 //    ---------------------------method les etudiant de la classe-----------------------------------
-    public List<Studens> readAllByClassId(long idClass){
-        List<Studens> list = students_repositorie.findByIdClasseIdAndActive(idClass, true );
+    public Page<Studens> readAllByClassId(int page, int pageSize,  long idClass){
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<Studens> list = students_repositorie.findByIdClasseId(idClass, pageable);
         if (list.isEmpty()){
-            return new ArrayList<>();
+            return Page.empty(pageable);
         }
         return list;
     }

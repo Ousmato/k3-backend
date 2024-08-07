@@ -1,5 +1,6 @@
 package Gestion_scolaire.Services;
 
+import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Models.Modules;
 import Gestion_scolaire.Models.Notes;
 import Gestion_scolaire.Repositories.Modules_repositories;
@@ -32,10 +33,11 @@ public class Modules_service {
     return list;
     }
 //    -----------------------------------------------method pour ajouter un module dans la class module-----------
-    public Modules addModule(Modules module){
+    public Object addModule(Modules module){
         Modules modulesExist = modules_repositories.findByIdUeAndNomModule(module.getIdUe(), module.getNomModule());
         if(modulesExist == null){
-            return modules_repositories.save(module);
+             modules_repositories.save(module);
+             return DTO_response_string.fromMessage("Ajout effectué avec succè",200);
         }
         throw new RuntimeException("ce module existe deja");
     }
@@ -54,14 +56,19 @@ public class Modules_service {
         return  modulesList;
     }
 //    -------------------------------------methode pour modifier le module qui n'as pas encore des notes
-    public Modules update(Modules module){
+    public Object update(Modules module){
         List<Notes> notesList = note_service.getNotesByIdModule(module.getId());
+        System.out.println(module.getId() + "les notes");
         if(notesList.isEmpty()){
-            Modules moduleExist = modules_repositories.findModulesByIdUeIdAndId(module.getIdUe().getId(), module.getId());
+
+            Modules moduleExist = modules_repositories.findByIdUeIdAndId(module.getIdUe().getId(), module.getId());
+            System.out.println(moduleExist);
             if(moduleExist !=null){
+
                 moduleExist.setNomModule(module.getNomModule());
                 moduleExist.setCoefficient(module.getCoefficient());
-                return modules_repositories.save(moduleExist);
+                modules_repositories.save(moduleExist);
+                return DTO_response_string.fromMessage("Mise à jour effectuer avec succè", 200);
             }
 
         }

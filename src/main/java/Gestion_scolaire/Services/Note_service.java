@@ -1,8 +1,12 @@
 package Gestion_scolaire.Services;
 
+import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Models.*;
 import Gestion_scolaire.Repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -71,15 +75,16 @@ public class Note_service {
         }
         return moyennes;
     }
-//    ------------------------------methode pour modifier le note d'un etudiant---------------------
-    public Notes update(Notes notes){
+//    ------------------------------methode pour modifier la note d'un etudiant---------------------
+    public Object update(Notes notes){
         Notes noteExist = notes_repositorie.findById(notes.getId());
         if (noteExist == null){
             throw new RuntimeException("la note n'existe pas");
         }
         noteExist.setExamNote(notes.getExamNote());
         noteExist.setClasseNote(notes.getClasseNote());
-        return notes_repositorie.save(noteExist);
+        notes_repositorie.save(noteExist);
+        return DTO_response_string.fromMessage("Mise à jour effectué avec succè", 200);
     }
 //-------------------------------------------------------methode pour appeler les note d'un etudiant du semestre en cours---------
     public List<Notes> readByIdCurrentSemestre(long idStudent, long idSemestre){
@@ -90,14 +95,15 @@ public class Note_service {
         return list;
     }
 //    ---------------------------------------------mehode pour ajouter une note----------------------
-    public Notes addNote(Notes notes) {
+    public Object addNote(Notes notes) {
        Notes noteExist = notes_repositorie.findByIdStudentsIdEtudiantAndIdModuleIdAndIdSemestreId(
                notes.getIdStudents().getIdEtudiant(),notes.getIdModule().getId(),notes.getIdSemestre().getId());
         if(noteExist != null){
             throw new RuntimeException("cet etudian a deja de note pour ce module dans cette semestre");
         }
 
-        return notes_repositorie.save(notes);
+        notes_repositorie.save(notes);
+        return DTO_response_string.fromMessage("Ajout effectué avec succè", 200);
     }
 //--------------------------------------methode pour appeler tout les module de la
 //    classe de l'etudiant qui on deja etait programmer pour un emplois du temps
@@ -118,11 +124,12 @@ public class Note_service {
         return new ArrayList<>(modulesSet);
     }
 //    ----------------------------------method get all notes by idClasse and current semestre
-    public List<Notes> listNotes(long idClasse){
+    public Page<Notes> listNotes(int page, int pageSize, long idClasse){
         Semestres currentSemestre = semestre_repositorie.getCurrentSemestre(LocalDate.now());
-        List<Notes> list = notes_repositorie.getByIdSemestreIdAndIdStudentsIdClasseId(currentSemestre.getId(),idClasse);
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<Notes> list = notes_repositorie.getByIdSemestreIdAndIdStudentsIdClasseId(currentSemestre.getId(), idClasse, pageable);
         if(list.isEmpty()){
-            return new ArrayList<>();
+            return Page.empty(pageable);
         }
         return list;
     }

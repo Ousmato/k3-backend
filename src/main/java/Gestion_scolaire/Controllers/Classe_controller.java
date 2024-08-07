@@ -1,15 +1,9 @@
 package Gestion_scolaire.Controllers;
 
-import Gestion_scolaire.Models.ClasseModule;
-import Gestion_scolaire.Models.Filiere;
-import Gestion_scolaire.Models.NiveauFilieres;
 import Gestion_scolaire.Models.StudentsClasse;
 import Gestion_scolaire.Services.Classe_service;
-import Gestion_scolaire.Services.StudentsClasse_service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,4 +36,6 @@ public class Classe_controller {
     public  Object update(@RequestBody StudentsClasse classe){
             return classe_service.update(classe);
     }
+
+
 }

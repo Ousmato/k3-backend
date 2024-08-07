@@ -19,7 +19,7 @@ public class Emplois_controller {
     private Emplois_service emplois_service;
 
     @PostMapping("/add")
-    public Emplois addEmplois(@RequestBody Emplois emplois){
+    public Object addEmplois(@RequestBody Emplois emplois){
             return emplois_service.add(emplois);
     }
 //    ------------------------get emplois by idClasse--------------------------------------

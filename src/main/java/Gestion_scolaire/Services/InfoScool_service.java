@@ -1,5 +1,6 @@
 package Gestion_scolaire.Services;
 
+import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Models.InfoSchool;
 import Gestion_scolaire.Repositories.InfoSchool_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
@@ -49,7 +50,7 @@ public class InfoScool_service {
     }
 
 //    -----------------------------method update
-public InfoSchool update(InfoSchool school, MultipartFile file) throws IOException {
+public Object update(InfoSchool school, MultipartFile file) throws IOException {
     InfoSchool infExist = infoSchool_repositorie.findById(school.getId());
 
     // Vérifie si l'entité existe
@@ -68,7 +69,8 @@ public InfoSchool update(InfoSchool school, MultipartFile file) throws IOExcepti
         infExist.setTelephone(school.getTelephone());
 
         // Enregistrer l'entité mise à jour dans le repository
-        return infoSchool_repositorie.save(infExist);
+         infoSchool_repositorie.save(infExist);
+         return DTO_response_string.fromMessage("Mise à effectuée avec succès",200);
     }
 
     // Si l'entité n'existe pas, lever une exception

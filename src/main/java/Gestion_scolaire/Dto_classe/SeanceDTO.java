@@ -15,6 +15,9 @@ public class SeanceDTO {
     private ModuleDTO idModule;
     private EmploisDTO idEmplois;
     private TeacherDTO idTeacher;
+    private SallesDTO idSalle;
+    private LocalTime debut_pause;
+    private LocalTime fin_pause;
 
     public static SeanceDTO toSeanceDTO(Seances seance) {
         SeanceDTO dto = new SeanceDTO();
@@ -25,6 +28,7 @@ public class SeanceDTO {
         dto.setIdTeacher(TeacherDTO.toTeacherDTO(seance.getIdTeacher()));
         dto.setIdEmplois(EmploisDTO.toEmploisDTO(seance.getIdEmplois()));
         dto.setIdModule(ModuleDTO.toModuleDTO(seance.getIdModule()));
+        dto.setIdSalle(SallesDTO.toSallesDTO(seance.getIdSalle()));
         return dto;
     }
 }

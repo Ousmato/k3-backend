@@ -1,6 +1,8 @@
 package Gestion_scolaire.Repositories;
 
 import Gestion_scolaire.Models.Notes;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -32,4 +34,6 @@ public interface Notes_repositorie extends JpaRepository<Notes, Long> {
     List<Notes> getByIdSemestreIdAndIdStudentsIdClasseId(long idSemestre, long idClass);
 
     List<Notes> getByIdSemestreIdAndIdModuleId(long idSemestre, long idModule);
+
+    Page<Notes> getByIdSemestreIdAndIdStudentsIdClasseId(long idSemestre, long idStudent, Pageable pageable);
 }
