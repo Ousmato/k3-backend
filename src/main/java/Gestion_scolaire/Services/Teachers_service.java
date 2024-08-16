@@ -266,18 +266,15 @@ public class Teachers_service {
     public Object addPaie(Paie paie){
 
         paie.setDate(LocalDate.now());
-        Paie paieExist = paie_repositorie.findByDateAndIdPresenceTeachersIdSeanceIdTeacherIdEnseignant(
-                paie.getDate(), paie.getIdPresenceTeachers().getIdSeance().getIdTeacher().getIdEnseignant());
+        Paie paieExist = paie_repositorie.getByIdPresenceTeachersId(
+                 paie.getIdPresenceTeachers().getId());
         if(paieExist !=null) {
-            long idSeanceExist = paieExist.getIdPresenceTeachers().getIdSeance().getId();
-            long idSeanceNew = paie.getIdPresenceTeachers().getIdSeance().getId();
 
-            if (idSeanceExist == idSeanceNew) {
-                throw new RuntimeException("cet enseignant est deja paiyer a cette date");
-            }
+                throw new RuntimeException("cet enseignant est déjà payer a cette date");
+
         }
         paie_repositorie.save(paie);
-        return DTO_response_string.fromMessage("Paiement effectué avec succè",200);
+        return DTO_response_string.fromMessage("Paiement effectué avec succès",200);
     }
 //    -----------------------------------------methode update paiement--------------------
     public Paie updatePaie(Paie paie){

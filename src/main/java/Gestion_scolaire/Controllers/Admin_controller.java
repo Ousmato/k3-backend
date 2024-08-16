@@ -22,6 +22,7 @@ public class Admin_controller {
     public Object add(
             @RequestParam("admin") String adminString,
             @RequestParam(value = "file", required = false)MultipartFile file) throws Exception {
+
         ObjectMapper objectMapper = new ObjectMapper();
         Admin a = objectMapper.readValue(adminString, Admin.class);
         // Vérifie si urlFile est null ou vide

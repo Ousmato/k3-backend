@@ -1,9 +1,9 @@
 package Gestion_scolaire.Controllers;
 
+import Gestion_scolaire.Dto_classe.CuntStudentDTO;
 import Gestion_scolaire.Dto_classe.DTO_scolarite;
-import Gestion_scolaire.Models.Studens;
-import Gestion_scolaire.Models.StudentsPresence;
-import Gestion_scolaire.Models.Teachers;
+import Gestion_scolaire.Models.*;
+import Gestion_scolaire.Services.Groupe_service;
 import Gestion_scolaire.Services.Student_service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -25,6 +25,9 @@ import java.util.List;
 public class Student_controller {
     @Autowired
     private Student_service student_service;
+
+    @Autowired
+    private Groupe_service groupe_service;
 
 
     @PostMapping("/add")
@@ -108,8 +111,81 @@ public class Student_controller {
 //    --------------------------update scolarite
     @PutMapping("/update-scolarite/{idStudent}")
     public Object updateScolarite(@PathVariable long idStudent, @RequestBody DTO_scolarite dtoScolarite){
-//        double scolarite = Double.parseDouble(scolariteString);
-        System.out.println(idStudent+" ;;;;;;;;;;;;;;;;;;;;;;;;;;;"+dtoScolarite);
         return student_service.update_scolarite(idStudent, dtoScolarite.getScolarite());
     }
+//------------------list des etudians valider de la classe
+    @GetMapping("/student-by-classe-id/{idClasse}")
+    public List<Studens> getStudentByClasse(@PathVariable long idClasse){
+        return student_service.get_by_classId(idClasse);
+    }
+
+//    -------------------------------------get all student by id annee scolaire
+    @GetMapping("/student-by-anneScolaire-id/{idAnne}")
+    public Page<Studens> getListByIaAnne(
+            @RequestParam (defaultValue = "0") int page,
+            @RequestParam (defaultValue = "10") int size,
+            @PathVariable long idAnne){
+        return student_service.get_by_idAnneeScolaire(page, size, idAnne);
+    }
+
+//    -------------------------------------------------------------------------------
+
+    @GetMapping("/find-all-groupe")
+    public  List<StudentGroupe> getAll_group(){
+        return groupe_service.findAll();
+    }
+
+//    -----------------------------------add group
+    @PostMapping("/add-group")
+    public Object addGroup(@RequestBody StudentGroupe studentGroupe){
+        return groupe_service.add_group(studentGroupe);
+    }
+
+    @GetMapping("/list-group-by-idEmploi/{idEmplois}")
+    public List<StudentGroupe> getListGroupByEmploi(@PathVariable long idEmplois){
+        return groupe_service.listGroupByIdEmploi(idEmplois);
+    }
+
+//    ----------------------------------------------------------------------
+
+    @PostMapping("/add-more-participant")
+    public Object addMoreParticipant(@RequestBody List<Participant> participants){
+        return groupe_service.add_participant(participants);
+    }
+
+//    --------------get all participant by emplois id
+    @GetMapping("/list-participant-by-emploi-id/{emploiId}")
+    public List<Participant> getListParticipantByEmploiId(@PathVariable long emploiId){
+        return groupe_service.ge_allBy_idEmploi(emploiId);
+    }
+
+//    -----------------------get All Students By Group
+    @GetMapping("/list-students-by-group-id/{idGroup}")
+    public List<Studens> getAllStudentByGroup(@PathVariable long idGroup){
+        return groupe_service.getAllStudentsByGroupId(idGroup);
+    }
+
+//    -----------------------------get sum of all scolarite of student in this year
+    @GetMapping("/sum-scolarite")
+    public double sumScolarite(){
+        return student_service.get_scolarite_annuel();
+    }
+
+//    -----------------------get sum of reliquat in this current year
+    @GetMapping("/sum-reliquat")
+    public double sumReliquat(){
+        return student_service.getAll_reliquat();
+    }
+
+//    --------------------cunt student inscrit and non inscrit
+    @GetMapping("/student-count")
+    public CuntStudentDTO countStudent(){
+        return student_service.cunt_student_inscrit();
+    }
+//    -------------------------------------------------reincreiption method
+    @PostMapping("/re-inscription")
+    public Object reInscription(@RequestBody Studens studens){
+            return student_service.reinscription(studens);
+    }
+
 }

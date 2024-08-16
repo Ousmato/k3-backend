@@ -2,7 +2,7 @@ package Gestion_scolaire.EnumClasse;
 
 public enum Admin_role {
     admin,
-    finance,
+    comptable,
     secretaire,
     dg,
     dga,

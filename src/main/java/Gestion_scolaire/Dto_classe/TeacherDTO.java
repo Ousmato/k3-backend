@@ -14,7 +14,7 @@ public class TeacherDTO {
     private String urlPhoto;
 //    private String sexe;
     private long idEnseignant;
-//    private Teachers_status status;
+    private Teachers_status status;
 
     public static TeacherDTO toTeacherDTO(Teachers teacher) {
         TeacherDTO dto = new TeacherDTO();
@@ -26,7 +26,7 @@ public class TeacherDTO {
         dto.setUrlPhoto(teacher.getUrlPhoto());
 //        dto.setSexe(teacher.getSexe());
         dto.setIdEnseignant(teacher.getIdEnseignant());
-//        dto.setStatus(teacher.getStatus());
+        dto.setStatus(teacher.getStatus());
         return dto;
     }
 }

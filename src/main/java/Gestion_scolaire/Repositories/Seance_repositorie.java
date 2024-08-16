@@ -1,6 +1,7 @@
 package Gestion_scolaire.Repositories;
 
 import Gestion_scolaire.Models.Emplois;
+import Gestion_scolaire.Models.SeanceConfig;
 import Gestion_scolaire.Models.Seances;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

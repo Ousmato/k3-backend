@@ -13,6 +13,9 @@ import java.util.List;
 
 @Repository
 public interface Paie_repositorie extends JpaRepository<Paie, Long> {
+
+    Paie getByIdPresenceTeachersId(long idPresenceTeachers);
+
     Paie findByDateAndIdPresenceTeachersIdSeanceIdTeacherIdEnseignant(LocalDate date, long idTeacher);
     List<Paie> findAllByIdPresenceTeachersIdSeanceIdTeacherIdEnseignant(long id);
 

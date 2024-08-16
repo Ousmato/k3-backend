@@ -1,10 +1,9 @@
 package Gestion_scolaire.Services;
 
 import Gestion_scolaire.Dto_classe.*;
+import Gestion_scolaire.EnumClasse.Seance_type;
 import Gestion_scolaire.Models.*;
-import Gestion_scolaire.Repositories.Emplois_repositorie;
-import Gestion_scolaire.Repositories.ListPresenceTeacher_repositorie;
-import Gestion_scolaire.Repositories.Seance_repositorie;
+import Gestion_scolaire.Repositories.*;
 import Gestion_scolaire.configuration.NoteFundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,9 +12,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class Seance_service {
@@ -31,26 +33,59 @@ public class Seance_service {
     @Autowired
     private Common_service common_service;
 
+    @Autowired
+    private SeancType_repositorie seancType_repositorie;
+
+    @Autowired
+    private Students_repositorie studentsRepositorie;
+
 //    ----------------------------------------------------appels tout les seances par id---------------
-    public List<Seances> readByIdEmplois(long idEmplois){
+public List<SeanceDTO> readByIdEmplois(long idEmplois) {
+    // Récupérer l'emploi par ID
+    Emplois emploisExist = emplois_repositorie.findById(idEmplois);
 
-        Emplois emploisExist = emplois_repositorie.findById(idEmplois);
-//        System.out.println(emploisExist+ "emplois exist");
-        List<Seances> seancesList = seance_repositorie.findByIdEmploisId(emploisExist.getId());
-
-//        System.out.println(seancesList+ "seance exist");
-        if (!seancesList.isEmpty()) {
-            if (emploisExist.getDateFin().isAfter(LocalDate.now())) {
-                seancesList.sort(Comparator
-                        .comparing(Seances::getDate)  // Trier par date
-                        .thenComparing(Seances::getHeureDebut));
-                return seancesList;
-            }
-            return new ArrayList<>();
-        }
-        return seancesList;
+    // Vérifier si l'emploi existe
+    if (emploisExist == null) {
+        throw new NoteFundException("L'emploi n'existe pas");
     }
-//    ----------------------------------nombre d'heure d'un enseignant present par seance d'un emplois-------------------
+
+    // Récupérer les séances associées à l'emploi
+    List<Seances> seancesList = seance_repositorie.findByIdEmploisId(emploisExist.getId());
+
+    // Vérifier si la liste des séances n'est pas vide
+    if (seancesList.isEmpty()) {
+        // Retourner une liste vide si aucune séance n'est trouvée
+        return new ArrayList<>();
+    }
+
+    // Vérifier si la date de fin de l'emploi est après la date actuelle
+    if (emploisExist.getDateFin().isAfter(LocalDate.now())) {
+        // Trier les séances par date et heure de début
+        seancesList.sort(Comparator
+                .comparing(Seances::getDate)  // Trier par date
+                .thenComparing(Seances::getHeureDebut));
+
+
+        // Convertir les séances en DTO et ajouter les pauses
+        return seancesList.stream().map(seance -> {
+            SeanceDTO dto = SeanceDTO.toSeanceDTO(seance);
+            LocalTime heureDebut = seance.getHeureDebut();
+            LocalTime heureFin = seance.getHeureFin();
+
+            List<String> plagesHoraires = common_service.calculerPlagesHoraires(heureDebut,heureFin);
+
+
+            dto.setPlageHoraire(plagesHoraires);
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    // Retourner une liste vide si la date de fin de l'emploi est passée
+    return new ArrayList<>();
+}
+
+
+    //    ----------------------------------nombre d'heure d'un enseignant present par seance d'un emplois-------------------
     public List<Integer> getNbreBySeance(long idTeacher){
         return seance_repositorie.findNbreHeureBySeanceIdTeacher(idTeacher,LocalDate.now().getMonthValue());
     }
@@ -93,7 +128,7 @@ public class Seance_service {
             List<Seances> existingSeances = seance_repositorie.getAllByDateAndIdTeacherIdEnseignant(seances.getDate(),seances.getIdTeacher().getIdEnseignant());
 
             for (Seances existingSeance : existingSeances) {
-                if (isOverlapping(seances, existingSeance)) {
+                if (common_service.isOverlapping(seances, existingSeance)) {
                     throw new RuntimeException("La séance chevauche une séance existante pour cet enseignant");
                 }
             }
@@ -130,16 +165,7 @@ public class Seance_service {
         return DTO_response_string.fromMessage("Ajoute effectué avec succès",200);
     }
 
-//    ------------------------------methode pour eviter le chevauchement d'heure
-private boolean isOverlapping(Seances newSeance, Seances existingSeance) {
-    LocalDateTime newStart = newSeance.getDate().atTime(newSeance.getHeureDebut());
-    LocalDateTime newEnd = newSeance.getDate().atTime(newSeance.getHeureFin());
-    LocalDateTime existingStart = existingSeance.getDate().atTime(existingSeance.getHeureDebut());
-    LocalDateTime existingEnd = existingSeance.getDate().atTime(existingSeance.getHeureFin());
 
-    // Vérifier si les intervalles se chevauchent
-    return newStart.isBefore(existingEnd) && existingStart.isBefore(newEnd);
-}
 //-------================================================================================
     public List<TeacherSeancesDTO> all_teacher() {
         List<Emplois> emploisList = emplois_repositorie.findAllEmploisActif(LocalDate.now());
@@ -198,6 +224,8 @@ public Page<TeacherSeancesDTO> all_teachers_seance_active(int page, int pageSize
                 teacherSeancesDTO.setClassRoom(new ArrayList<>());
                 teacherSeancesDTO.setSeances(new ArrayList<>());
                 teacherSeancesDTO.setEmplois(new ArrayList<>());
+                teacherSeancesDTO.setStatus(seance.getIdTeacher().getStatus());
+                System.out.println("---------------------"+teacherSeancesDTO);
                 teacherMap.put(teacherId, teacherSeancesDTO);
             }
 
@@ -261,13 +289,13 @@ public Page<TeacherSeancesDTO> all_teachers_seance_active(int page, int pageSize
         Seances seanceExist = seance_repositorie.getById(seances.getId());
         if(seanceExist != null) {
             TeachersPresence tpresent = listPresenceTeacher_repositorie.findByIdSeanceId(seanceExist.getId());
-            System.out.println("t presence --------------------------------"+tpresent);
+//            System.out.println("t presence --------------------------------"+tpresent);
 
             if (!tpresent.isObservation()) {
                 if(seances.getIdTeacher() != null){
                     List<Seances> existingSeances = seance_repositorie.getAllByDateAndIdTeacherIdEnseignant(seances.getDate(),seances.getIdTeacher().getIdEnseignant());
                     for (Seances existingSeance : existingSeances) {
-                        if (isOverlapping(seances, existingSeance)) {
+                        if (common_service.isOverlapping(seances, existingSeance)) {
                             throw new RuntimeException("La séance chevauche une séance existante pour cet enseignant");
                         }
                     }
@@ -321,11 +349,55 @@ public Page<TeacherSeancesDTO> all_teachers_seance_active(int page, int pageSize
         Seances seanceExist = seance_repositorie.getById(idSeance);
         if (seanceExist != null) {
 
-            return  SeanceDTO.toSeanceDTO(seanceExist);
-
+            return SeanceDTO.toSeanceDTO(seanceExist);
         }
         throw new NoteFundException("La seance n'existe pas");
     }
+//------------------------------------------------------------------------------------------
+
+//    ----------------------------get all seance config
+    public List<DTO_Config> getAllSeanceConfig(long idEmplois) {
+        List<SeanceConfig> configList = seancType_repositorie.getByIdSeanceIdEmploisId(idEmplois);
+        List<DTO_Config> dtoConfigsList = new ArrayList<>(); // Créer une liste pour stocker les DTO
+
+        for (SeanceConfig sc : configList) {
+            DTO_Config dtoConfig = DTO_Config.toConfig(sc);
+            String heureDebut = sc.getHeureDebut().toString();
+            String heureFin = sc.getHeureFin().toString();
+            dtoConfig.setPlageHoraire(heureDebut + " - " + heureFin);
+
+            dtoConfigsList.add(dtoConfig);
+        }
+        return dtoConfigsList;
+    }
+
+    //    -----------------------------get seance config by id
+    public SeanceConfig getSeanceConfig(long idConfig){
+        SeanceConfig seanceExist = seancType_repositorie.findById(idConfig);
+        if(seanceExist != null){
+            return seanceExist;
+        }
+        throw new NoteFundException("La configuration pour cette séance n'existe pas");
+    }
+//    --------------------------------get seance configuration by Exam and session
+    public List<DTO_Config> getAllSeanceConfig_byExaAndSess(){
+        List<SeanceConfig> list = seancType_repositorie.findBySeanceTypeAndDate(Seance_type.examen, Seance_type.session, LocalDate.now());
+        List<DTO_Config> dtoConfigsList = new ArrayList<>();
+
+       if (list.isEmpty()){
+            return new ArrayList<>();
+        }
+
+        for (SeanceConfig sc : list) {
+            DTO_Config dtoConfig = DTO_Config.toConfig(sc);
+            String heureDebut = sc.getHeureDebut().toString();
+            String heureFin = sc.getHeureFin().toString();
+            dtoConfig.setPlageHoraire(heureDebut + " - " + heureFin);
+            dtoConfigsList.add(dtoConfig);
+        }
+        return dtoConfigsList;
+    }
+
 }
 
 

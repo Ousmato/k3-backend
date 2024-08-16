@@ -1,8 +1,10 @@
 package Gestion_scolaire.Dto_classe;
 
+import Gestion_scolaire.EnumClasse.Teachers_status;
 import Gestion_scolaire.Models.Teachers;
 import lombok.Data;
 
+import java.time.LocalTime;
 import java.util.List;
 
 // DTO classes
@@ -12,6 +14,8 @@ public class TeacherSeancesDTO {
     private List<EmploisDTO> emplois;
     private List<ClasseDTO> classRoom;
     private List<SeanceDTO> seances;
+    private Teachers_status status;
+//    private LocalTime nbreHeure
     private boolean Observation;
 
 

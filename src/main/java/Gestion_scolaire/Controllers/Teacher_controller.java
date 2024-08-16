@@ -149,7 +149,7 @@ public Page<TeacherSeancesDTO> getPage_teacher_seance_actif(
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size)
 {
-    return seance_service.all_teachers_seance_active(page, size);
+     return seance_service.all_teachers_seance_active(page, size);
 }
 //------------------------------------------------
     @GetMapping("/detaille/{idTeacher}")

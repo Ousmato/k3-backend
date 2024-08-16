@@ -1,5 +1,6 @@
 package Gestion_scolaire.Models;
 
+import Gestion_scolaire.EnumClasse.Type_status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -17,6 +18,9 @@ public class Studens extends UsersAbstract {
     private double scolarite = 0;
 
     @NotNull
+    private boolean payer = false;
+
+    @NotNull
     private String matricule;
 
     @NotNull
@@ -28,10 +32,19 @@ public class Studens extends UsersAbstract {
     @NotNull
     private LocalDate dateNaissance;
 
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private Type_status status;
+
 
     @ManyToOne
     private Admin idAdmin;
 
+    @NotNull
     @ManyToOne
     private  StudentsClasse idClasse;
+
+    @NotNull
+    @ManyToOne
+    private AnneeScolaire idAnneeScolaire;
 }

@@ -10,7 +10,7 @@ import java.util.List;
 public interface Classe_repositorie extends JpaRepository<StudentsClasse, Long> {
 
     StudentsClasse findById(long id);
-    StudentsClasse findByScolarite(double scolarite);
+    int countAllByFermer(boolean fermer);
     StudentsClasse findByIdFiliereIdAndIdFiliereIdNiveauId(long idFiliereId, long idFiliereIdNiveauId);
     List<StudentsClasse> findStudentsClasseById(long idclasse);
 

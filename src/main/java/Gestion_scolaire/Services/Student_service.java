@@ -1,5 +1,6 @@
 package Gestion_scolaire.Services;
 
+import Gestion_scolaire.Dto_classe.CuntStudentDTO;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.MailSender.MessaSender;
 import Gestion_scolaire.MailSender.PendingEmail;
@@ -53,6 +54,7 @@ public class Student_service {
         if(telephone.length() > 8) {
             throw new NoteFundException("Le numéro de téléphone ne doit pas dépasser 8 chiffres");
         }
+
         LocalDate dateNaissance = LocalDate.now().minusYears(15);
         if(dateNaissance.isBefore(studens.getDateNaissance())) {
             throw new NoteFundException("La date de naissance n'est pas valide. L'étudiant doit avoir au moins 15 ans.");
@@ -65,9 +67,6 @@ public class Student_service {
 
             StudentsClasse classeExist = classe_repositorie.findById(studens.getIdClasse().getId());
             if(classeExist != null){
-                double class_scolarite = classeExist.getScolarite();
-                double student_scolarite = studens.getScolarite();
-                double scolarite = class_scolarite - student_scolarite;
 
                 classeExist.setEffectifs(classeExist.getEffectifs()+1);
                 classe_repositorie.save(classeExist);
@@ -75,6 +74,9 @@ public class Student_service {
                 String urlPhoto = fileManagers.saveFile(file);
                 studens.setUrlPhoto(urlPhoto);
                 studens.setDate(LocalDate.now());
+                if(studens.getDate().isBefore(studens.getIdAnneeScolaire().getDebutAnnee()) || studens.getDate().isAfter(studens.getIdAnneeScolaire().getFinAnnee())){
+                    throw new NoteFundException("Inscription non valide veillez choisir une année scolaire en cours");
+                }
                 studens.setIdClasse(classeExist);
 
                 String plainPassword = studens.getPassword();
@@ -135,7 +137,6 @@ public class Student_service {
             students_repositorie.save(studentExist);
             return DTO_response_string.fromMessage("Modification effectuée avec succé",200);
 
-
     }
 //    -----------------------------methode pour desactiver un etudiant-------------------------------------------
     public Object desable(long id){
@@ -167,10 +168,10 @@ public class Student_service {
         if (studensExist != null){
             return studensExist;
         }else {
-            throw new NoteFundException("l'etudiant est introuvable");
+            throw new NoteFundException("l'étudiant est introuvable");
         }
     }
-//    ---------------------------method les etudiant de la classe-----------------------------------
+//    ---------------------------method les etudiant de la classe par page-----------------------------------
     public Page<Studens> readAllByClassId(int page, int pageSize,  long idClass){
         Pageable pageable = PageRequest.of(page, pageSize);
         Page<Studens> list = students_repositorie.findByIdClasseId(idClass, pageable);
@@ -209,9 +210,88 @@ public class Student_service {
         if (studensExist != null){
             double montant = studensExist.getScolarite() + scolarite; // Par exemple, simple addition
             studensExist.setScolarite(montant);
+            studensExist.setPayer(true);
             students_repositorie.save(studensExist);
           return DTO_response_string.fromMessage("Modification effectuer avec succé", 200);
         }
         throw new NoteFundException("Student does not exist");
     }
+
+//    ----------------------------get list student by class id
+    public List<Studens> get_by_classId(long idClass){
+        List<Studens> list = students_repositorie.getByIdClasseIdAndPayer(idClass, true);
+        if (list.isEmpty()){
+            return new ArrayList<>();
+        }
+        return list;
+    }
+
+//    -----------------------------get by id annee scolaire
+public Page<Studens> get_by_idAnneeScolaire(int page, int pageSize, long idAnneeScolaire){
+        Pageable pageable = PageRequest.of(page, pageSize);
+    Page<Studens> list = students_repositorie.getByIdAnneeScolaireId(idAnneeScolaire, pageable);
+    if (list.isEmpty()){
+        return Page.empty(pageable);
+    }
+    return list;
+}
+
+//    --------------------------------get scolarite annuelle of all student
+    public double get_scolarite_annuel(){
+        return students_repositorie.sumScolariteForCurrentYear();
+    }
+
+//    ----------------------get all reliquat of current year
+    public double getAll_reliquat(){
+        return students_repositorie.getReliquatForCurrentYear();
+    }
+
+//    ------------------cunt all student inscrit
+    public CuntStudentDTO cunt_student_inscrit(){
+        int inscrit = students_repositorie.countAllByPayer(true);
+        int non_inscrit = students_repositorie.countAllByPayer(false);
+        return CuntStudentDTO.getCount(inscrit, non_inscrit);
+    }
+
+//-------------------------------------------------------------------------------------
+    public Object reinscription(Studens studens) {
+         Studens studensReincrit = students_repositorie.findByMatriculeAndTelephone(studens.getMatricule(), studens.getTelephone());
+
+        if (studensReincrit != null) {
+            if (studensReincrit.getIdClasse().getIdFiliere().getIdNiveau().equals(studens.getIdClasse().getIdFiliere().getIdNiveau())) {
+                throw new NoteFundException("Réinscription invalide, veuillez choisir un niveau supérieur");
+            }
+
+            if (!studensReincrit.getIdClasse().getIdFiliere().equals(studens.getIdClasse().getIdFiliere())) {
+                throw new NoteFundException("Réinscription invalide, la filière ne corresponde pas");
+            }
+
+            studens.setDate(LocalDate.now());
+            LocalDate end_year = studensReincrit.getIdAnneeScolaire().getFinAnnee().minusMonths(2);
+            if(studens.getDate().isBefore(studens.getIdAnneeScolaire().getFinAnnee()) || studens.getDate().isAfter(end_year)){
+                throw new NoteFundException("Inscription non valide veillez choisir une année scolaire en cours");
+            }
+
+            StudentsClasse classeExist = classe_repositorie.findById(studens.getIdClasse().getId());
+            if (classeExist != null) {
+                classeExist.setEffectifs(classeExist.getEffectifs() + 1);
+                classe_repositorie.save(classeExist);
+
+                studens.setUrlPhoto(studensReincrit.getUrlPhoto());
+
+                studens.setIdClasse(classeExist);
+                studens.setPayer(false);
+                studens.setPassword(studensReincrit.getPassword());
+                studens.setScolarite(0);
+                studens.setIdAdmin(studensReincrit.getIdAdmin());
+                studens.setUrlPhoto(studensReincrit.getUrlPhoto());
+
+                students_repositorie.save(studens);
+            }
+            return DTO_response_string.fromMessage("Inscription effectuée avec succès", 200);
+        }
+    
+        throw new NoteFundException("L'étudiant est introuvable");
+    }
+
 }

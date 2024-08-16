@@ -59,6 +59,7 @@ public class Admin_service {
 
     //  =======================================================================================
     public Object add(Admin admin, MultipartFile file) throws Exception {
+        System.out.println("----------------------------------------"+admin);
         Admin adminExist = admin_repositorie.findByRole(admin.getRole());
         if (adminExist != null) {
            throw new NoteFundException("Impossible d'attribuer le meme role a deux administrateur");

@@ -38,4 +38,9 @@ public class Classe_controller {
     }
 
 
+//    ------------------------------------get numbre of cunt mentions(classes)
+    @GetMapping("/count-class")
+    public int getCountClass(){
+        return classe_service.cunt_class();
+    }
 }

@@ -105,6 +105,10 @@ public class Classe_service {
     public List<StudentsClasse> readAllClass(){
         return classe_repositorie.findAll();
     }
+//    ----------------------------------cunt number of class
+    public int cunt_class(){
+        return classe_repositorie.countAllByFermer(false);
+    }
     //-------------------------------------------methode pour appeler une classe par id---------------
     public StudentsClasse readByIdClasse(long id){
         return classe_repositorie.findById(id);

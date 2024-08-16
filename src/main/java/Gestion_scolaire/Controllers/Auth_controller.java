@@ -2,6 +2,7 @@ package Gestion_scolaire.Controllers;
 
 import Gestion_scolaire.Authentification.Auth;
 import Gestion_scolaire.Authentification.Jeton_Auth;
+import Gestion_scolaire.Models.AnneeScolaire;
 import Gestion_scolaire.Models.InfoSchool;
 import Gestion_scolaire.Models.Studens;
 import Gestion_scolaire.Models.UsersAbstract;
@@ -73,6 +74,28 @@ public class Auth_controller {
             // Traitement si aucun fichier n'est téléchargé
             return infoScool_service.update(inf, null); // Vous devez implémenter la gestion de cas sans fichier dans votre service
         }
+    }
+//    ----------------------------add annee scolaire
+    @PostMapping("/add-annee-scolaire")
+    public Object add_annee_scolaire(@RequestBody AnneeScolaire scolaire){
+        return infoScool_service.add_anneeScolaire(scolaire);
+    }
+
+//    ---------------------------get all annee scolaire
+    @GetMapping("/get-all-annee")
+    public List<AnneeScolaire> getAllAnnee(){
+        return infoScool_service.readAll_anne();
+    }
+//    -----------------------update annee scolaire
+    @PutMapping("/updat-anne-scolaire")
+    public Object update_anne_scolaire(@RequestBody AnneeScolaire scolaire){
+        return infoScool_service.update_AnneeScolaire(scolaire);
+    }
+
+//    ----------------------delete annee scolaire
+    @DeleteMapping("/delete-annee-scolaire/{idAnnee}")
+    public Object delete_annee_scolaire(@PathVariable long idAnnee){
+        return infoScool_service.delete_annee(idAnnee);
     }
 //    ---------------------------------------
 
