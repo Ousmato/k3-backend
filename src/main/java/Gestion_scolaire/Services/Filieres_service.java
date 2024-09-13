@@ -3,10 +3,7 @@ package Gestion_scolaire.Services;
 import Gestion_scolaire.Dto_classe.ClasseDTO;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Dto_classe.NivauFilierDTO;
-import Gestion_scolaire.Models.Filiere;
-import Gestion_scolaire.Models.Niveau;
-import Gestion_scolaire.Models.NiveauFilieres;
-import Gestion_scolaire.Models.StudentsClasse;
+import Gestion_scolaire.Models.*;
 import Gestion_scolaire.Repositories.*;
 import Gestion_scolaire.configuration.NoteFundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,23 +27,33 @@ public class Filieres_service {
     @Autowired
     private Classe_repositorie classe_repositorie;
 
-    @Autowired
-    private Semestre_repositorie semestreRepositorie;
 
-    public Object add(Filiere filiere, Niveau niveau){
+    public NiveauFilieres add(Filiere filiere, Niveau niveau, AnneeScolaire annee){
          // Vérification de la duplication de la relation NiveauFilieres
-        NiveauFilieres existingNivFiliere = niveauFiliere_repositorie.findByIdFiliereAndIdNiveau(filiere, niveau);
-        if (existingNivFiliere != null) {
-            throw new NoteFundException("Attention duplication de filiere");
-        }
+       List<NiveauFilieres> existingNivFiliere = niveauFiliere_repositorie.getAllByIdFiliereIdAndIdNiveauId(filiere.getId(), niveau.getId());
+       if(!existingNivFiliere.isEmpty()){
+           boolean hasExist = false;
+           for(NiveauFilieres nivFiliere : existingNivFiliere){
+               StudentsClasse classe = classe_repositorie.findByIdFiliereIdAndIdAnneeScolaireId(nivFiliere.getId(),annee.getId());
+              if(classe != null){
+
+                  hasExist = true;
+                  break;
+              }
+
+           }
+           if (hasExist) {
+               throw new NoteFundException("Attention la classe " + niveau.getNom() +" "+  filiere.getNomFiliere()+" existe déjà");
+           }
+       }
+
         // Créer une nouvelle relation NiveauFilieres
         NiveauFilieres niveauFilieres = new NiveauFilieres();
         niveauFilieres.setIdNiveau(niveau);
         niveauFilieres.setIdFiliere(filiere);
 
         // Sauvegarder la nouvelle relation
-        niveauFiliere_repositorie.save(niveauFilieres);
-        return DTO_response_string.fromMessage("Ajout effectué avec succès", 200);
+       return niveauFiliere_repositorie.save(niveauFilieres);
     }
 //    -------------------------------------------list of all niveau filiere-----------------------
     public List<NiveauFilieres> readNivFil(){
@@ -69,15 +76,14 @@ public class Filieres_service {
         return newClasses;
     }
 //----------------------------------------------------methode create filiere-----------------------------
-    public Filiere create(Filiere filiere){
+    public Object create(Filiere filiere){
         Filiere filiereExist = filiere_repositorie.findByNomFiliere(filiere.getNomFiliere());
-        if (filiereExist != null){
-            filiereExist.setNomFiliere(filiere.getNomFiliere());
-            return filiere_repositorie.save(filiereExist);
+        if (filiereExist == null){
+            filiere_repositorie.save(filiere);
+            return DTO_response_string.fromMessage("Ajout effectué avec succès", 200);
 
-        }else {
-            return filiere_repositorie.save(filiere);
         }
+        throw new NoteFundException("Attention la filière existe déjà");
     }
 
 //----------------------------------------method update niveau filiere
@@ -109,4 +115,49 @@ public class Filieres_service {
         throw new NoteFundException("Element n'existe pas ");
 
     }
+
+    //------------------------update filiere
+    public Object updateFilirer(Filiere filiere){
+        Filiere filiExist = filiere_repositorie.findById(filiere.getId());
+        if(filiExist != null){
+            List<StudentsClasse> classeList = classe_repositorie.findByIdFiliereId(filiere.getId());
+            if (!classeList.isEmpty()) {
+                throw new NoteFundException("La filière ne peut pas etre modifier des classes sont déjà associé");
+            }
+            if(filiere.getNomFiliere().equals(filiExist.getNomFiliere())){
+                throw new NoteFundException("Aucune Mises à jours n'est effectué ");
+            }
+            filiExist.setNomFiliere(filiere.getNomFiliere());
+            filiere_repositorie.save(filiExist);
+            return DTO_response_string.fromMessage("Mises à jour effectué avec succès", 200);
+
+        }
+        throw new NoteFundException("La filière n'existe pas ");
+    }
+
+    //   --------------------------------get all filiere
+    public List<Filiere> getFilieres(){
+        return filiere_repositorie.findAll();
+    }
+
+    //-------------------------------------------delete filiere
+    public Object deleteFiliere(long idFiliere){
+        Filiere filiere = filiere_repositorie.findById(idFiliere);
+        List<StudentsClasse> classe = classe_repositorie.findByIdFiliereId(idFiliere);
+        if(filiere != null){
+            if(!classe.isEmpty()){
+                throw new NoteFundException("Suppression impossible des classes sont déjà associé");
+            }
+            List<NiveauFilieres> niveauFilieres = niveauFiliere_repositorie.findByIdFiliereId(filiere.getId());
+
+            if(!niveauFilieres.isEmpty()){
+                throw new NoteFundException("Suppression impossible des niveaux sont déjà associé");
+            }
+            filiere_repositorie.delete(filiere);
+            return DTO_response_string.fromMessage("Suppression effectué avec succès", 200);
+        }
+        throw new NoteFundException("La filière n'existe pas ");
+    }
+
+
 }

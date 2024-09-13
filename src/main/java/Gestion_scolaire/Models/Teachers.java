@@ -1,5 +1,6 @@
 package Gestion_scolaire.Models;
 
+import Gestion_scolaire.EnumClasse.Diplomes;
 import Gestion_scolaire.EnumClasse.Teachers_status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -18,4 +19,10 @@ public class Teachers extends UsersAbstract {
     @Enumerated(EnumType.STRING)
     private Teachers_status status;
 
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private Diplomes diplome;
+
+    @ManyToOne
+    private UE idUe;
 }

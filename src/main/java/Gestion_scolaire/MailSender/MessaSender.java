@@ -1,6 +1,5 @@
 package Gestion_scolaire.MailSender;
 
-import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Models.Admin;
 import Gestion_scolaire.Models.Studens;
 import Gestion_scolaire.Models.Teachers;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

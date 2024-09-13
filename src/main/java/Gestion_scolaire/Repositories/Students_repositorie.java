@@ -17,9 +17,9 @@ public interface Students_repositorie extends JpaRepository<Studens, Long> {
 
    Studens findByMatriculeAndTelephone(String matricule, int telephone);
 
-   Page<Studens> getByIdAnneeScolaireId(long anneeScolaireId, Pageable pageable);
+   Page<Studens> getByIdClasseIdAnneeScolaireId(long anneeScolaireId, Pageable pageable);
 
-   List<Studens> getByIdAnneeScolaireId(long anneeScolaireId);
+   List<Studens> getByIdClasseIdAnneeScolaireId(long anneeScolaireId);
 
    Studens findByIdEtudiant (long id);
 
@@ -46,5 +46,6 @@ public interface Students_repositorie extends JpaRepository<Studens, Long> {
    int countAllByPayer(boolean payer);
 
 
+   Page<Studens> findByIdClasseIdAnneeScolaireIdAndIdClasseId(long idAnneeScolaireId, long idClasseId, Pageable pageable);
 
 }

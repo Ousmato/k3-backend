@@ -1,6 +1,7 @@
 package Gestion_scolaire.Services;
 
 import Gestion_scolaire.Dto_classe.DTO_response_string;
+import Gestion_scolaire.Dto_classe.PaieDTO;
 import Gestion_scolaire.MailSender.MessaSender;
 import Gestion_scolaire.MailSender.PendingEmail;
 import Gestion_scolaire.Models.Paie;
@@ -11,10 +12,7 @@ import Gestion_scolaire.Repositories.Paie_repositorie;
 import Gestion_scolaire.Repositories.Teacher_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +23,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 @Service
 public class Teachers_service {
@@ -64,13 +63,13 @@ public class Teachers_service {
         String plainPassword = teachers.getPassword();
         teachers.setPassword(passwordEncoder.encode(teachers.getPassword()));
 
-        PendingEmail emailPend = new PendingEmail();
-        emailPend.setToSend(teachers.getEmail());
-        emailPend.setFromAdmin(adminEmail);
-        emailPend.setBody("Bonjour M. %s %s%s,".formatted(teachers.getNom(), teachers.getPrenom(), messaSender.messageTeacher(teachers, plainPassword)));
-        emailPend.setSubject("Confirmation");
-
-        messaSender.sendSimpleMail(emailPend);
+//        PendingEmail emailPend = new PendingEmail();
+//        emailPend.setToSend(teachers.getEmail());
+//        emailPend.setFromAdmin(adminEmail);
+//        emailPend.setBody("Bonjour M. %s %s%s,".formatted(teachers.getNom(), teachers.getPrenom(), messaSender.messageTeacher(teachers, plainPassword)));
+//        emailPend.setSubject("Confirmation");
+//
+//        messaSender.sendSimpleMail(emailPend);
         teacher_repositorie.save(teachers);
         return DTO_response_string.fromMessage("Ajout effectué avec sucès", 200);
     }
@@ -91,22 +90,36 @@ public class Teachers_service {
         }
         return presenceExist;
     }
+
+//    -----------------------------------------------count number teacher
+    public int countNumber(){
+        return teacher_repositorie.countByActive(true);
+    }
 //    -------------------------------------methode pour modifier-----------------------------------------
-    public Object update(Teachers t, MultipartFile file) throws IOException {
-       System.out.println("------------------------------------------------------- +" + t);
+    public Object update(Teachers t) throws IOException {
         Teachers teachersExist = teacher_repositorie.findByIdEnseignantAndActive(t.getIdEnseignant(),true);
         if(teachersExist != null){
+            //           ------------------------- cas ou l'image ne pas changer--------------
+            updateIfNotEmpty(t.getNom(), teachersExist::setNom);
+            updateIfNotEmpty(t.getPrenom(), teachersExist::setPrenom);
+            updateIfNotEmpty(t.getEmail(), teachersExist::setEmail);
+            updateIfNotEmpty(t.getSexe(), teachersExist::setSexe);
+            updateIfNotEmpty(t.getPassword(), teachersExist::setPassword);
 
-            if (file != null && !file.isEmpty()) {
-                String urlPhoto = fileManagers.updateFile(file, teachersExist.getUrlPhoto());
-                teachersExist.setUrlPhoto(urlPhoto);
+            // Mise à jour conditionnelle pour les champs potentiellement nulls
+            if (t.getDiplome() != null) {
+                teachersExist.setDiplome(t.getDiplome());
             }
-//           ------------------------- cas ou l'image ne pas changer--------------
-                teachersExist.setNom(t.getNom());
-                teachersExist.setPrenom(t.getPrenom());
-                teachersExist.setEmail(t.getEmail());
+            System.out.println("--------------------------------------"+t.getIdUe());
+            if (t.getIdUe() != null) {
+                teachersExist.setIdUe(t.getIdUe());
+            }
+            if (t.getStatus() != null) {
+                teachersExist.setStatus(t.getStatus());
+            }
+            if (t.getTelephone() != 0) {
                 teachersExist.setTelephone(t.getTelephone());
-                teachersExist.setPassword(t.getPassword());
+            }
 
             teacher_repositorie.save(teachersExist);
             return DTO_response_string.fromMessage("Mise a jours effectuer avec sucès", 200);
@@ -119,12 +132,24 @@ public class Teachers_service {
 
 //    --------------------------------method pour lire les enseignants acti------------------------------
     public Page<Teachers> readAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Sort sort = Sort.by(Sort.Order.asc("prenom"));
+
+        Pageable pageable = PageRequest.of(page, size, sort);
         return teacher_repositorie.findAll(pageable);
+
     }
 
     public List<Teachers> readAll_teacher() {
         return teacher_repositorie.findAll();
+    }
+
+    public List<Teachers> readAll_byDiplome(long idUe) {
+        List<Teachers> list = teacher_repositorie.findByIdUeId(idUe);
+        if(list == null){
+            return new ArrayList<>();
+        }
+        return list;
+
     }
 
 //    -----------------------------------------------------mehod pour appeler un enseignant-------------
@@ -133,100 +158,100 @@ public class Teachers_service {
     }
 
 //    -----------------------------------method to add teacher in presence list------------------
-    public Object addPresence(TeachersPresence presence) {
-        presence.setDate(LocalDate.now());
-        // Recherche de la présence existante
-        TeachersPresence teachersPresenceExist = listPresenceTeacher_repositorie.findByIdSeanceIdAndIdSeanceIdTeacherIdEnseignantAndIdSeanceDateAndIdSeanceHeureFin(
-                presence.getIdSeance().getId(),
-                presence.getIdSeance().getIdTeacher().getIdEnseignant(),
-                LocalDate.now(),
-                presence.getIdSeance().getHeureFin()
-        );
-
-        // Si aucune présence n'existe encore, ajouter la présence avec observation à true
-        if (teachersPresenceExist != null) {
-            if(!teachersPresenceExist.isObservation()){
-                teachersPresenceExist.setObservation(true);
-               listPresenceTeacher_repositorie.save(teachersPresenceExist);
-
-                return DTO_response_string.fromMessage("Ajout effectuer avec succes", 200);
-
-            }
-//            throw new NoteFundException("Presence exist deja");
-
-        }
-        presence.setObservation(true);
-
-        // Sauvegarde de la présence dans tous les cas
-        listPresenceTeacher_repositorie.save(presence);
-        return DTO_response_string.fromMessage("Présence ajout effectuer avec succes", 200);
-    }
-
-
-
-    //    --------------------------------------------method change-observation un teacher
-    public Object change_observation(TeachersPresence presence){
-        TeachersPresence presenceExist = listPresenceTeacher_repositorie.findByIdSeanceIdTeacherIdEnseignantAndIdSeanceDateAndIdSeanceHeureFin(
-                presence.getIdSeance().getIdTeacher().getIdEnseignant(), presence.getIdSeance().getDate() ,presence.getIdSeance().getHeureFin()
-        );
-        if(presenceExist != null){
-            presenceExist.setObservation(!presenceExist.isObservation());
-            listPresenceTeacher_repositorie.save(presenceExist);
-            return DTO_response_string.fromMessage("Mise à jour effectuer avec succè",200);
-        }
-        throw new NoteFundException("Echec, Enseignants n'existe pas");
-    }
+//    public Object addPresence(TeachersPresence presence) {
+//        presence.setDate(LocalDate.now());
+//        // Recherche de la présence existante
+//        TeachersPresence teachersPresenceExist = listPresenceTeacher_repositorie.findByIdSeanceIdAndIdSeanceIdTeacherIdEnseignantAndIdSeanceDateAndIdSeanceHeureFin(
+//                presence.getIdSeance().getId(),
+//                presence.getIdSeance().getIdTeacher().getIdEnseignant(),
+//                LocalDate.now(),
+//                presence.getIdSeance().getHeureFin()
+//        );
+//
+//        // Si aucune présence n'existe encore, ajouter la présence avec observation à true
+//        if (teachersPresenceExist != null) {
+//            if(!teachersPresenceExist.isObservation()){
+//                teachersPresenceExist.setObservation(true);
+//               listPresenceTeacher_repositorie.save(teachersPresenceExist);
+//
+//                return DTO_response_string.fromMessage("Ajout effectuer avec succes", 200);
+//
+//            }
+////            throw new NoteFundException("Presence exist deja");
+//
+//        }
+//        presence.setObservation(true);
+//
+//        // Sauvegarde de la présence dans tous les cas
+//        listPresenceTeacher_repositorie.save(presence);
+//        return DTO_response_string.fromMessage("Présence ajout effectuer avec succes", 200);
+//    }
+//
+//
+//
+//    //    --------------------------------------------method change-observation un teacher
+//    public Object change_observation(TeachersPresence presence){
+//        TeachersPresence presenceExist = listPresenceTeacher_repositorie.findByIdSeanceIdTeacherIdEnseignantAndIdSeanceDateAndIdSeanceHeureFin(
+//                presence.getIdSeance().getIdTeacher().getIdEnseignant(), presence.getIdSeance().getDate() ,presence.getIdSeance().getHeureFin()
+//        );
+//        if(presenceExist != null){
+//            presenceExist.setObservation(!presenceExist.isObservation());
+//            listPresenceTeacher_repositorie.save(presenceExist);
+//            return DTO_response_string.fromMessage("Mise à jour effectuer avec succè",200);
+//        }
+//        throw new NoteFundException("Echec, Enseignants n'existe pas");
+//    }
 
 //    ----------------------------------------method get status of teacher
-    public List<TeachersPresence> getStatus(long idTeacher){
-
-        LocalDate today = LocalDate.now();
-        LocalDate startOfMonth = LocalDate.of(today.getYear(), today.getMonth(), 1);
-        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
-        System.out.println(endOfMonth);
-        List<TeachersPresence> list = listPresenceTeacher_repositorie.getByIdSeanceIdTeacherIdEnseignantAndIdSeanceDateBetween(idTeacher, startOfMonth, endOfMonth);
-        System.out.println("----------------------"+ list + " "+ idTeacher);
-        if(!list.isEmpty()){
-
-            return list;
-
-        }
-       return new ArrayList<>();
-    }
+//    public List<TeachersPresence> getStatus(long idTeacher){
+//
+//        LocalDate today = LocalDate.now();
+//        LocalDate startOfMonth = LocalDate.of(today.getYear(), today.getMonth(), 1);
+//        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
+//        System.out.println(endOfMonth);
+//        List<TeachersPresence> list = listPresenceTeacher_repositorie.getByIdSeanceIdTeacherIdEnseignantAndIdSeanceDateBetween(idTeacher, startOfMonth, endOfMonth);
+//        System.out.println("----------------------"+ list + " "+ idTeacher);
+//        if(!list.isEmpty()){
+//
+//            return list;
+//
+//        }
+//       return new ArrayList<>();
+//    }
 
     //    ----------------------------------- method pour appeler laliste de presences------------------------------
-    public Page<TeachersPresence> getListPresence(int page, int pageSize) {
-        Pageable pageable = PageRequest.of(page, pageSize);
-        LocalDate today = LocalDate.now();
-        LocalDate startOfMonth = LocalDate.of(today.getYear(), today.getMonth(), 1);
-        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
-        Page<TeachersPresence> list = listPresenceTeacher_repositorie.getByObservationAndIdSeanceDateBetween(true, startOfMonth, endOfMonth, pageable);
-        List<Paie> listPaie = readAllPaie();
-        List<TeachersPresence> newListPresence = new ArrayList<>();
-
-        for (TeachersPresence presence : list) {
-            boolean hasPaie = false;
-            for (Paie paie : listPaie) {
-                if (paie.getIdPresenceTeachers().getIdSeance().equals(presence.getIdSeance())) {
-                    hasPaie = true;
-                    break;
-                }
-            }
-            if (!hasPaie) {
-                newListPresence.add(presence);
-            }
-        }
-
-        // Paginate newListPresence
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), newListPresence.size());
-        List<TeachersPresence> subList = newListPresence.subList(start, end);
-
-        return new PageImpl<>(subList, pageable, newListPresence.size());
-    }
+//    public Page<TeachersPresence> getListPresence(int page, int pageSize) {
+//        Pageable pageable = PageRequest.of(page, pageSize);
+//        LocalDate today = LocalDate.now();
+//        LocalDate startOfMonth = LocalDate.of(today.getYear(), today.getMonth(), 1);
+//        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
+//        Page<TeachersPresence> list = listPresenceTeacher_repositorie.getByObservationAndIdSeanceDateBetween(true, startOfMonth, endOfMonth, pageable);
+//        List<Paie> listPaie = readAllPaie();
+//        List<TeachersPresence> newListPresence = new ArrayList<>();
+//
+//        for (TeachersPresence presence : list) {
+//            boolean hasPaie = false;
+//            for (Paie paie : listPaie) {
+//                if (paie.getIdPresenceTeachers().getIdSeance().equals(presence.getIdSeance())) {
+//                    hasPaie = true;
+//                    break;
+//                }
+//            }
+//            if (!hasPaie) {
+//                newListPresence.add(presence);
+//            }
+//        }
+//
+//        // Paginate newListPresence
+//        int start = (int) pageable.getOffset();
+//        int end = Math.min((start + pageable.getPageSize()), newListPresence.size());
+//        List<TeachersPresence> subList = newListPresence.subList(start, end);
+//
+//        return new PageImpl<>(subList, pageable, newListPresence.size());
+//    }
 
     //    ----------------------------------method get all teachers paie----------------------------------
-    public List<Paie> readAllPaie(){
+    public List<PaieDTO> readAllPaie(){
         LocalDate today = LocalDate.now();
         LocalDate startOfMonth = LocalDate.of(today.getYear(), today.getMonth(), 1);
         LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
@@ -234,7 +259,16 @@ public class Teachers_service {
         if (paieList.isEmpty()){
             return new ArrayList<>();
         }
-        return paieList;
+
+
+        List<PaieDTO> dtoList = paieList.stream()
+                .map(PaieDTO::fromPaieDTO)
+                .toList();
+        for (PaieDTO paie : dtoList) {
+            int teacherHours = paie_repositorie.findTotalHoursByTeacherId(paie.getIdTeacher());
+            paie.setNbreHeures(teacherHours);
+        }
+        return dtoList;
     }
 //    -------------------------------------method pour appeler les heures paiyer de teacher
     public List<Paie> getAll_paie_byIdTeacher(long idTeacher){
@@ -242,7 +276,7 @@ public class Teachers_service {
         LocalDate today = LocalDate.now();
         LocalDate startOfMonth = LocalDate.of(today.getYear(), today.getMonth(), 1);
         LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
-        List<Paie> paies = paie_repositorie.getByDateBetweenAndIdPresenceTeachersIdSeanceIdTeacherIdEnseignant(
+        List<Paie> paies = paie_repositorie.getByDateBetweenAndJourneeIdTeacherIdEnseignant(
                 startOfMonth, endOfMonth, idTeacher
         ) ;
         if (paies.isEmpty()){
@@ -263,31 +297,37 @@ public class Teachers_service {
         return paieList;
     }
 //    ---------------------------------mehod add paie-----------------------------------
-    public Object addPaie(Paie paie){
-
-        paie.setDate(LocalDate.now());
-        Paie paieExist = paie_repositorie.getByIdPresenceTeachersId(
-                 paie.getIdPresenceTeachers().getId());
-        if(paieExist !=null) {
-
-                throw new RuntimeException("cet enseignant est déjà payer a cette date");
-
-        }
-        paie_repositorie.save(paie);
-        return DTO_response_string.fromMessage("Paiement effectué avec succès",200);
-    }
+//    public Object addPaie(Paie paie){
+//
+//        paie.setDate(LocalDate.now());
+//        Paie paieExist = paie_repositorie.getByIdPresenceTeachersId(
+//                 paie.getIdPresenceTeachers().getId());
+//        if(paieExist !=null) {
+//
+//                throw new RuntimeException("cet enseignant est déjà payer a cette date");
+//
+//        }
+//        paie_repositorie.save(paie);
+//        return DTO_response_string.fromMessage("Paiement effectué avec succès",200);
+//    }
 //    -----------------------------------------methode update paiement--------------------
-    public Paie updatePaie(Paie paie){
-        Paie paieExist = paie_repositorie.findByDateAndIdPresenceTeachersIdSeanceIdTeacherIdEnseignant(
-                paie.getDate(), paie.getIdPresenceTeachers().getIdSeance().getIdTeacher().getIdEnseignant());
-        if(paieExist == null){
-            throw  new RuntimeException("paiement no exist");
-        }
-        paieExist.setCoutHeure(paie.getCoutHeure());
-        paieExist.setDate(LocalDate.now());
+//    public Paie updatePaie(Paie paie){
+//        Paie paieExist = paie_repositorie.findByDateAndIdPresenceTeachersIdSeanceIdTeacherIdEnseignant(
+//                paie.getDate(), paie.getIdPresenceTeachers().getIdSeance().getIdTeacher().getIdEnseignant());
+//        if(paieExist == null){
+//            throw  new RuntimeException("paiement no exist");
+//        }
+//        paieExist.setCoutHeure(paie.getCoutHeure());
+//        paieExist.setDate(LocalDate.now());
+//
+////        int heure =   seance_service.nbreHeure(paie.getIdPresenceTeachers().getIdSeance().getIdTeacher());
+////        paieExist.setNbreHeures(heure);
+//        return paie_repositorie.save(paieExist);
+//    }
 
-//        int heure =   seance_service.nbreHeure(paie.getIdPresenceTeachers().getIdSeance().getIdTeacher());
-//        paieExist.setNbreHeures(heure);
-        return paie_repositorie.save(paieExist);
+    public void updateIfNotEmpty(String newValue, Consumer<String> setter) {
+        if (newValue != null && !newValue.isEmpty()) {
+            setter.accept(newValue);
+        }
     }
 }

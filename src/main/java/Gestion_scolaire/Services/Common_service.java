@@ -1,12 +1,8 @@
 package Gestion_scolaire.Services;
 
-import Gestion_scolaire.Dto_classe.DTO_response_string;
-import Gestion_scolaire.Models.Salles;
-import Gestion_scolaire.Models.SeanceConfig;
-import Gestion_scolaire.Models.Seances;
-import Gestion_scolaire.Repositories.Salles_repositorie;
-import Gestion_scolaire.Repositories.SeancType_repositorie;
-import Gestion_scolaire.Repositories.Seance_repositorie;
+import Gestion_scolaire.EnumClasse.Seance_type;
+import Gestion_scolaire.Models.*;
+import Gestion_scolaire.Repositories.*;
 import Gestion_scolaire.configuration.NoteFundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,19 +23,26 @@ public class Common_service {
     @Autowired
     private Seance_repositorie seance_repositorie;
 
+
     @Autowired
-    SeancType_repositorie seancType_repositorie;
+    private Emplois_repositorie emplois_repositorie;
+
+    @Autowired
+    private  Journee_repositorie journee_repositorie;
+
+    @Autowired
+    private Paie_repositorie paie_repositorie;
 
     public List<Salles> salle_occuper(){
         List<Salles> salles = sallesRepositorie.findAll();
         List<Salles> salles_occuper = new ArrayList<>();
 
         for (Salles salle : salles) {
-            List<Seances> seancesActif = getAllSeancesActive(salle.getId());
+            List<Journee> seancesActif = getAllSeancesActive(salle.getId());
             boolean hasSeanceActif = false;
-            for (Seances seance : seancesActif) {
+            for (Journee jour : seancesActif) {
 
-                if(seance.getIdSalle().getId() == salle.getId()){
+                if(jour.getIdSalle().getId() == salle.getId()){
                     hasSeanceActif = true;
                     break;
 
@@ -54,8 +57,8 @@ public class Common_service {
     }
 
     //    -------------------------all seance active by id salle
-    public List<Seances> getAllSeancesActive(long idSalle){
-        List<Seances> seancesList = seance_repositorie.getAllByIdSalle_Id(idSalle, LocalDate.now());
+    public List<Journee> getAllSeancesActive(long idSalle){
+        List<Journee> seancesList = journee_repositorie.getAllByIdSalle_Id(idSalle, LocalDate.now());
         if (seancesList.isEmpty()) {
             return new ArrayList<>();
         }
@@ -68,11 +71,11 @@ public class Common_service {
         List<Salles> salles_occuper = new ArrayList<>();
 
         for (Salles salle : salles) {
-            List<Seances> seancesActif = getAllSeancesActive(salle.getId());
+            List<Journee> seancesActif = getAllSeancesActive(salle.getId());
             boolean hasSeanceActif = false;
-            for (Seances seance : seancesActif) {
+            for (Journee jour : seancesActif) {
 
-                if(seance.getDate().equals(date)){
+                if(jour.getDate().equals(date)){
                     hasSeanceActif = true;
                     break;
 
@@ -102,7 +105,6 @@ public class Common_service {
         return plagesHoraires;
     }
 
-
     //    ------------------------------methode pour eviter le chevauchement d'heure
     public boolean isOverlapping(Seances newSeance, Seances existingSeance) {
         LocalDateTime newStart = newSeance.getDate().atTime(newSeance.getHeureDebut());
@@ -114,26 +116,57 @@ public class Common_service {
         return newStart.isBefore(existingEnd) && existingStart.isBefore(newEnd);
     }
 
-    public Object createConfig(List<SeanceConfig> seanceConfig){
-//        System.out.println("------------------------"+seanceConfig);
-        boolean hasConfig = false;
-        for (SeanceConfig sc : seanceConfig) {
-            SeanceConfig confiExist = seancType_repositorie.getByHeureDebutAndHeureFinAndIdSeanceId(sc.getHeureDebut(), sc.getHeureFin(),
-                    sc.getIdSeance().getId());
-            if (confiExist == null) {
-                seancType_repositorie.save(sc);
-                hasConfig = true;
 
+    //    ------------------------------------------------------------------------------
+    public void validateSeance(Journee seances) {
+        Journee jourExist = journee_repositorie.findByDateAndIdEmploisIdAndIdTeacherIdEnseignantAndHeureFin(
+                seances.getDate(), seances.getIdEmplois().getId(), seances.getIdTeacher().getIdEnseignant(), seances.getHeureFin());
+        if(jourExist != null){
+            throw new NoteFundException("Une seance existe déjà pour cette date : "  +  jourExist.getDate());
+        }
+
+        if (seances.getHeureFin().equals(seances.getHeureDebut())) {
+            throw new NoteFundException("Invalid, vérifier les heures");
+        }
+        if (seances.getHeureFin().isBefore(seances.getHeureDebut())) {
+            throw new NoteFundException("Invalid, l'heure de fin est inférieure à l'heure de début");
+        }
+
+        Emplois emploisExist = emplois_repositorie.findById(seances.getIdEmplois().getId());
+        if(emploisExist == null){
+            throw new NoteFundException("L'emploi du temps n'existe pas");
+        }
+        LocalDate dateSeance = seances.getDate();
+
+        if (dateSeance.isBefore(emploisExist.getDateDebut()) || dateSeance.isAfter(emploisExist.getDateFin())) {
+            throw new RuntimeException("La date de la séance doit être comprise entre la date de début et de fin de l'emploi du temps");
+        }
+
+
+
+        for (Seances existingSeance : seance_repositorie.getAllByDate(seances.getDate())) {
+            if (seances.getHeureFin().isAfter(existingSeance.getHeureDebut()) && seances.getHeureFin().isBefore(existingSeance.getHeureFin())) {
+                throw new NoteFundException("L'heure de fin de la séance se trouve dans l'intervalle d'une autre séance existante.");
             }
+        }
+    }
+//-----------------------------------------create paie for config
+    public void createPaieForConfig(Journee jour) {
+        Duration duration = Duration.between(jour.getHeureDebut(), jour.getHeureFin());
+        long heures = duration.toHours() - 2;
 
+        Paie paie = new Paie();
+        paie.setJournee(jour);
+        paie.setDate(jour.getDate());
+
+        if (jour.getSeanceType().equals(Seance_type.examen) || jour.getSeanceType().equals(Seance_type.session)) {
+            paie.setCoutHeure(5000);
+        }else {
+            paie.setCoutHeure(10000);
         }
 
-        if (hasConfig) {
-            return DTO_response_string.fromMessage("Ajout effectué avec succès", 200);
-        } else {
-            throw new NoteFundException("Une configuration existante est trouver");
-        }
-
+        paie.setNbreHeures((int) heures);
+        paie_repositorie.save(paie);
     }
 
 }

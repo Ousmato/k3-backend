@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -48,9 +49,25 @@ public class Salles_service {
 //    ----------------------------------------get all salles
     public List<Salles> getAllSalles() {
         List<Salles> sallesList = sallesRepositorie.findAll();
+
         if (sallesList.isEmpty()) {
             return new ArrayList<>();
         }
+        sallesList.sort((s1, s2) -> {
+            String[] parts1 = s1.getNom().split("-");
+            String[] parts2 = s2.getNom().split("-");
+
+            // Comparer d'abord la partie alphabétique (ex: "E2" vs "E2")
+            int comparePrefix = parts1[0].compareTo(parts2[0]);
+            if (comparePrefix != 0) {
+                return comparePrefix;
+            }
+
+            // Comparer la partie numérique (ex: 10 vs 2)
+            Integer num1 = Integer.parseInt(parts1[1]);
+            Integer num2 = Integer.parseInt(parts2[1]);
+            return num1.compareTo(num2);
+        });
         return sallesList;
     }
 

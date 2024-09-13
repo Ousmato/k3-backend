@@ -13,6 +13,6 @@ public interface Participant_repositorie extends JpaRepository<Participant, Long
 
     List<Participant> findByIdStudentGroupId(long idStudentGroupId);
 
-    List<Participant> getByIdStudentGroupIdEmploiId(long idEmplois);
+    List<Participant> getByIdStudentGroupIdEmploiIdClasseId(long idClasse);
 
 }

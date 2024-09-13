@@ -15,7 +15,8 @@ public class StudentsClasse {
     private long id;
 
     @NotNull
-    private int anneeScolaire;
+    @ManyToOne
+    private AnneeScolaire idAnneeScolaire;
 
     @NotNull
     private int effectifs = 0;

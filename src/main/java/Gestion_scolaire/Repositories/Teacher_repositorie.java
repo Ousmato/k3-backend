@@ -1,6 +1,9 @@
 package Gestion_scolaire.Repositories;
 
 import Gestion_scolaire.Models.Teachers;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,4 +17,9 @@ public interface Teacher_repositorie extends JpaRepository<Teachers, Long> {
 
     Teachers findByIdEnseignant(long id);
     List<Teachers> findByActive(boolean isActive);
+
+    List<Teachers> findByIdUeId(long idUe);
+
+    int countByActive(boolean isActive);
+
 }

@@ -4,6 +4,7 @@ import Gestion_scolaire.Models.Filiere;
 import Gestion_scolaire.Models.Niveau;
 import Gestion_scolaire.Models.NiveauFilieres;
 import Gestion_scolaire.Services.Filieres_service;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @RestController
 @Slf4j
-@RequestMapping("/filiere")
+@RequestMapping("/api-filiere")
 public class Filiere_controller {
 
     @Autowired
@@ -24,26 +25,35 @@ public class Filiere_controller {
 
     @PostMapping("/addFiliere")
     public Object add(@RequestBody Filiere filiere){
-            objectFiliere = filieres_service.create(filiere);
-            return  objectFiliere;
-    }
-//--------------------------------------------------------add niveau filiere---------------------------
-    @PostMapping("/add")
-    public Object add(@RequestBody NiveauFilieres request) {
-        Niveau niveau = request.getIdNiveau();
-        Filiere filiere = objectFiliere;
+           return filieres_service.create(filiere);
 
-        return filieres_service.add(filiere, niveau);
     }
+
 //    ---------------------------------------------method pour lire la liste de niveau filiere---------------
-    @GetMapping("liste")
+    @GetMapping("/list-mentions")
+    @Operation(summary = "Recuperer la liste des niveau et filiere associer")
     public List<NiveauFilieres> liste(){
        return filieres_service.readNivFil();
     }
-//    ----------------------------update niveau filiere
-    @PutMapping("/update-niveau-filiere")
-    public Object update(@RequestBody NiveauFilieres niveauFilieres){
-       return filieres_service.update(niveauFilieres);
 
+    //    --------------------------------------------
+    @PutMapping("/update")
+    @Operation(summary = "Modifier la filiere")
+    public Object update(@RequestBody Filiere filiere){
+        return filieres_service.updateFilirer(filiere);
+    }
+
+    //-----------------------------------------
+    @GetMapping("/readAll")
+    @Operation(summary = "Recuperer la liste des filieres")
+    public List<Filiere> readAll(){
+      return   filieres_service.getFilieres();
+    }
+
+    //-------------------------------------
+    @DeleteMapping("/filiere-delete/{idFiliere}")
+    @Operation(summary = "Suppression du filiere sans association")
+    public Object deleteFiliere(@PathVariable int idFiliere){
+        return filieres_service.deleteFiliere(idFiliere);
     }
 }

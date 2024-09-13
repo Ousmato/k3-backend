@@ -21,11 +21,17 @@ public class Emplois {
     @NotNull
     private LocalDate dateFin;
 
+    @NotNull
     @ManyToOne
     private StudentsClasse idClasse;
 
+    @NotNull
     @ManyToOne
     private Semestres idSemestre;
+
+    @NotNull
+    @ManyToOne
+    private Modules idModule;
 
     private boolean valid = false;
 

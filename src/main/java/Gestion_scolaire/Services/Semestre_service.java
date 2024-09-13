@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,15 +25,25 @@ public class Semestre_service {
 
     public Object add_semestre(Semestres semestre) throws NoteFundException {
         // Vérifie si un semestre avec le même nom et la même date de fin existe déjà
-        Semestres s = semestre_repositorie.findByNomSemetreAndDatFin(semestre.getNomSemetre(), semestre.getDatFin());
+        Semestres s = semestre_repositorie.findByNomSemetreAndIdAnneeScolaireId(semestre.getNomSemetre(), semestre.getIdAnneeScolaire().getId());
         if (s != null) {
-            throw new NoteFundException("Le semestre avec ce nom et la date de fin existe déjà");
+            throw new NoteFundException("Impossible, le semestre existe déjà pour cette année ");
         }
+        Period period = Period.between(semestre.getDateDebut(), semestre.getDatFin());
+        if (period.toTotalMonths() < 4 || period.toTotalMonths() > 6 ) {
+            throw new NoteFundException("La période pour une semestre ne dois pas etre supérieur a 6 mois ou inférieur a 4mois ");
 
-        // Sauvegarde le nouveau semestre
-        semestre_repositorie.save(semestre);
+        }
+        LocalDate anneeDebutDate = semestre.getIdAnneeScolaire().getDebutAnnee();
+        LocalDate anneeFinDate = semestre.getIdAnneeScolaire().getFinAnnee();
+        if ((semestre.getDatFin().isAfter(anneeDebutDate.minusDays(1)) && semestre.getDateDebut().isBefore(anneeFinDate.plusDays(1)))) {
+            // Sauvegarde le nouveau semestre
+            semestre_repositorie.save(semestre);
 
-        return DTO_response_string.fromMessage("Ajout effectué avec succès", 200);
+            return DTO_response_string.fromMessage("Ajout effectué avec succès", 200);
+        }
+        throw new NoteFundException("Le semestre dois etre dans l'intervalle de la promotion " + anneeFinDate.getYear());
+
     }
 
 
@@ -61,15 +72,25 @@ public class Semestre_service {
             throw new NoteFundException("La date debut ne pas etre inferieur a la date de fin");
         }
 
-//        if (semestre.getDatFin().isBefore(currentSemestre.getDateDebut())){
-//            throw  new NoteFundException("La date du %sne doit pas etre inferieur a la date de fin du semestre acctuel".formatted(semestre.getNomSemetre()));
-//        }
+        Period period = Period.between(semestre.getDateDebut(), semestre.getDatFin());
+        if (period.toTotalMonths() < 4 || period.toTotalMonths() > 6 ) {
+            throw new NoteFundException("La période pour une semestre ne dois pas etre supérieur a 6 mois ou inférieur a 4mois ");
 
-        smExist.setDateDebut(semestre.getDateDebut());
-        smExist.setDatFin(semestre.getDatFin());
-       semestre_repositorie.save(smExist);
+        }
 
-        return DTO_response_string.fromMessage("Mise à jour effectuée avec succès", 200);
+        LocalDate anneeDebutDate = semestre.getIdAnneeScolaire().getDebutAnnee();
+        LocalDate anneeFinDate = semestre.getIdAnneeScolaire().getFinAnnee();
+        if ((semestre.getDatFin().isAfter(anneeDebutDate.minusDays(1)) && semestre.getDateDebut().isBefore(anneeFinDate.plusDays(1)))) {
+
+            smExist.setNomSemetre(semestre.getNomSemetre());
+            smExist.setDateDebut(semestre.getDateDebut());
+            smExist.setDatFin(semestre.getDatFin());
+            semestre_repositorie.save(smExist);
+
+            return DTO_response_string.fromMessage("Mise à jour effectuée avec succès", 200);
+        }
+        throw new NoteFundException("Le semestre dois etre dans l'intervalle de la promotion " + anneeFinDate.getYear());
+        
     }
 
 //    --------------------------------------------get semestre by idClasse

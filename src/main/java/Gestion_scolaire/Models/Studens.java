@@ -44,7 +44,4 @@ public class Studens extends UsersAbstract {
     @ManyToOne
     private  StudentsClasse idClasse;
 
-    @NotNull
-    @ManyToOne
-    private AnneeScolaire idAnneeScolaire;
 }

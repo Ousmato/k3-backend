@@ -1,6 +1,8 @@
 package Gestion_scolaire.Services;
 
+import Gestion_scolaire.Dto_classe.AddModuleDTO;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
+import Gestion_scolaire.Dto_classe.ModuleDTO;
 import Gestion_scolaire.Models.Modules;
 import Gestion_scolaire.Models.Notes;
 import Gestion_scolaire.Repositories.Modules_repositories;
@@ -33,13 +35,27 @@ public class Modules_service {
     return list;
     }
 //    -----------------------------------------------method pour ajouter un module dans la class module-----------
-    public Object addModule(Modules module){
-        Modules modulesExist = modules_repositories.findByIdUeAndNomModule(module.getIdUe(), module.getNomModule());
-        if(modulesExist == null){
-             modules_repositories.save(module);
-             return DTO_response_string.fromMessage("Ajout effectué avec succè",200);
+    public Object addModule(AddModuleDTO module){
+        boolean isSaved = false;
+        for (Modules modules: module.getModules()){
+            Modules modulesExist = modules_repositories.findByIdUeAndNomModule(module.getIdUe(), modules.getNomModule());
+
+            if(modulesExist == null){
+                Modules mod = new Modules();
+                mod.setIdUe(module.getIdUe());
+                mod.setNomModule(modules.getNomModule());
+                mod.setCoefficient(modules.getCoefficient());
+                modules_repositories.save(mod);
+                isSaved = true;
+
+            }
         }
-        throw new RuntimeException("ce module existe deja");
+        if (isSaved) {
+            return DTO_response_string.fromMessage("Ajout effectué avec succès", 200);
+        } else {
+            // Si aucun module n'a été ajouté, cela signifie qu'ils existent tous
+            throw new RuntimeException("Tous les modules existent déjà");
+        }
     }
 
 //    ---------------------------------------method pour appeler la liste-----------------------------

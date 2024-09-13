@@ -20,12 +20,10 @@ public class Paie {
     @NotNull
     private int nbreHeures;
 
-//    @NotNull
-//    private double montant;
 
     @NotNull
     private LocalDate date;
 
     @ManyToOne
-    private TeachersPresence idPresenceTeachers;
+    private Journee journee;
 }

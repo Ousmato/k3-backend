@@ -89,9 +89,8 @@ public class Groupe_service {
 
 
     //    ---------------get all participation by emploi id
-    public List<Participant> ge_allBy_idEmploi(long idEmploi){
-        System.out.println("---------------------------"+idEmploi);
-        List<Participant> participantList = participant_repositorie.getByIdStudentGroupIdEmploiId(idEmploi);
+    public List<Participant> ge_allBy_idClass(long idClass){
+        List<Participant> participantList = participant_repositorie.getByIdStudentGroupIdEmploiIdClasseId(idClass);
 
         if(participantList.isEmpty()){
             return new ArrayList<>();

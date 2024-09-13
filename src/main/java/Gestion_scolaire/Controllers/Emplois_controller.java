@@ -1,5 +1,6 @@
 package Gestion_scolaire.Controllers;
 
+import Gestion_scolaire.Dto_classe.EmploisDTO;
 import Gestion_scolaire.Models.Emplois;
 import Gestion_scolaire.Services.Emplois_service;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +24,9 @@ public class Emplois_controller {
             return emplois_service.add(emplois);
     }
 //    ------------------------get emplois by idClasse--------------------------------------
-    @GetMapping("/read/{idClasse}")
-    public Emplois readByIdClass(@PathVariable long idClasse){
-            return emplois_service.getByIdClasse(idClasse);
+    @GetMapping("/read/{idEmploi}")
+    public Emplois readByIdClass(@PathVariable long idEmploi){
+            return emplois_service.getById(idEmploi);
     }
 //    -----------------------------method update emplois-----------------------------------
     @PutMapping("/update")
@@ -33,11 +34,11 @@ public class Emplois_controller {
             return emplois_service.update(emplois);
     }
 //    --------------------------methode get all emplois- teacher--------------------
-    @GetMapping("/list/{idTeacher}")
-    public List<Emplois> getAllByIdTeacher(@PathVariable long idTeacher){
-        return emplois_service.findAllEmploisByTeacher(idTeacher);
-
-    }
+//    @GetMapping("/list/{idTeacher}")
+//    public List<Emplois> getAllByIdTeacher(@PathVariable long idTeacher){
+//        return emplois_service.findAllEmploisByTeacher(idTeacher);
+//
+//    }
 //    -------------------------------------get emplois by id ----------------------
     @GetMapping("/emplois/{id}")
     public Emplois getById(@PathVariable long id){
@@ -68,5 +69,11 @@ public class Emplois_controller {
     @GetMapping("/all-actifs-emplois")
     public List<Emplois> emploisActif(){
             return emplois_service.listEmploisActifs();
+    }
+
+//    ------------------------------------------all-actifs-emplois-with-seances
+    @GetMapping("/all-actifs-emplois-with-seances")
+    public List<EmploisDTO> emploisActifWithSeances(){
+        return emplois_service.listEmploisActifs_with_seances();
     }
 }

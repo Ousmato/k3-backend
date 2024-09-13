@@ -1,6 +1,8 @@
 package Gestion_scolaire.Controllers;
 
+import Gestion_scolaire.Dto_classe.AddModuleDTO;
 import Gestion_scolaire.Dto_classe.DTO_ClassModule;
+import Gestion_scolaire.Dto_classe.ModuleDTO;
 import Gestion_scolaire.Models.ClasseModule;
 import Gestion_scolaire.Models.Modules;
 import Gestion_scolaire.Models.UE;
@@ -39,7 +41,7 @@ public class UeAndModule_controller {
     }
 //    -----------------------------------------methode add module in module---------------
     @PostMapping("/add-module")
-    public Object addModule(@RequestBody Modules module){
+    public Object addModule(@RequestBody AddModuleDTO module){
        return modules_service.addModule(module);
     }
 //    --------------------------------------------method get list all eu----------------------

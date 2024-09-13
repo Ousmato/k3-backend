@@ -1,5 +1,6 @@
 package Gestion_scolaire.Models;
 
+import Gestion_scolaire.EnumClasse.DocType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -15,14 +16,11 @@ public class Documents {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotNull
-    private String titre;
 
     @NotNull
-    private String description;
+    @Enumerated(EnumType.STRING)
+    private DocType docType;
 
-    @NotNull
-    private String docUrl;
 
     @NotNull
     private boolean deleted = false;
@@ -30,10 +28,10 @@ public class Documents {
     @NotNull
     private LocalDate date = LocalDate.now();
 
-    @NotNull
-    private double DocSize;
 
-    @ManyToOne
-    private Seances idSeance;
+
+    @NotNull
+    private boolean soutenue = false;
+
 
 }

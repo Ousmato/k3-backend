@@ -2,13 +2,18 @@ package Gestion_scolaire.Controllers;
 
 import Gestion_scolaire.Dto_classe.CuntStudentDTO;
 import Gestion_scolaire.Dto_classe.DTO_scolarite;
+import Gestion_scolaire.Dto_classe.DocDTO;
+import Gestion_scolaire.Dto_classe.SoutenanceDTO;
 import Gestion_scolaire.Models.*;
+import Gestion_scolaire.Services.Common_service;
+import Gestion_scolaire.Services.Doc_service;
 import Gestion_scolaire.Services.Groupe_service;
 import Gestion_scolaire.Services.Student_service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,6 +33,8 @@ public class Student_controller {
 
     @Autowired
     private Groupe_service groupe_service;
+    @Autowired
+    private Doc_service doc_service;
 
 
     @PostMapping("/add")
@@ -35,8 +42,8 @@ public class Student_controller {
             @RequestParam("student") String studensString,
             @RequestParam(value = "file", required = false) MultipartFile urlFile) throws IOException {
 
-            ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT,true);
-            objectMapper.registerModule(new JavaTimeModule());
+            ObjectMapper objectMapper = new ObjectMapper();
+//            objectMapper.registerModule(new JavaTimeModule());
             Studens students = objectMapper.readValue(studensString, Studens.class);
 
             if (!urlFile.isEmpty()) {
@@ -66,7 +73,7 @@ public class Student_controller {
 //        System.out.println("------------------" + urlFile.getOriginalFilename() + "--------------" + studensString + "---------------------------");
 
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
+//        objectMapper.registerModule(new JavaTimeModule());
         Studens studens = objectMapper.readValue(studensString, Studens.class);
         // Vérifie si urlFile est null ou vide
         if (urlFile == null) {
@@ -154,9 +161,9 @@ public class Student_controller {
     }
 
 //    --------------get all participant by emplois id
-    @GetMapping("/list-participant-by-emploi-id/{emploiId}")
-    public List<Participant> getListParticipantByEmploiId(@PathVariable long emploiId){
-        return groupe_service.ge_allBy_idEmploi(emploiId);
+    @GetMapping("/list-participant-by-class-id/{idClasse}")
+    public List<Participant> getListParticipantByClassId(@PathVariable long idClasse){
+        return groupe_service.ge_allBy_idClass(idClasse);
     }
 
 //    -----------------------get All Students By Group
@@ -183,9 +190,88 @@ public class Student_controller {
         return student_service.cunt_student_inscrit();
     }
 //    -------------------------------------------------reincreiption method
-    @PostMapping("/re-inscription")
-    public Object reInscription(@RequestBody Studens studens){
-            return student_service.reinscription(studens);
+    @GetMapping("/re-inscription/{idStudent}/{idClasse}/{idAnnee}")
+    public Object reInscription(@PathVariable long idStudent, @PathVariable long idClasse, @PathVariable long idAnnee){
+            return student_service.reinscription(idStudent, idClasse, idAnnee);
     }
 
+    //    ---------------------------------------
+    @PostMapping("add-doc")
+    @Operation(summary = "Ajouter un document (rapport ou memoire)")
+    public Object addDoc(@RequestBody DocDTO doc){
+        return doc_service.addDoc(doc);
+    }
+
+    //    -------------------------------------------
+    @GetMapping("all-docs")
+    @Operation(summary = "Recuperer la liste des document")
+    public List<Documents> getAllDocs(){
+        return doc_service.getAllDocs();
+
+    }
+
+    // ----------------------------------------------
+    @GetMapping("/all-docs-by-idClass-and-idAnnee/{idAnnee}")
+    @Operation(summary = "Recuperer tous les docs avec idAnnee et id Classe")
+    public Page<DocDTO> getAllDocsByIdClassAndIdAnnee(
+            @RequestParam (defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @PathVariable long idAnnee) {
+        return doc_service.getByIdAnneeAndIdClasse(page, size, idAnnee);
+    }
+
+    //---------------------------------------------
+
+    @GetMapping("/default-docs-curent-year")
+    @Operation(summary = "Recuperer les docs de l'annee en cours")
+    public Page<DocDTO> getDefaultofYear(
+            @RequestParam (defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return doc_service.defultCurrentDocs(page, size);
+    }
+
+    //------------------------------------------------------
+    @GetMapping("/all-docs-by-idClasse/{idClasse}")
+    @Operation(summary = "Recuperer tous les doccument de la classe")
+    public List<DocDTO> getAllDocsByIdClasse(@PathVariable long idClasse) {
+        return doc_service.getDocsByIdClass(idClasse);
+    }
+
+    //    -------------------------------------------
+    @PostMapping("/add-soutenance")
+    @Operation(summary = "Programer une soutenance")
+    public Object addSoutenance(@RequestBody SoutenanceDTO soutenance){
+        return doc_service.addProgramSoutenance(soutenance);
+    }
+
+    //-------------------------------------
+    @GetMapping("/all-soutenance-actif")
+    @Operation(summary = "Recuperer la liste des soutenance programmer actif")
+    public List<SoutenanceDTO> getAllSoutenanceActif(){
+        return doc_service.getAllSoutenancesActive();
+    }
+    //-------------------------------------------
+    @GetMapping("/memoire-number")
+    @Operation(summary = "Recuperer les nombre de memoire ")
+    public int countMemoire(){
+        return doc_service.countMemoire();
+    }
+
+    //    ----------------
+    @GetMapping("/rapport-number")
+    @Operation(summary = "Recuperer les nombre de rapport ")
+    public int countRapport(){
+        return doc_service.countRapport();
+    }
+
+    //------------------------
+    @GetMapping("/get-student-annee-and-classe/{idAnnee}/{idClasse}")
+    @Operation(summary = "Recuperer la list des etudiant d'une classe par année")
+    public Page<Studens> getStudentAnneeAndIdClasse(
+            @PathVariable long idAnnee,
+            @PathVariable long idClasse,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return student_service.getStudentByIDAnneeAndIdClasse(idAnnee, idClasse, page, size);
+    }
 }

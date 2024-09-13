@@ -1,12 +1,10 @@
 package Gestion_scolaire.Services;
 
+import Gestion_scolaire.Dto_classe.AddClassDTO;
 import Gestion_scolaire.Dto_classe.DTO_ClassModule;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Models.*;
-import Gestion_scolaire.Repositories.ClasseModule_repositorie;
-import Gestion_scolaire.Repositories.Classe_repositorie;
-import Gestion_scolaire.Repositories.NiveauFiliere_repositorie;
-import Gestion_scolaire.Repositories.Students_repositorie;
+import Gestion_scolaire.Repositories.*;
 import Gestion_scolaire.configuration.NoteFundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,9 +22,21 @@ public class Classe_service {
     @Autowired
     private Classe_repositorie classe_repositorie;
 
+    @Autowired
+    private Filieres_service filieresService;
+
+    @Autowired
+    private Niveau_repositorie niveau_repositorie;
+
+    @Autowired
+    private Filiere_repositorie filiere_repositorie;
+
 
     @Autowired
     private Students_repositorie students_repositorie;
+
+    @Autowired
+    private AnneeScolaire_repositorie annee_scolaire_repositorie;
 
     @Autowired
     private NiveauFiliere_repositorie niveauFiliere_repositorie;
@@ -71,23 +81,31 @@ public class Classe_service {
 
 //    ------------------------------------------------------------------------------------------
 
-    public Object create(StudentsClasse classe){
-        NiveauFilieres filiereExist = niveauFiliere_repositorie.findByIdFiliereAndIdNiveau(
-                classe.getIdFiliere().getIdFiliere(),classe.getIdFiliere().getIdNiveau());
-
-        StudentsClasse classExist = classe_repositorie.findByIdFiliereIdAndIdFiliereIdNiveauId(
-                classe.getIdFiliere().getId(),classe.getIdFiliere().getIdNiveau().getId());
-        if(classExist != null){
-            throw new NoteFundException("La mention avec cette filière existe déjà");
+    public Object create(AddClassDTO dto){
+        Filiere filiere = filiere_repositorie.findById(dto.getIdFiliere());
+        if(filiere == null){
+            throw new NoteFundException("La filière n'existe pas");
         }
-        if(filiereExist != null){
-            classe.setIdFiliere(classe.getIdFiliere());
-            classe.setAnneeScolaire(LocalDate.now().getYear());
+        Niveau niveau = niveau_repositorie.findById(dto.getIdNiveau());
+        if(niveau == null){
+            throw new NoteFundException("Le niveau n'existe pas");
+        }
+        AnneeScolaire anneeScolaire = annee_scolaire_repositorie.findById(dto.getIdAnnee());
+        if(anneeScolaire == null){
+            throw new NoteFundException("La promotion n'existe pas");
+        }
+        NiveauFilieres niveauFilieresSaved = filieresService.add(filiere, niveau, anneeScolaire);
+
+
+        if(niveauFilieresSaved != null){
+            StudentsClasse classe = new StudentsClasse();
+            classe.setIdFiliere(niveauFilieresSaved);
+            classe.setScolarite(dto.getScolarite());
+            classe.setIdAnneeScolaire(anneeScolaire);
             classe_repositorie.save(classe);
-            return DTO_response_string.fromMessage("Ajout effectué  avec succès", 200);
 
         }
-        throw new NoteFundException("La classe avec cette filière  n'existe pas");
+        return DTO_response_string.fromMessage("Ajout effectué  avec succès", 200);
     }
 
 
@@ -103,7 +121,8 @@ public class Classe_service {
     }
     //    ------------------------------------------------------method pour appeler tout les classes ouverte-------
     public List<StudentsClasse> readAllClass(){
-        return classe_repositorie.findAll();
+
+        return classe_repositorie.getClasseForCurrentYear(LocalDate.now());
     }
 //    ----------------------------------cunt number of class
     public int cunt_class(){

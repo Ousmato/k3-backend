@@ -22,7 +22,7 @@ public interface Emplois_repositorie extends JpaRepository<Emplois, Long> {
     @Query("select e from Emplois AS e where e.dateFin > :date AND e.idClasse.id = :idClasse")
     List<Emplois> findEmploisActifByIdClass(LocalDate date, long idClasse);
 
-    Emplois getEmploisByDateFinAfterAndIdClasseId(LocalDate date, long id);
+    Emplois getEmploisByDateFinAfterAndId(LocalDate date, long id);
 
     Emplois findByIdClasseId(long idClasse);
 

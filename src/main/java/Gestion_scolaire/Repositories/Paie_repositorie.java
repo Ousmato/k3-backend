@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -14,17 +16,12 @@ import java.util.List;
 @Repository
 public interface Paie_repositorie extends JpaRepository<Paie, Long> {
 
-    Paie getByIdPresenceTeachersId(long idPresenceTeachers);
-
-    Paie findByDateAndIdPresenceTeachersIdSeanceIdTeacherIdEnseignant(LocalDate date, long idTeacher);
-    List<Paie> findAllByIdPresenceTeachersIdSeanceIdTeacherIdEnseignant(long id);
-
     List<Paie> findByDateBetween(LocalDate debut, LocalDate fin);
 
+    @Query("SELECT SUM(p.nbreHeures) FROM Paie p WHERE p.journee.idTeacher.idEnseignant = :idTeacher")
+    int findTotalHoursByTeacherId(@Param("idTeacher") long idTeacher);
     Page<Paie> findByDateBetween(LocalDate debut, LocalDate fin, Pageable pageable);
 
-    List<Paie> getByDateBetweenAndIdPresenceTeachersIdSeanceIdTeacherIdEnseignant(LocalDate debut, LocalDate fin, long id);
-
-
+    List<Paie> getByDateBetweenAndJourneeIdTeacherIdEnseignant(LocalDate debut, LocalDate fin, long id);
 
 }

@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Repository
 public interface Semestre_repositorie extends JpaRepository<Semestres, Long> {
     Semestres findById(long id);
-    Semestres findByNomSemetreAndDatFin(String name, LocalDate dateFin);
+    Semestres findByNomSemetreAndIdAnneeScolaireId(String name, long idAnneeScolaire);
 
     @Query("SELECT s FROM Semestres s WHERE (:dateDebut BETWEEN s.dateDebut AND s.datFin OR :dateFin BETWEEN s.dateDebut AND s.datFin)")
     Semestres getByDateRangeOverlap(@Param("dateDebut") LocalDate dateDebut, @Param("dateFin") LocalDate dateFin);
@@ -19,4 +19,6 @@ public interface Semestre_repositorie extends JpaRepository<Semestres, Long> {
 
     @Query("SELECT s FROM Semestres s WHERE :date BETWEEN s.dateDebut AND s.datFin")
     Semestres getCurrentSemestre(@Param("date") LocalDate date);
+
+    Semestres getByDatFinBetweenAndIdAnneeScolaireId(LocalDate start, LocalDate end, Long id);
 }

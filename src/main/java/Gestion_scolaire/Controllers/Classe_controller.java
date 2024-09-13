@@ -1,5 +1,6 @@
 package Gestion_scolaire.Controllers;
 
+import Gestion_scolaire.Dto_classe.AddClassDTO;
 import Gestion_scolaire.Models.StudentsClasse;
 import Gestion_scolaire.Services.Classe_service;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +18,8 @@ public class Classe_controller {
     private Classe_service classe_service;
 
     @PostMapping("/add")
-    public Object add(@RequestBody StudentsClasse classe){
-           return classe_service.create(classe);
+    public Object add(@RequestBody AddClassDTO addClassDTO){
+           return classe_service.create(addClassDTO);
     }
 //    ---------------------------------method get all class-------------------------------
     @GetMapping("/list-class")

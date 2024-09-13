@@ -1,6 +1,7 @@
 package Gestion_scolaire.Services;
 
 import Gestion_scolaire.Dto_classe.DTO_response_string;
+import Gestion_scolaire.Dto_classe.EmploisDTO;
 import Gestion_scolaire.Models.Emplois;
 import Gestion_scolaire.Models.Seances;
 import Gestion_scolaire.Repositories.Emplois_repositorie;
@@ -85,15 +86,6 @@ public class Emplois_service {
         throw new NoteFundException("emplois n'existe pas");
     }
 
-//---------------------------method get current emplois by idClasse-------------------------
-    public Emplois getByIdClasse(long idClasse){
-
-        Emplois emplois = emplois_repositorie.getEmploisByDateFinAfterAndIdClasseId(LocalDate.now(),idClasse);
-        if (emplois != null){
-           return emplois;
-        }
-        throw new NoteFundException("Auccun emplois pour le moment");
-    }
 //    ---------------------------------------methode pour retourner un boolean if emplois exist pour une classe
     public Object hasEmplois(long idClasse) {
         // Vérifie si des emplois existent pour la classe spécifiée avec une date de fin après la date actuelle
@@ -117,17 +109,17 @@ public class Emplois_service {
     }
 
     //    --------------------------method get all emplois of teacher-------------------------
-    public List<Emplois> findAllEmploisByTeacher(long idteacher) {
-        List<Seances> seancesList = seance_repositorie.findAll_ByIdTeacher( idteacher, LocalDate.now());
-        List<Emplois> emploisList = new ArrayList<>();
-        for (Seances seance : seancesList) {
-            Emplois emplois = seance.getIdEmplois();
-            if (!emploisList.contains(emplois)) {
-                emploisList.add(emplois);
-            }
-        }
-        return emploisList;
-    }
+//    public List<Emplois> findAllEmploisByTeacher(long idteacher) {
+//        List<Seances> seancesList = seance_repositorie.findAll_ByIdTeacher( idteacher, LocalDate.now());
+//        List<Emplois> emploisList = new ArrayList<>();
+//        for (Seances seance : seancesList) {
+//            Emplois emplois = seance.getIdEmplois();
+//            if (!emploisList.contains(emplois)) {
+//                emploisList.add(emplois);
+//            }
+//        }
+//        return emploisList;
+//    }
 //    --------------------------------method get by id emplois--------------------
     public Emplois getById(long id){
         Emplois emplois = emplois_repositorie.findById(id);
@@ -168,5 +160,25 @@ public class Emplois_service {
         }
         return list;
     }
-//    ------------------------------get em
+//    ------------------------------get emplois active with seances
+    public List<EmploisDTO> listEmploisActifs_with_seances(){
+        List<Emplois>  list = emplois_repositorie.findAllEmploisActif(LocalDate.now());
+
+        if (list.isEmpty()){
+            return  new ArrayList<>();
+        }
+        List<EmploisDTO> dtoList = new ArrayList<>();
+
+        for (Emplois emploi : list){
+            List<Seances> seancesList = seance_repositorie.findByIdEmploisId(emploi.getId());
+
+
+            EmploisDTO emploisDTO = EmploisDTO.toEmploisDTO(emploi);
+            emploisDTO.setIdSemestre(emploi.getIdSemestre());
+            emploisDTO.setSeances(seancesList);
+            dtoList.add(emploisDTO);
+
+        }
+        return dtoList;
+    }
 }

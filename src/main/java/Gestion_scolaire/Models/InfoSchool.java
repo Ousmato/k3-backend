@@ -30,7 +30,5 @@ public class InfoSchool {
     @NotNull
     private String urlPhoto;
 
-    @ManyToOne
-    private AnneeScolaire anneeScolaire;
 
 }

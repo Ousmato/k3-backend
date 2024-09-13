@@ -13,9 +13,8 @@ public class SeanceDTO {
     private LocalTime heureDebut;
     private LocalTime heureFin;
     private LocalDate date;
-    private ModuleDTO idModule;
+//    private ModuleDTO idModule;
     private EmploisDTO idEmplois;
-    private TeacherDTO idTeacher;
     private SallesDTO idSalle;
     private LocalTime pause_matin;
     private LocalTime pause_midi;
@@ -27,10 +26,7 @@ public class SeanceDTO {
         dto.setHeureDebut(seance.getHeureDebut());
         dto.setHeureFin(seance.getHeureFin());
         dto.setDate(seance.getDate());
-        dto.setIdTeacher(TeacherDTO.toTeacherDTO(seance.getIdTeacher()));
         dto.setIdEmplois(EmploisDTO.toEmploisDTO(seance.getIdEmplois()));
-        dto.setIdModule(ModuleDTO.toModuleDTO(seance.getIdModule()));
-        dto.setIdSalle(SallesDTO.toSallesDTO(seance.getIdSalle()));
 //        dto.setFin_pause(LocalTime);
         return dto;
     }

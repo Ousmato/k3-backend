@@ -1,9 +1,6 @@
 package Gestion_scolaire.Models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -25,5 +22,9 @@ public class Semestres {
 
     @NotNull
     private LocalDate datFin;
+
+    @NotNull
+    @ManyToOne
+    private AnneeScolaire idAnneeScolaire;
 
 }

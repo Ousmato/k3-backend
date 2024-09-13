@@ -17,16 +17,16 @@ public interface ListPresenceTeacher_repositorie extends JpaRepository<TeachersP
     List<TeachersPresence> getByIdSeanceId(long idSeance);
     TeachersPresence findByIdSeanceId(long idSeance);
 
-   TeachersPresence findByIdSeanceIdAndIdSeanceIdTeacherIdEnseignant(long idSeance, long idTeacher);
+//   TeachersPresence findByIdSeanceIdAndIdSeanceIdTeacherIdEnseignant(long idSeance, long idTeacher);
 
     List<TeachersPresence> findByObservationAndIdSeanceDateBetween(boolean isPre, LocalDate debut, LocalDate fin);
     Page<TeachersPresence> getByObservationAndIdSeanceDateBetween(boolean isPre, LocalDate debut, LocalDate fin, Pageable pageable);
 
-    TeachersPresence findByIdSeanceIdAndIdSeanceIdTeacherIdEnseignantAndIdSeanceDateAndIdSeanceHeureFin(long idSeance,long idTeacher, LocalDate date, LocalTime heureFin);
+//    TeachersPresence findByIdSeanceIdAndIdSeanceIdTeacherIdEnseignantAndIdSeanceDateAndIdSeanceHeureFin(long idSeance,long idTeacher, LocalDate date, LocalTime heureFin);
 
-    TeachersPresence findByIdSeanceIdTeacherIdEnseignantAndIdSeanceDateAndIdSeanceHeureFin(long idTeacher, LocalDate date, LocalTime heufin);
+//    TeachersPresence findByIdSeanceIdTeacherIdEnseignantAndIdSeanceDateAndIdSeanceHeureFin(long idTeacher, LocalDate date, LocalTime heufin);
 
-   List<TeachersPresence> getByIdSeanceIdTeacherIdEnseignantAndIdSeanceDateBetween(long idTeacher, LocalDate startDate, LocalDate endDate);
+//   List<TeachersPresence> getByIdSeanceIdTeacherIdEnseignantAndIdSeanceDateBetween(long idTeacher, LocalDate startDate, LocalDate endDate);
 
 }
 

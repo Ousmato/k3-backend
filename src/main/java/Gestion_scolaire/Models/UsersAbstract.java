@@ -10,9 +10,6 @@ import lombok.Data;
 @MappedSuperclass
 @Data
 public abstract class UsersAbstract {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private long id;
 
     @NotNull
     private String email;

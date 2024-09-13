@@ -3,6 +3,7 @@ package Gestion_scolaire.Controllers;
 import Gestion_scolaire.Models.Salles;
 import Gestion_scolaire.Services.Common_service;
 import Gestion_scolaire.Services.Salles_service;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,5 +38,18 @@ public class Salles_controller {
     @GetMapping("/list-all-salle")
     public List<Salles> list_all_Salle() {
         return salles_service.getAllSalles();
+    }
+
+    //--------------------------------
+    @GetMapping("/number-salle-non-occupe")
+    @Operation (summary = "Recuperer le nombre de salle disponible")
+    public int numberSalleNonOccupe() {
+        return salles_service.getAllSalles_non_occuper().size();
+    }
+    //-------------------------------------
+    @GetMapping("/number-salle-occupe")
+    @Operation(summary = "Recuperer le nombre de salle occuper")
+    public int numberSalleOccupe() {
+        return common_service.salle_occuper().size();
     }
 }
