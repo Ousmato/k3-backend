@@ -3,6 +3,7 @@ package Gestion_scolaire.Services;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Models.Emplois;
 import Gestion_scolaire.Models.Semestres;
+import Gestion_scolaire.Models.StudentsClasse;
 import Gestion_scolaire.Repositories.Emplois_repositorie;
 import Gestion_scolaire.Repositories.Semestre_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
@@ -93,7 +94,7 @@ public class Semestre_service {
         
     }
 
-//    --------------------------------------------get semestre by idClasse
+    //-----------get semestre by idClasse
     public Semestres semestre_classe_id(int id){
         Emplois em = emplois_repositorie.findByIdClasseId(id);
         if (em == null){
@@ -101,4 +102,10 @@ public class Semestre_service {
         }
         return em.getIdSemestre();
     }
+    //------------------get current year
+
+    public List<Semestres> currenctSemestres(){
+        return semestre_repositorie.getCurrentSemestreOfYer(LocalDate.now().getYear());
+    }
+
 }

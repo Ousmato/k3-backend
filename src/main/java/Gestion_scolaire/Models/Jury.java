@@ -20,4 +20,8 @@ public class Jury {
     @NotNull
     @ManyToOne
     private Teachers idTeacher;
+
+    @NotNull
+    @ManyToOne
+    private Soutenance idSoutenance;
 }

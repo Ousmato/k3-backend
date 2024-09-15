@@ -2,15 +2,12 @@ package Gestion_scolaire.Services;
 
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Models.Salles;
-import Gestion_scolaire.Models.Seances;
 import Gestion_scolaire.Repositories.Salles_repositorie;
-import Gestion_scolaire.Repositories.Seance_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 @Service

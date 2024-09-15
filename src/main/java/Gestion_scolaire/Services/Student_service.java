@@ -9,7 +9,6 @@ import Gestion_scolaire.Models.StudentsClasse;
 import Gestion_scolaire.Models.StudentsPresence;
 import Gestion_scolaire.Repositories.AnneeScolaire_repositorie;
 import Gestion_scolaire.Repositories.Classe_repositorie;
-import Gestion_scolaire.Repositories.StudentsPresene_repositorie;
 import Gestion_scolaire.Repositories.Students_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +41,6 @@ public class Student_service {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private StudentsPresene_repositorie studentsPresene_repositorie;
 
     @Autowired
     private fileManagers fileManagers;
@@ -191,29 +187,29 @@ public class Student_service {
     }
 
     //    ----------------------add presence student ----------------------------
-    public StudentsPresence addPresence(StudentsPresence presence) {
-        StudentsPresence studentsPresenceExist = studentsPresene_repositorie.findByIdSeanceAndIdStudentsAndStatus(
-                presence.getIdSeance(), presence.getIdStudents(), presence.isStatus()
-        );
-        if (studentsPresenceExist != null) {
-            studentsPresenceExist.setStatus(!studentsPresenceExist.isStatus());
-            return studentsPresene_repositorie.save(studentsPresenceExist);
-
-        }
-        return studentsPresene_repositorie.save(presence);
-    }
-
-    //    ------------------------method get all presence ------------------------------
-    public List<StudentsPresence> getListPresence() {
-        LocalDate today = LocalDate.now();
-        LocalDate startOfMonth = LocalDate.of(today.getYear(), today.getMonth(), 1);
-        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
-        List<StudentsPresence> list = studentsPresene_repositorie.findByStatusAndDateBetween(true, startOfMonth, endOfMonth);
-        if (list.isEmpty()) {
-            return new ArrayList<>();
-        }
-        return list;
-    }
+//    public StudentsPresence addPresence(StudentsPresence presence) {
+//        StudentsPresence studentsPresenceExist = studentsPresene_repositorie.findByIdSeanceAndIdStudentsAndStatus(
+//                presence.getIdSeance(), presence.getIdStudents(), presence.isStatus()
+//        );
+//        if (studentsPresenceExist != null) {
+//            studentsPresenceExist.setStatus(!studentsPresenceExist.isStatus());
+//            return studentsPresene_repositorie.save(studentsPresenceExist);
+//
+//        }
+//        return studentsPresene_repositorie.save(presence);
+//    }
+//
+//    //    ------------------------method get all presence ------------------------------
+//    public List<StudentsPresence> getListPresence() {
+//        LocalDate today = LocalDate.now();
+//        LocalDate startOfMonth = LocalDate.of(today.getYear(), today.getMonth(), 1);
+//        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
+//        List<StudentsPresence> list = studentsPresene_repositorie.findByStatusAndDateBetween(true, startOfMonth, endOfMonth);
+//        if (list.isEmpty()) {
+//            return new ArrayList<>();
+//        }
+//        return list;
+//    }
 
     //-----------------------------update scolarite
     public Object update_scolarite(long idStudent, double scolarite) {

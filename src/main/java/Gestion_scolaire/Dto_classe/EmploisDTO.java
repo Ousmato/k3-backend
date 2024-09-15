@@ -1,7 +1,6 @@
 package Gestion_scolaire.Dto_classe;
 
 import Gestion_scolaire.Models.Emplois;
-import Gestion_scolaire.Models.Seances;
 import Gestion_scolaire.Models.Semestres;
 import lombok.Data;
 
@@ -16,7 +15,6 @@ public class EmploisDTO {
     private ModuleDTO idModule;
     private Semestres idSemestre;
     private ClasseDTO idClasse;
-    private List<Seances> seances;
 
     public static EmploisDTO toEmploisDTO(Emplois emplois){
         EmploisDTO dto = new EmploisDTO();

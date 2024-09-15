@@ -29,7 +29,6 @@ public class SoutenanceDTO {
         dto.setHeureFin(soutenance.getHeureFin());
         dto.setDate(soutenance.getDate());
         dto.setIdSalle(soutenance.getIdSalle());
-        dto.setIdTeacher(soutenance.getIdTeacher());
         return dto;
 
     }

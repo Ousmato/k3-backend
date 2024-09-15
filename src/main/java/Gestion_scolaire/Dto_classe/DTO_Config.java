@@ -10,7 +10,6 @@ import java.util.List;
 @Data
 public class DTO_Config {
     private long id;
-    private Seances idSeance;
     private Teachers idTeacher;
     private LocalTime heureDebut;
     private LocalTime heureFin;

@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public interface Semestre_repositorie extends JpaRepository<Semestres, Long> {
@@ -19,6 +20,9 @@ public interface Semestre_repositorie extends JpaRepository<Semestres, Long> {
 
     @Query("SELECT s FROM Semestres s WHERE :date BETWEEN s.dateDebut AND s.datFin")
     Semestres getCurrentSemestre(@Param("date") LocalDate date);
+
+    @Query("SELECT s FROM Semestres s WHERE YEAR (s.idAnneeScolaire.finAnnee) =:year")
+    List<Semestres> getCurrentSemestreOfYer(@Param("year") int year);
 
     Semestres getByDatFinBetweenAndIdAnneeScolaireId(LocalDate start, LocalDate end, Long id);
 }

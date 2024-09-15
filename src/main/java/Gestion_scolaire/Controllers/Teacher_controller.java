@@ -1,20 +1,14 @@
 package Gestion_scolaire.Controllers;
 
 import Gestion_scolaire.Dto_classe.PaieDTO;
-import Gestion_scolaire.Dto_classe.TeacherSeancesDTO;
 import Gestion_scolaire.Models.Paie;
 import Gestion_scolaire.Models.Teachers;
-import Gestion_scolaire.Models.TeachersPresence;
-import Gestion_scolaire.Services.Seance_service;
 import Gestion_scolaire.Services.Teachers_service;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,9 +22,7 @@ public class Teacher_controller {
 
     @Autowired
     private Teachers_service teachers_service;
-
-    @Autowired
-    private Seance_service seance_service;
+    
 
     @PostMapping("/add")
     private Object addTeacher(
@@ -108,11 +100,7 @@ public class Teacher_controller {
 //    ){
 //       return teachers_service.getListPresence(page, size);
 //    }
-//------------------------------method get presence by id seance
-    @GetMapping("/presence-by-idseance/{idSeance}")
-    public TeachersPresence getBySeanceId(@PathVariable long idSeance){
-        return teachers_service.getByIdSeanceId(idSeance);
-    }
+
 //    ----------------------------method get teacher paies----------------------------
 //    @GetMapping("/list-paie")
 //    private  Page<Paie> listPaie(

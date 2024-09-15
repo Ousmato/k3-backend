@@ -1,6 +1,7 @@
 package Gestion_scolaire.Controllers;
 
 import Gestion_scolaire.Dto_classe.AddModuleDTO;
+import Gestion_scolaire.Dto_classe.AddUeDTO;
 import Gestion_scolaire.Dto_classe.DTO_ClassModule;
 import Gestion_scolaire.Dto_classe.ModuleDTO;
 import Gestion_scolaire.Models.ClasseModule;
@@ -30,8 +31,8 @@ public class UeAndModule_controller {
     private Classe_service classe_service;
 
     @PostMapping("/add-ue")
-    public Object addUe(@RequestBody UE ue){
-        return ue_service.add(ue);
+    public Object addUe(@RequestBody AddUeDTO dto){
+        return ue_service.add(dto);
     }
 //    ---------------------------------------methode add modules-------------------------------
     @PostMapping("/add-module-class")

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,7 +48,7 @@ public class Classe_service {
         StudentsClasse clm = classe_repositorie.findById(
                 dto.getIdStudentClasse().getId());
 
-        List<UE> ues = classeModule_repositorie.findAllByIdStudentClasseId(clm.getId())
+        List<UE> ues = classeModule_repositorie.findAllByIdNiveauFiliereId(clm.getId())
                 .stream()
                 .map(ClasseModule::getIdUE)
                 .toList();
@@ -63,21 +64,15 @@ public class Classe_service {
 
         for (UE ue : uesToAdd) {
             ClasseModule clmodule = new ClasseModule();
-            clmodule.setIdStudentClasse(clm);
+            clmodule.setIdNiveauFiliere(clm.getIdFiliere());
             clmodule.setIdUE(ue);
             classeModule_repositorie.save(clmodule);
 
         }
 
-
         return DTO_response_string.fromMessage("Ajout effectué  avec succès", 200);
     }
 
-    //        ----------------------------------------methode pour appeler tous les modules de la class----------------
-    public List<ClasseModule> readById(long id){
-        List<ClasseModule> uEslist = classeModule_repositorie.findAllByIdStudentClasseId(id);
-        return uEslist;
-    }
 
 //    ------------------------------------------------------------------------------------------
 
@@ -121,9 +116,14 @@ public class Classe_service {
     }
     //    ------------------------------------------------------method pour appeler tout les classes ouverte-------
     public List<StudentsClasse> readAllClass(){
+        List<StudentsClasse> classeList = classe_repositorie.getClasseForCurrentYear(LocalDate.now().getYear());
+        if(!classeList.isEmpty()){
+            classeList.sort(Comparator.comparing(classe ->classe.getIdFiliere().getIdFiliere().getNomFiliere()));
 
-        return classe_repositorie.getClasseForCurrentYear(LocalDate.now());
+        }
+        return classeList;
     }
+
 //    ----------------------------------cunt number of class
     public int cunt_class(){
         return classe_repositorie.countAllByFermer(false);

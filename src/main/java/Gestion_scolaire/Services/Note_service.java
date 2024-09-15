@@ -109,7 +109,7 @@ public class Note_service {
 //    classe de l'etudiant qui on deja etait programmer pour un emplois du temps
     public ArrayList<Modules> readAllByAllEmplois(long idClasse){
 //        Emplois emploisList = emplois_repositorie.getEmploisByDateFinAfterAndIdClasseId(LocalDate.now(), idClasse);
-        List<ClasseModule> classeModuleList = classeModule_repositorie.findByIdStudentClasseId(idClasse);
+        List<ClasseModule> classeModuleList = classeModule_repositorie.findByIdNiveauFiliereId(idClasse);
         Set<Modules> modulesSet = new HashSet<>();
 
             for (ClasseModule clm : classeModuleList){

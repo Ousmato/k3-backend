@@ -25,8 +25,7 @@ public class StudentsPresence {
     @ManyToOne
     private Studens idStudents;
 
-    @ManyToOne
-    private Seances idSeance;
+
 
 
 }

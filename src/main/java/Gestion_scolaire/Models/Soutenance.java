@@ -26,18 +26,11 @@ public class Soutenance {
 
     @NotNull
     @OneToOne
-    private Documents idDoc;
+    private StudentDoc idDoc;
 
+    private int note = 0;
     @NotNull
-    @ManyToOne
-    private Teachers idTeacher;
-
-    @NotNull
-//    @ManyToOne
-    private String idJury;
-
-    @NotNull
-    @ManyToOne
+    @OneToOne
     private Salles idSalle;
 
 

@@ -45,15 +45,15 @@ public class Emplois_controller {
             return emplois_service.getById(id);
     }
 //    ------------------------------------------verifier l'existence d'un emplois pour la classe
-    @GetMapping("/hasEmplois/{classId}")
-    public Object hasEmplois(@PathVariable long classId) {
-        return emplois_service.hasEmplois(classId);
-    }
-//    -----------------------methode pour verifier l'existence des seances pour un emplois
-        @GetMapping("/hasSeance/{idEmplois}")
-        public Boolean hasSeance(@PathVariable long idEmplois) {
-            return emplois_service.hasSeances(idEmplois);
-        }
+//    @GetMapping("/hasEmplois/{classId}")
+//    public Object hasEmplois(@PathVariable long classId) {
+//        return emplois_service.hasEmplois(classId);
+//    }
+////    -----------------------methode pour verifier l'existence des seances pour un emplois
+//        @GetMapping("/hasSeance/{idEmplois}")
+//        public Boolean hasSeance(@PathVariable long idEmplois) {
+//            return emplois_service.hasSeances(idEmplois);
+//        }
 
 //        ---------------------------------method for validated
     @GetMapping("/valid/{idEmplois}")
@@ -72,8 +72,8 @@ public class Emplois_controller {
     }
 
 //    ------------------------------------------all-actifs-emplois-with-seances
-    @GetMapping("/all-actifs-emplois-with-seances")
-    public List<EmploisDTO> emploisActifWithSeances(){
-        return emplois_service.listEmploisActifs_with_seances();
-    }
+//    @GetMapping("/all-actifs-emplois-with-seances")
+//    public List<EmploisDTO> emploisActifWithSeances(){
+//        return emplois_service.listEmploisActifs_with_seances();
+//    }
 }

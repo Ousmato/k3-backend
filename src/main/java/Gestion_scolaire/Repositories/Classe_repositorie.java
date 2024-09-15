@@ -25,7 +25,8 @@ public interface Classe_repositorie extends JpaRepository<StudentsClasse, Long> 
 
     StudentsClasse findByIdFiliereIdAndIdAnneeScolaireId(long idFiliereId, long idAnneeScolaireId);
 
-    @Query("SELECT c  FROM StudentsClasse c WHERE c.idAnneeScolaire.finAnnee > :date")
-    List<StudentsClasse> getClasseForCurrentYear(@Param("date") LocalDate date);
+    @Query("SELECT c  FROM StudentsClasse c WHERE YEAR (c.idAnneeScolaire.finAnnee ) = :year")
+    List<StudentsClasse> getClasseForCurrentYear(@Param("year") int year);
+
 
 }

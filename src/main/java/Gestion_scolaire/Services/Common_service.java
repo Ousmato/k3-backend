@@ -20,9 +20,6 @@ public class Common_service {
     @Autowired
     Salles_repositorie sallesRepositorie;
 
-    @Autowired
-    private Seance_repositorie seance_repositorie;
-
 
     @Autowired
     private Emplois_repositorie emplois_repositorie;
@@ -105,16 +102,16 @@ public class Common_service {
         return plagesHoraires;
     }
 
-    //    ------------------------------methode pour eviter le chevauchement d'heure
-    public boolean isOverlapping(Seances newSeance, Seances existingSeance) {
-        LocalDateTime newStart = newSeance.getDate().atTime(newSeance.getHeureDebut());
-        LocalDateTime newEnd = newSeance.getDate().atTime(newSeance.getHeureFin());
-        LocalDateTime existingStart = existingSeance.getDate().atTime(existingSeance.getHeureDebut());
-        LocalDateTime existingEnd = existingSeance.getDate().atTime(existingSeance.getHeureFin());
-
-        // Vérifier si les intervalles se chevauchent
-        return newStart.isBefore(existingEnd) && existingStart.isBefore(newEnd);
-    }
+//    //    ------------------------------methode pour eviter le chevauchement d'heure
+//    public boolean isOverlapping(Seances newSeance, Seances existingSeance) {
+//        LocalDateTime newStart = newSeance.getDate().atTime(newSeance.getHeureDebut());
+//        LocalDateTime newEnd = newSeance.getDate().atTime(newSeance.getHeureFin());
+//        LocalDateTime existingStart = existingSeance.getDate().atTime(existingSeance.getHeureDebut());
+//        LocalDateTime existingEnd = existingSeance.getDate().atTime(existingSeance.getHeureFin());
+//
+//        // Vérifier si les intervalles se chevauchent
+//        return newStart.isBefore(existingEnd) && existingStart.isBefore(newEnd);
+//    }
 
 
     //    ------------------------------------------------------------------------------
@@ -144,11 +141,11 @@ public class Common_service {
 
 
 
-        for (Seances existingSeance : seance_repositorie.getAllByDate(seances.getDate())) {
-            if (seances.getHeureFin().isAfter(existingSeance.getHeureDebut()) && seances.getHeureFin().isBefore(existingSeance.getHeureFin())) {
-                throw new NoteFundException("L'heure de fin de la séance se trouve dans l'intervalle d'une autre séance existante.");
-            }
-        }
+//        for (Seances existingSeance : seance_repositorie.getAllByDate(seances.getDate())) {
+//            if (seances.getHeureFin().isAfter(existingSeance.getHeureDebut()) && seances.getHeureFin().isBefore(existingSeance.getHeureFin())) {
+//                throw new NoteFundException("L'heure de fin de la séance se trouve dans l'intervalle d'une autre séance existante.");
+//            }
+//        }
     }
 //-----------------------------------------create paie for config
     public void createPaieForConfig(Journee jour) {

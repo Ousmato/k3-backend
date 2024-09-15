@@ -16,4 +16,5 @@ public interface NiveauFiliere_repositorie extends JpaRepository<NiveauFilieres,
     List<NiveauFilieres> findByIdFiliereId(long idNiveau);
 
     List<NiveauFilieres> getAllByIdFiliereIdAndIdNiveauId(long idFiliere, long idNiveau);
+//    List<NiveauFilieres> getAllBy
 }

@@ -9,6 +9,7 @@ import Gestion_scolaire.configuration.NoteFundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +59,9 @@ public class Filieres_service {
 //    -------------------------------------------list of all niveau filiere-----------------------
     public List<NiveauFilieres> readNivFil(){
         List<NiveauFilieres> list =  niveauFiliere_repositorie.findAll();
-        List<StudentsClasse> classesS = classe_repositorie.findAll();
+
+
+        List<StudentsClasse> classesS = classe_repositorie.getClasseForCurrentYear(LocalDate.now().getYear());
         List<NiveauFilieres> newClasses = new ArrayList<>();
 
         for (NiveauFilieres nivFiliere : list) {
@@ -75,6 +78,8 @@ public class Filieres_service {
         }
         return newClasses;
     }
+
+
 //----------------------------------------------------methode create filiere-----------------------------
     public Object create(Filiere filiere){
         Filiere filiereExist = filiere_repositorie.findByNomFiliere(filiere.getNomFiliere());

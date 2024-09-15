@@ -104,17 +104,7 @@ public class Student_controller {
         return student_service.studenById(idStudent);
 
     }
-//   -------------------- method add presence--------------------------------
-    @PostMapping("/add-presence")
-    public StudentsPresence addPresence(@RequestBody StudentsPresence presence){
-        return student_service.addPresence(presence);
-    }
-//    ----------------------------------method get all presence-----------------------------
-    @GetMapping("/list-presence")
-    public List<StudentsPresence> getListPresence(){
-        return student_service.getListPresence();
 
-    }
 //    --------------------------update scolarite
     @PutMapping("/update-scolarite/{idStudent}")
     public Object updateScolarite(@PathVariable long idStudent, @RequestBody DTO_scolarite dtoScolarite){
@@ -237,19 +227,19 @@ public class Student_controller {
         return doc_service.getDocsByIdClass(idClasse);
     }
 
-    //    -------------------------------------------
-    @PostMapping("/add-soutenance")
-    @Operation(summary = "Programer une soutenance")
-    public Object addSoutenance(@RequestBody SoutenanceDTO soutenance){
-        return doc_service.addProgramSoutenance(soutenance);
-    }
+//    //    -------------------------------------------
+//    @PostMapping("/add-soutenance")
+//    @Operation(summary = "Programer une soutenance")
+//    public Object addSoutenance(@RequestBody SoutenanceDTO soutenance){
+//        return doc_service.addProgramSoutenance(soutenance);
+//    }
 
     //-------------------------------------
-    @GetMapping("/all-soutenance-actif")
-    @Operation(summary = "Recuperer la liste des soutenance programmer actif")
-    public List<SoutenanceDTO> getAllSoutenanceActif(){
-        return doc_service.getAllSoutenancesActive();
-    }
+//    @GetMapping("/all-soutenance-actif")
+//    @Operation(summary = "Recuperer la liste des soutenance programmer actif")
+//    public List<SoutenanceDTO> getAllSoutenanceActif(){
+//        return doc_service.getAllSoutenancesActive();
+//    }
     //-------------------------------------------
     @GetMapping("/memoire-number")
     @Operation(summary = "Recuperer les nombre de memoire ")

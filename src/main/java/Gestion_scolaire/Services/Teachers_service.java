@@ -3,11 +3,8 @@ package Gestion_scolaire.Services;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Dto_classe.PaieDTO;
 import Gestion_scolaire.MailSender.MessaSender;
-import Gestion_scolaire.MailSender.PendingEmail;
 import Gestion_scolaire.Models.Paie;
 import Gestion_scolaire.Models.Teachers;
-import Gestion_scolaire.Models.TeachersPresence;
-import Gestion_scolaire.Repositories.ListPresenceTeacher_repositorie;
 import Gestion_scolaire.Repositories.Paie_repositorie;
 import Gestion_scolaire.Repositories.Teacher_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
@@ -20,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -29,9 +25,6 @@ import java.util.function.Consumer;
 public class Teachers_service {
     @Autowired
     private Teacher_repositorie teacher_repositorie;
-
-    @Autowired
-    private ListPresenceTeacher_repositorie listPresenceTeacher_repositorie;
 
     @Autowired
     private Paie_repositorie paie_repositorie;
@@ -83,13 +76,7 @@ public class Teachers_service {
         return "desactiver avec succes";
     }
 //    --------------------------------------get presence by id seance
-    public TeachersPresence getByIdSeanceId(long id){
-        TeachersPresence presenceExist = listPresenceTeacher_repositorie.findByIdSeanceId(id);
-        if(presenceExist == null){
-            throw new NoteFundException("La seance avec cet id n'existe pas");
-        }
-        return presenceExist;
-    }
+
 
 //    -----------------------------------------------count number teacher
     public int countNumber(){

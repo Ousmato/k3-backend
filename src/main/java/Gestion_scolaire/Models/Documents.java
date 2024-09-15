@@ -29,6 +29,9 @@ public class Documents {
     private LocalDate date = LocalDate.now();
 
 
+    @NotNull
+    @ManyToOne
+    private Teachers idEncadrant;
 
     @NotNull
     private boolean soutenue = false;

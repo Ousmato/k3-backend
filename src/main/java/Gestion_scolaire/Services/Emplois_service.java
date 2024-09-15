@@ -3,9 +3,7 @@ package Gestion_scolaire.Services;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Dto_classe.EmploisDTO;
 import Gestion_scolaire.Models.Emplois;
-import Gestion_scolaire.Models.Seances;
 import Gestion_scolaire.Repositories.Emplois_repositorie;
-import Gestion_scolaire.Repositories.Seance_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,8 +20,6 @@ public class Emplois_service {
     @Autowired
     private Emplois_repositorie emplois_repositorie;
 
-    @Autowired
-    private Seance_repositorie seance_repositorie;
 
     public Object add(Emplois emplois) {
         List<Emplois> emplois_de_la_classe = emplois_repositorie.findEmploisActifByIdClass(LocalDate.now(), emplois.getIdClasse().getId());
@@ -87,26 +83,26 @@ public class Emplois_service {
     }
 
 //    ---------------------------------------methode pour retourner un boolean if emplois exist pour une classe
-    public Object hasEmplois(long idClasse) {
-        // Vérifie si des emplois existent pour la classe spécifiée avec une date de fin après la date actuelle
-        Emplois emplois = emplois_repositorie.findByIdClasseIdAndDateFinIsAfter(idClasse, LocalDate.now());
-
-        if (emplois == null) {
-            return false;
-        }
-
-        // Vérifie s'il y a des séances associées à cet emploi
-        List<Seances> seances = seance_repositorie.findByIdEmploisId(emplois.getId());
-
-        if (seances.isEmpty()) {
-            return true;
-        }
-        // Sinon, retourne l'objet contenant l'emploi et les séances
-        Map<String, Object> result = new HashMap<>();
-        result.put("emplois", emplois);
-        result.put("seances", seances);
-        return result;
-    }
+//    public Object hasEmplois(long idClasse) {
+//        // Vérifie si des emplois existent pour la classe spécifiée avec une date de fin après la date actuelle
+//        Emplois emplois = emplois_repositorie.findByIdClasseIdAndDateFinIsAfter(idClasse, LocalDate.now());
+//
+//        if (emplois == null) {
+//            return false;
+//        }
+//
+//        // Vérifie s'il y a des séances associées à cet emploi
+//        List<Seances> seances = seance_repositorie.findByIdEmploisId(emplois.getId());
+//
+//        if (seances.isEmpty()) {
+//            return true;
+//        }
+//        // Sinon, retourne l'objet contenant l'emploi et les séances
+//        Map<String, Object> result = new HashMap<>();
+//        result.put("emplois", emplois);
+//        result.put("seances", seances);
+//        return result;
+//    }
 
     //    --------------------------method get all emplois of teacher-------------------------
 //    public List<Emplois> findAllEmploisByTeacher(long idteacher) {
@@ -129,9 +125,9 @@ public class Emplois_service {
         throw new RuntimeException("Auccune correspondance");
     }
 //    ----------------------methode pour verifier l'existence des seances sur l'emplois du temps
-    public boolean hasSeances(long idEmplois){
-        return seance_repositorie.existsByIdEmploisId(idEmplois);
-    }
+//    public boolean hasSeances(long idEmplois){
+//        return seance_repositorie.existsByIdEmploisId(idEmplois);
+//    }
 //    -------------------------------method to validate emplois
     public boolean validated(long idEmplois){
         Emplois emploiExist =emplois_repositorie.findById(idEmplois);
@@ -161,24 +157,24 @@ public class Emplois_service {
         return list;
     }
 //    ------------------------------get emplois active with seances
-    public List<EmploisDTO> listEmploisActifs_with_seances(){
-        List<Emplois>  list = emplois_repositorie.findAllEmploisActif(LocalDate.now());
-
-        if (list.isEmpty()){
-            return  new ArrayList<>();
-        }
-        List<EmploisDTO> dtoList = new ArrayList<>();
-
-        for (Emplois emploi : list){
-            List<Seances> seancesList = seance_repositorie.findByIdEmploisId(emploi.getId());
-
-
-            EmploisDTO emploisDTO = EmploisDTO.toEmploisDTO(emploi);
-            emploisDTO.setIdSemestre(emploi.getIdSemestre());
-            emploisDTO.setSeances(seancesList);
-            dtoList.add(emploisDTO);
-
-        }
-        return dtoList;
-    }
+//    public List<EmploisDTO> listEmploisActifs_with_seances(){
+//        List<Emplois>  list = emplois_repositorie.findAllEmploisActif(LocalDate.now());
+//
+//        if (list.isEmpty()){
+//            return  new ArrayList<>();
+//        }
+//        List<EmploisDTO> dtoList = new ArrayList<>();
+//
+//        for (Emplois emploi : list){
+//            List<Seances> seancesList = seance_repositorie.findByIdEmploisId(emploi.getId());
+//
+//
+//            EmploisDTO emploisDTO = EmploisDTO.toEmploisDTO(emploi);
+//            emploisDTO.setIdSemestre(emploi.getIdSemestre());
+//            emploisDTO.setSeances(seancesList);
+//            dtoList.add(emploisDTO);
+//
+//        }
+//        return dtoList;
+//    }
 }

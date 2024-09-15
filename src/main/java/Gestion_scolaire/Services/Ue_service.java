@@ -1,12 +1,12 @@
 package Gestion_scolaire.Services;
 
+import Gestion_scolaire.Dto_classe.AddUeDTO;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Models.*;
 import Gestion_scolaire.Repositories.*;
 import Gestion_scolaire.configuration.NoteFundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.webjars.NotFoundException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -35,14 +35,28 @@ public class Ue_service {
 
 
 
-    public Object add(UE ue){
-        UE uEexist = ue_repositorie.findByNomUE(ue.getNomUE());
+    public Object add(AddUeDTO dto){
+        UE uEexist = ue_repositorie.findByNomUE(dto.getIdUe().getNomUE());
         if (uEexist != null){
-            throw new RuntimeException("Ce nom Existe deja");
-        }else {
-            ue_repositorie.save(ue);
-            return DTO_response_string.fromMessage("Ajout effectué avec succè", 200);
+            throw new RuntimeException("Ce nom existe deja");
         }
+
+        LocalDate dateDebutSemestre = dto.getSemestre().getDateDebut();
+        LocalDate dateFinSemestre = dto.getSemestre().getDatFin();
+        LocalDate dateDebutAnne = dto.getClasse().getIdAnneeScolaire().getDebutAnnee();
+        LocalDate dateFinAnne = dto.getClasse().getIdAnneeScolaire().getFinAnnee();
+
+        if(dateDebutSemestre.isBefore(dateDebutAnne) || dateFinSemestre.isBefore(dateFinAnne)){
+            throw new NoteFundException("Le semestre doit etre dans l'intervalle de l'année scolaire");
+        }
+           UE ueSaved = ue_repositorie.save(dto.getIdUe());
+            ClasseModule classeModule = new ClasseModule();
+            classeModule.setIdUE(ueSaved);
+            classeModule.setIdSemestre(dto.getSemestre());
+            classeModule.setIdNiveauFiliere(dto.getClasse().getIdFiliere());
+            classeModule_repositorie.save(classeModule);
+            return DTO_response_string.fromMessage("Ajout effectué avec succès", 200);
+
     }
 //    ------------------------------------------------methode pour appeler la liste des ues-------------
     public List<UE> readAll(long idClasse){
@@ -50,7 +64,7 @@ public class Ue_service {
         List<UE> ueNewList = new ArrayList<>();
 
             for (UE ue : list) {
-                ClasseModule cm = classeModule_repositorie.findByIdStudentClasseIdAndIdUEId(idClasse, ue.getId());
+                ClasseModule cm = classeModule_repositorie.findByIdNiveauFiliereIdAndIdUEId(idClasse, ue.getId());
                  if (cm == null){
                         ueNewList.add(ue);
                  }
@@ -63,7 +77,7 @@ public class Ue_service {
         List<UE> ueNewList = new ArrayList<>();
 
         for (UE ue : list) {
-            ClasseModule cm = classeModule_repositorie.findByIdStudentClasseIdAndIdUEId(idClasse, ue.getId());
+            ClasseModule cm = classeModule_repositorie.findByIdNiveauFiliereIdAndIdUEId(idClasse, ue.getId());
             if (cm != null){
                 ueNewList.add(ue);
             }

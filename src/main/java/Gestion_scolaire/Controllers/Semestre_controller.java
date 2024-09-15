@@ -3,6 +3,7 @@ package Gestion_scolaire.Controllers;
 import Gestion_scolaire.Models.Semestres;
 import Gestion_scolaire.Services.Semestre_service;
 import Gestion_scolaire.configuration.NoteFundException;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,6 +39,11 @@ public class Semestre_controller {
         return semestre_service.semestre_classe_id(idClasse);
     }
 
+    @GetMapping("/current-semestre-of-year")
+    @Operation(summary = "Recuperer la liste des tous les semestre en cours")
+    public List<Semestres> getCurrentSemestreOfYear(){
+        return semestre_service.currenctSemestres();
+    }
 //    ----------------------------------add semestre
     @PostMapping("/add-semestre")
     public Object addSemestre(@RequestBody Semestres semestre){
