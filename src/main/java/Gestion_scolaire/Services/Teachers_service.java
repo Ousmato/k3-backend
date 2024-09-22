@@ -1,25 +1,31 @@
 package Gestion_scolaire.Services;
 
+import Gestion_scolaire.Dto_classe.ProfilDTO;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Dto_classe.PaieDTO;
 import Gestion_scolaire.MailSender.MessaSender;
+import Gestion_scolaire.Models.Filiere;
 import Gestion_scolaire.Models.Paie;
+import Gestion_scolaire.Models.Profile;
 import Gestion_scolaire.Models.Teachers;
 import Gestion_scolaire.Repositories.Paie_repositorie;
+import Gestion_scolaire.Repositories.Profile_repositorie;
 import Gestion_scolaire.Repositories.Teacher_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @Service
 public class Teachers_service {
@@ -32,6 +38,10 @@ public class Teachers_service {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+
+    @Autowired
+    private Profile_repositorie profile_repositorie;
+
     @Autowired
     private MessaSender messaSender;
 
@@ -40,21 +50,23 @@ public class Teachers_service {
     @Autowired
     private fileManagers fileManagers;
 
-    public Object add(Teachers teachers, MultipartFile file) throws IOException {
-        Teachers teachersExist = teacher_repositorie.findByEmail(teachers.getEmail());
+    @Transactional
+    public Object add(ProfilDTO dto){
+        System.out.println("---------dto-----------"+dto);
+        if( dto.getFilieres() == null || dto.getFilieres().isEmpty() || dto.getFilieres().stream().allMatch(Objects::isNull)){
+            throw new NoteFundException("Ajouter au moins une filière d'enseignement");
+        }
+        Teachers teachersExist = teacher_repositorie.findByEmail(dto.getTeachers().getEmail());
 
         if (teachersExist != null) {
             throw new RuntimeException("L'adresse email existe déjà");
         }
 
-        if (file != null && !file.isEmpty()) {
-            String urlPhoto = fileManagers.saveFile(file);
-            teachers.setUrlPhoto(urlPhoto);
-        } else {
-            teachers.setUrlPhoto("no_image.jpg"); // Exemple de valeur par défaut pour l'image
-        }
-        String plainPassword = teachers.getPassword();
-        teachers.setPassword(passwordEncoder.encode(teachers.getPassword()));
+
+
+        dto.getTeachers().setUrlPhoto("no_image.jpg"); // Exemple de valeur par défaut pour l'image
+        String plainPassword = dto.getTeachers().getPassword();
+        dto.getTeachers().setPassword(passwordEncoder.encode(dto.getTeachers().getPassword()));
 
 //        PendingEmail emailPend = new PendingEmail();
 //        emailPend.setToSend(teachers.getEmail());
@@ -63,7 +75,23 @@ public class Teachers_service {
 //        emailPend.setSubject("Confirmation");
 //
 //        messaSender.sendSimpleMail(emailPend);
-        teacher_repositorie.save(teachers);
+       Teachers teacherSaved = teacher_repositorie.save(dto.getTeachers());
+       boolean hasProfil = false;
+       for (Filiere fil : dto.getFilieres()) {
+
+           Profile profile = new Profile();
+           Profile profil = profile_repositorie.findByIdFiliereIdAndIdTeacherIdEnseignant(fil.getId(),teacherSaved.getIdEnseignant());
+           if (profil != null) {
+               hasProfil = true;
+               break;
+           }
+           profile.setIdTeacher(teacherSaved);
+           profile.setIdFiliere(fil);
+           profile_repositorie.save(profile);
+       }
+       if (hasProfil){
+           throw new NoteFundException("Attention duplication de profile de l'enseignant");
+       }
         return DTO_response_string.fromMessage("Ajout effectué avec sucès", 200);
     }
 
@@ -75,9 +103,6 @@ public class Teachers_service {
         }
         return "desactiver avec succes";
     }
-//    --------------------------------------get presence by id seance
-
-
 //    -----------------------------------------------count number teacher
     public int countNumber(){
         return teacher_repositorie.countByActive(true);
@@ -130,12 +155,16 @@ public class Teachers_service {
         return teacher_repositorie.findAll();
     }
 
-    public List<Teachers> readAll_byDiplome(long idUe) {
-        List<Teachers> list = teacher_repositorie.findByIdUeId(idUe);
+    public List<Teachers> readAll_byProfile(long idFiliere) {
+        List<Profile> list = profile_repositorie.findByIdFiliereId(idFiliere);
         if(list == null){
             return new ArrayList<>();
         }
-        return list;
+        List<Teachers> teachers = new ArrayList<>();
+        for (Profile profile : list) {
+            teachers.add(profile.getIdTeacher());
+        }
+        return teachers;
 
     }
 
@@ -317,4 +346,36 @@ public class Teachers_service {
             setter.accept(newValue);
         }
     }
+    //---------------------------------
+    public Page<ProfilDTO> getAllProfile(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Profile> profilePage = profile_repositorie.findAll(pageable);
+
+        if (profilePage.isEmpty()) {
+            return Page.empty(); // Retourne une page vide si aucun profil n'est trouvé
+        }
+
+        // Transformer chaque Profile en ProfilDTO
+        List<ProfilDTO> profilDTOList = profilePage.stream().map(profile -> {
+            ProfilDTO profilDTO = new ProfilDTO();
+            List<Filiere> filiereList = new ArrayList<>();
+
+            List<Profile> list = profile_repositorie.getByIdTeacherIdEnseignant(profile.getIdTeacher().getIdEnseignant());
+            // Ajouter les filières associées au profil
+            for (Profile prof : list) {
+                filiereList.add(prof.getIdFiliere());
+            }
+
+            profilDTO.setId(profile.getId());
+            profilDTO.setTeachers(profile.getIdTeacher());
+            profilDTO.setFilieres(filiereList);
+
+            return profilDTO; // Retourner l'objet ProfilDTO pour chaque Profile
+        }).collect(Collectors.toList());
+
+        // Retourner un objet Page de ProfilDTO avec les mêmes informations de pagination
+        return new PageImpl<>(profilDTOList, pageable, profilePage.getTotalElements());
+    }
+
 }

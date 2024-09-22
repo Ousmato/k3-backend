@@ -1,9 +1,6 @@
 package Gestion_scolaire.Controllers;
 
-import Gestion_scolaire.Dto_classe.CuntStudentDTO;
-import Gestion_scolaire.Dto_classe.DTO_scolarite;
-import Gestion_scolaire.Dto_classe.DocDTO;
-import Gestion_scolaire.Dto_classe.SoutenanceDTO;
+import Gestion_scolaire.Dto_classe.*;
 import Gestion_scolaire.Models.*;
 import Gestion_scolaire.Services.Common_service;
 import Gestion_scolaire.Services.Doc_service;
@@ -43,7 +40,7 @@ public class Student_controller {
             @RequestParam(value = "file", required = false) MultipartFile urlFile) throws IOException {
 
             ObjectMapper objectMapper = new ObjectMapper();
-//            objectMapper.registerModule(new JavaTimeModule());
+            objectMapper.registerModule(new JavaTimeModule());
             Studens students = objectMapper.readValue(studensString, Studens.class);
 
             if (!urlFile.isEmpty()) {
@@ -180,9 +177,9 @@ public class Student_controller {
         return student_service.cunt_student_inscrit();
     }
 //    -------------------------------------------------reincreiption method
-    @GetMapping("/re-inscription/{idStudent}/{idClasse}/{idAnnee}")
-    public Object reInscription(@PathVariable long idStudent, @PathVariable long idClasse, @PathVariable long idAnnee){
-            return student_service.reinscription(idStudent, idClasse, idAnnee);
+    @PostMapping("/re-inscription/{idClasse}")
+    public Object reInscription(@RequestBody Studens student, @PathVariable long idClasse){
+            return student_service.reinscription(student, idClasse);
     }
 
     //    ---------------------------------------
@@ -263,5 +260,12 @@ public class Student_controller {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         return student_service.getStudentByIDAnneeAndIdClasse(idAnnee, idClasse, page, size);
+    }
+
+    //    ----------------------------
+    @PostMapping("/students-import")
+    @Operation(summary = "Ajout des etudiant du fichier excel importer")
+    public Object addStudentImport(@RequestBody AddStudentsImport students){
+        return student_service.addStudentsImport(students);
     }
 }

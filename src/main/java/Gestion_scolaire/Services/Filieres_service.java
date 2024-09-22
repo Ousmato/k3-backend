@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -142,7 +143,10 @@ public class Filieres_service {
 
     //   --------------------------------get all filiere
     public List<Filiere> getFilieres(){
-        return filiere_repositorie.findAll();
+
+        List<Filiere> list = filiere_repositorie.findAll();
+        list.sort(Comparator.comparing(Filiere::getNomFiliere));
+        return list;
     }
 
     //-------------------------------------------delete filiere

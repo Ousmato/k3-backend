@@ -1,9 +1,11 @@
 package Gestion_scolaire.Services;
 
 import Gestion_scolaire.Dto_classe.DTO_response_string;
+import Gestion_scolaire.Models.ClasseModule;
 import Gestion_scolaire.Models.Emplois;
 import Gestion_scolaire.Models.Semestres;
 import Gestion_scolaire.Models.StudentsClasse;
+import Gestion_scolaire.Repositories.ClasseModule_repositorie;
 import Gestion_scolaire.Repositories.Emplois_repositorie;
 import Gestion_scolaire.Repositories.Semestre_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
@@ -23,6 +25,10 @@ public class Semestre_service {
 
     @Autowired
     private Emplois_repositorie emplois_repositorie;
+
+    @Autowired
+    private ClasseModule_repositorie classeModule_repositorie;
+
 
     public Object add_semestre(Semestres semestre) throws NoteFundException {
         // Vérifie si un semestre avec le même nom et la même date de fin existe déjà
@@ -108,4 +114,19 @@ public class Semestre_service {
         return semestre_repositorie.getCurrentSemestreOfYer(LocalDate.now().getYear());
     }
 
+//    --------------------------------
+    public List<Semestres> getCurrenctSemestresByIdNivFil(long icNivFil){
+        List<ClasseModule> classeModuleList = classeModule_repositorie.findAllByIdNiveauFiliereId(icNivFil);
+        List<Semestres> semestresList = new ArrayList<>();
+        if (classeModuleList.isEmpty()){
+            return new ArrayList<>();
+        }
+        for (ClasseModule classeModule : classeModuleList){
+            semestresList.add(classeModule.getIdSemestre());
+        }
+        return semestresList;
+    }
+
+    //--------------------------------
+ 
 }

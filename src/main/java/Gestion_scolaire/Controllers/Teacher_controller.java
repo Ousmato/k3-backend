@@ -1,16 +1,16 @@
 package Gestion_scolaire.Controllers;
 
+import Gestion_scolaire.Dto_classe.ProfilDTO;
 import Gestion_scolaire.Dto_classe.PaieDTO;
+import Gestion_scolaire.Models.Filiere;
 import Gestion_scolaire.Models.Paie;
 import Gestion_scolaire.Models.Teachers;
 import Gestion_scolaire.Services.Teachers_service;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,21 +25,10 @@ public class Teacher_controller {
     
 
     @PostMapping("/add")
-    private Object addTeacher(
-            @RequestParam("teacher") String teacherString,
-            @RequestParam(value = "file", required = false) MultipartFile urlFile) throws IOException {
+    @Operation(summary = "Ajouter un enseignant")
+    private Object addTeacher( @RequestBody ProfilDTO profilDTO) {
+        return teachers_service.add(profilDTO);
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            Teachers t = objectMapper.readValue(teacherString, Teachers.class);
-             // Vérifie si urlFile est null ou vide
-            if (urlFile == null || urlFile.isEmpty()) {
-                // Si pas de fichier photo, ajoute l'enseignant sans spécifier de photo
-                return teachers_service.add(t, null);
-            } else {
-                // Si un fichier photo est fourni, ajoute l'enseignant avec la photo
-                return teachers_service.add(t, urlFile);
-
-            }
     }
 
     //    --------------------------------------method get all teachers--------------------------
@@ -55,10 +44,10 @@ public class Teacher_controller {
         return teachers_service.readAll_teacher();
     }
 //    -------------------------------------------------------------------------------------
-    @GetMapping("/list-teacher-by-idUe/{idUe}")
+    @GetMapping("/list-teacher-by-filiere/{idFiliere}")
     @Operation(summary = "Recuperer la liste des enseignants par idUe(spécialité)")
-    public List<Teachers> get_list_teachers_by_idUe(@PathVariable long idUe){
-        return teachers_service.readAll_byDiplome(idUe);
+    public List<Teachers> get_list_teachers_by_idFiliere(@PathVariable long idFiliere){
+        return teachers_service.readAll_byProfile(idFiliere);
     }
 //    ------------------------------method get teacher by id----------------------------------
     @GetMapping("/teacher-by-id/{idTeacher}")
@@ -148,4 +137,11 @@ public class Teacher_controller {
 //    public TeacherSeancesDTO getDetail_t_s(@PathVariable long idTeacher) {
 //        return seance_service.getDetail(idTeacher);
 //    }
+    @GetMapping("/all-techer-by-with-profile")
+    @Operation(summary = "Recuperer la liste de profile de l'enseignant (filiere associer)")
+    public Page<ProfilDTO> getAllFiliereByTeacher(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size){
+        return teachers_service.getAllProfile(page, size);
+    }
 }

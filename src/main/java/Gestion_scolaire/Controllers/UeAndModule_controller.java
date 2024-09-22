@@ -6,10 +6,12 @@ import Gestion_scolaire.Dto_classe.DTO_ClassModule;
 import Gestion_scolaire.Dto_classe.ModuleDTO;
 import Gestion_scolaire.Models.ClasseModule;
 import Gestion_scolaire.Models.Modules;
+import Gestion_scolaire.Models.NiveauFilieres;
 import Gestion_scolaire.Models.UE;
 import Gestion_scolaire.Services.Classe_service;
 import Gestion_scolaire.Services.Modules_service;
 import Gestion_scolaire.Services.Ue_service;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,21 +36,10 @@ public class UeAndModule_controller {
     public Object addUe(@RequestBody AddUeDTO dto){
         return ue_service.add(dto);
     }
-//    ---------------------------------------methode add modules-------------------------------
-    @PostMapping("/add-module-class")
-    public Object addClassModule(@RequestBody DTO_ClassModule cm){
-        System.out.println(cm + "----------ici");
-       return classe_service.add(cm);
-    }
-//    -----------------------------------------methode add module in module---------------
-    @PostMapping("/add-module")
-    public Object addModule(@RequestBody AddModuleDTO module){
-       return modules_service.addModule(module);
-    }
 //    --------------------------------------------method get list all eu----------------------
-    @GetMapping("/list-ue/{idClasse}")
-    public List<UE> getAllUe(@PathVariable long idClasse){
-        return ue_service.readAll(idClasse);
+    @GetMapping("/list-ue/{idClasse}/{idSemestre}")
+    public List<AddUeDTO> getAllUe(@PathVariable long idClasse, @PathVariable long idSemestre){
+        return ue_service.getAllUeByIdNiveauFiliereAndIdSemestre(idClasse, idSemestre);
     }
 //    -----------------------------------method get list module -----------
     @GetMapping("/list-module")
@@ -70,9 +61,9 @@ public class UeAndModule_controller {
     public List<Modules> allModule_without_note(@PathVariable long idClasse){
         return ue_service.listModule_without_note(idClasse);
     }
-//---------------------------------------------tout les modules sans notes
-@GetMapping("/all-module-without-note_all")
-public List<Modules> allModule_without_note_all(){
+    //---------------------------------------------tout les modules sans notes
+    @GetMapping("/all-module-without-note_all")
+    public List<Modules> allModule_without_note_all(){
     return ue_service.listModule_without_note_all();
 }
 
@@ -115,4 +106,9 @@ public List<Modules> allModule_without_note_all(){
         return ue_service.delete_module_by_id(idModule);
     }
 
+    @GetMapping("/all-niv-filiere")
+    @Operation(summary = "Recupere les niveau et filiere associer (mention)")
+    public List<NiveauFilieres> getAllNivFiliere(){
+        return classe_service.getAllNiveauFilieres();
+    }
 }

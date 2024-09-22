@@ -1,6 +1,8 @@
 package Gestion_scolaire.Services;
 
 import Gestion_scolaire.Dto_classe.DTO_response_string;
+import Gestion_scolaire.Dto_classe.NoteDTO;
+import Gestion_scolaire.Dto_classe.NoteModuleDTO;
 import Gestion_scolaire.Models.*;
 import Gestion_scolaire.Repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -86,14 +89,7 @@ public class Note_service {
         notes_repositorie.save(noteExist);
         return DTO_response_string.fromMessage("Mise à jour effectué avec succè", 200);
     }
-//-------------------------------------------------------methode pour appeler les note d'un etudiant du semestre en cours---------
-    public List<Notes> readByIdCurrentSemestre(long idStudent, long idSemestre){
-        List<Notes> list = notes_repositorie.findByIdStudentsIdEtudiantAndIdSemestreId(idStudent, idSemestre);
-        if (list.isEmpty()){
-            return new ArrayList<>();
-        }
-        return list;
-    }
+
 //    ---------------------------------------------mehode pour ajouter une note----------------------
     public Object addNote(Notes notes) {
        Notes noteExist = notes_repositorie.findByIdStudentsIdEtudiantAndIdModuleIdAndIdSemestreId(
@@ -142,5 +138,86 @@ public class Note_service {
         }
         return new ArrayList<>();
     }
+
+//    -----------------------------------
+public List<NoteDTO> moyenOfStudent(long idStudent, long idSemestre) {
+    // Vérification de l'existence de l'étudiant
+    Studens studentExist = students_repositorie.findByIdEtudiant(idStudent);
+    if (studentExist == null) {
+        throw new RuntimeException("L'étudiant n'existe pas");
+    }
+
+    // Récupération des ClasseModule associées
+    List<ClasseModule> classeWithModule = classeModule_repositorie.getAllByIdNiveauFiliereIdAndIdSemestreId(
+            studentExist.getIdClasse().getIdFiliere().getId(), idSemestre);
+
+    // Récupération des notes associées à l'étudiant
+    List<Notes> notesList = notes_repositorie.getByIdSemestreIdAndIdStudentsIdEtudiant(idSemestre, idStudent);
+
+    List<NoteDTO> noteDTOList = new ArrayList<>();
+
+    // Parcours des ClasseModule (qui sont associées aux UEs)
+    for (ClasseModule classeModule : classeWithModule) {
+        UE ue = classeModule.getIdUE(); // On récupère l'UE associée
+
+        NoteDTO nDTO = new NoteDTO();
+        nDTO.setNomUE(ue.getNomUE());
+
+        // Récupération des modules associés à l'UE
+        List<Modules> modulesList = modules_repositories.findByIdUeId(ue.getId());
+        List<NoteModuleDTO> noteModuleDTOList = new ArrayList<>();
+
+        int totalCoefficients = 0;
+        double totalSum = 0;
+
+        // Pour chaque module, on cherche la note correspondante
+        for (Modules module : modulesList) {
+            Notes moduleNote = notesList.stream()
+                    .filter(note -> note.getIdModule().equals(module))
+                    .findFirst()
+                    .orElse(null);
+
+            // Si le module a une note, on l'ajoute au calcul
+            if (moduleNote != null) {
+                NoteModuleDTO noteModuleDTO = new NoteModuleDTO();
+                noteModuleDTO.setNomModule(module.getNomModule());
+                noteModuleDTO.setIdModule(module.getId());
+                noteModuleDTO.setCoefficient(module.getCoefficient());
+
+                // Calcul de la note du module pondérée par le coefficient
+                double noteModule = ((moduleNote.getExamNote() * 2) + moduleNote.getClasseNote()) / 3;
+                double notePonderee = noteModule * module.getCoefficient();
+
+                noteModule = Math.round(noteModule * 100.0)/100.0;
+                noteModuleDTO.setNoteModule( noteModule); // Ajout de la note au DTO
+
+                // Ajout à la somme pondérée des notes
+                totalSum += notePonderee;
+                totalCoefficients += module.getCoefficient();
+
+                // Ajout du module au DTO uniquement s'il a une note
+                noteModuleDTOList.add(noteModuleDTO);
+            }
+        }
+
+        // Si des modules avec des notes sont trouvés, on calcule la note de l'UE
+        if (!noteModuleDTOList.isEmpty()) {
+            nDTO.setModules(noteModuleDTOList);
+            nDTO.setCoefficientUe(totalCoefficients);
+            double noteUe = (totalSum / totalCoefficients);
+            noteUe = Math.round(noteUe * 100.0) / 100.0;
+            nDTO.setNoteUE(noteUe);
+        } else {
+            // Si aucun module avec des notes n'a été trouvé, on peut décider de ne pas ajouter cet UE
+            continue;
+        }
+
+        // Ajouter le DTO de l'UE à la liste des résultats
+        noteDTOList.add(nDTO);
+    }
+
+    return noteDTOList; // Retourner la liste de tous les NoteDTO
+}
+
 
 }

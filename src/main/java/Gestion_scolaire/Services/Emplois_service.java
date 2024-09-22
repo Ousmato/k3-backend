@@ -30,6 +30,11 @@ public class Emplois_service {
         LocalDate dateDebutSemestre = emplois.getIdSemestre().getDateDebut();
         LocalDate dateFinSemestre = emplois.getIdSemestre().getDatFin();
 
+//        System.out.println("dateDebutSemestre: " + dateDebutSemestre);
+//        System.out.println("dateFinSemestre: " + dateFinSemestre);
+//
+//        System.out.println("dateDebut: " + dateDebut);
+//        System.out.println("dateFin: " + dateFin);
         if (dateDebut.isBefore(dateDebutSemestre) || dateFin.isAfter(dateFinSemestre)) {
             throw new NoteFundException("Les dates de l'emploi doivent être comprises entre les dates du semestre.");
         }

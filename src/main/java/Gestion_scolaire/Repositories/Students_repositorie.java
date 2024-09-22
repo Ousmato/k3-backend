@@ -31,20 +31,24 @@ public interface Students_repositorie extends JpaRepository<Studens, Long> {
    List<Studens> getByIdClasseIdAndPayer(@Param("idClasse") long idClasse, @Param("isPayer") boolean isPayer);
 
 
-   @Query("SELECT e FROM Studens e WHERE YEAR(e.date) = YEAR(CURRENT_DATE) AND e.idClasse.id = :idClasse")
+   @Query("SELECT e FROM Studens e WHERE  e.idClasse.id = :idClasse")
    Page<Studens> findByIdClasseId(@Param("idClasse") long idClasse, Pageable pageable);
 
    @Query("SELECT SUM(e.scolarite) FROM Studens e WHERE YEAR (e.date) = YEAR (current_date )")
    double sumScolariteForCurrentYear();
 
-   @Query("SELECT SUM(e.idClasse.scolarite) -SUM(e.scolarite) FROM Studens e WHERE YEAR (e.date) = YEAR (current_date )")
+   @Query("SELECT SUM(e.idClasse.idFiliere.scolarite) -SUM(e.scolarite) FROM Studens e WHERE YEAR (e.date) = YEAR (current_date )")
    double getReliquatForCurrentYear();
 
    @Query("SELECT SUM(e.scolarite) FROM Studens e WHERE YEAR (e.date) = YEAR (current_date )")
    double cunt();
 
    int countAllByPayer(boolean payer);
+   int countAllByIdClasseIdAndIdClasseIdAnneeScolaireId(long idClasseId, long idAnneeScolaireId);
 
+
+   @Query("SELECT e FROM Studens e WHERE YEAR(e.date) = YEAR(CURRENT_DATE)")
+   Page<Studens> findStudentOfCurrentYear( Pageable pageable);
 
    Page<Studens> findByIdClasseIdAnneeScolaireIdAndIdClasseId(long idAnneeScolaireId, long idClasseId, Pageable pageable);
 

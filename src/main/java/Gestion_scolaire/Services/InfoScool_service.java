@@ -174,4 +174,6 @@ public class InfoScool_service {
         }
         throw new NoteFundException("L'année scolaire n'existe pas");
     }
+
+
 }

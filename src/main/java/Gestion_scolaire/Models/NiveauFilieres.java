@@ -16,4 +16,8 @@ public class NiveauFilieres {
 
     @ManyToOne
     private Niveau idNiveau;
+
+    @NotNull
+    private double scolarite;
+
 }

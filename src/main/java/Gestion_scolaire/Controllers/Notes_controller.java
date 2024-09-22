@@ -1,9 +1,11 @@
 package Gestion_scolaire.Controllers;
 
+import Gestion_scolaire.Dto_classe.NoteDTO;
 import Gestion_scolaire.Models.Modules;
 import Gestion_scolaire.Models.Notes;
 import Gestion_scolaire.Services.Note_service;
 import Gestion_scolaire.Services.Ue_service;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,8 +36,8 @@ public class Notes_controller {
     }
 //    ----------------------------------methode get AllNote by student-------------
     @GetMapping("/read/{idStudent}/{idSemestre}")
-    public List<Notes> getByIdStudent(@PathVariable long idStudent, @PathVariable long idSemestre){
-        return note_service.readByIdCurrentSemestre(idStudent, idSemestre);
+    public List<NoteDTO> getByIdStudent(@PathVariable long idStudent, @PathVariable long idSemestre){
+        return note_service.moyenOfStudent(idStudent, idSemestre);
 
     }
 //        -------------------------------method get all moyen in classe and curente semestre-----------
@@ -60,9 +62,9 @@ public class Notes_controller {
         return note_service.update(notes);
     }
 //    ----------------------------liste de  modules par etudiant qui n'ont pas encore eu de note
-    @GetMapping("/all-Modules-filter/{idStudent}/{idClasse}")
-    public List<Modules> getAllModule(@PathVariable long idStudent, @PathVariable long idClasse){
-        return ue_service.getByIdStudentAndIdClasse(idStudent,idClasse);
+    @GetMapping("/all-Modules-filter/{idStudent}/{idClasse}/{idSemestre}")
+    public List<Modules> getAllModule(@PathVariable long idStudent, @PathVariable long idClasse, @PathVariable long idSemestre){
+        return ue_service.getByIdStudentAndIdClasse(idStudent,idClasse, idSemestre);
     }
 //    --------------------------------------read all notes of current semestre
     @GetMapping("/read-all-of-semestre/{idClasse}")
@@ -71,5 +73,11 @@ public class Notes_controller {
             @RequestParam(defaultValue = "10") int size,
             @PathVariable long idClasse){
         return note_service.listNotes(page, size, idClasse);
+    }
+
+    @GetMapping("/calculate-studen-moyen-by-semestre/{idStudent}/{idSemestre}")
+    @Operation(summary = "Calculer la note de l'etudiant par semestre")
+    public Object calculateMoyen(@PathVariable long idStudent, @PathVariable long idSemestre){
+        return note_service.moyenOfStudent(idStudent, idSemestre);
     }
 }

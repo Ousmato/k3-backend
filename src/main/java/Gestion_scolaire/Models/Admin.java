@@ -4,7 +4,9 @@ import Gestion_scolaire.EnumClasse.Admin_role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 public class Admin extends UsersAbstract{
@@ -18,3 +20,4 @@ public class Admin extends UsersAbstract{
     private Admin_role role;
 
 }
+

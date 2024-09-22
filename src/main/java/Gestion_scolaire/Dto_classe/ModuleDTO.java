@@ -10,7 +10,7 @@ import java.util.List;
 public class ModuleDTO {
 //    private long id;
     private String nomModule;
-//    private int coefficient;
+    private int coefficient;
     private UeDTO idUe;
 
 

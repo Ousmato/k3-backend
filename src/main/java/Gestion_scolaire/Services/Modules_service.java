@@ -22,42 +22,6 @@ public class Modules_service {
     @Autowired
     private Note_service note_service;
 
-    public List<Modules> add(List<Modules> modules){
-        List<Modules> list = new ArrayList<>();
-        for (Modules module: modules){
-            Modules modulesExist = modules_repositories.findByIdUeAndNomModule(module.getIdUe(), module.getNomModule());
-            if(modulesExist == null){
-                 list.add(modules_repositories.save(module));
-            }else {
-                throw new RuntimeException("Module exist deja");
-            }
-        }
-    return list;
-    }
-//    -----------------------------------------------method pour ajouter un module dans la class module-----------
-    public Object addModule(AddModuleDTO module){
-        boolean isSaved = false;
-        for (Modules modules: module.getModules()){
-            Modules modulesExist = modules_repositories.findByIdUeAndNomModule(module.getIdUe(), modules.getNomModule());
-
-            if(modulesExist == null){
-                Modules mod = new Modules();
-                mod.setIdUe(module.getIdUe());
-                mod.setNomModule(modules.getNomModule());
-                mod.setCoefficient(modules.getCoefficient());
-                modules_repositories.save(mod);
-                isSaved = true;
-
-            }
-        }
-        if (isSaved) {
-            return DTO_response_string.fromMessage("Ajout effectué avec succès", 200);
-        } else {
-            // Si aucun module n'a été ajouté, cela signifie qu'ils existent tous
-            throw new RuntimeException("Tous les modules existent déjà");
-        }
-    }
-
 //    ---------------------------------------method pour appeler la liste-----------------------------
     public List<Modules> readAll(){
       return  modules_repositories.findAll();

@@ -44,6 +44,13 @@ public class Semestre_controller {
     public List<Semestres> getCurrentSemestreOfYear(){
         return semestre_service.currenctSemestres();
     }
+
+    @GetMapping("/all-semestre-by-idNiv-fil/{idNivFiliere}")
+    @Operation(summary = "Recuperer la liste des tous les semestre en cours par id du mention nivfil")
+    public List<Semestres> getCurrentSemestreByIdNivFil(@PathVariable int idNivFiliere){
+        return semestre_service.getCurrenctSemestresByIdNivFil(idNivFiliere);
+    }
+
 //    ----------------------------------add semestre
     @PostMapping("/add-semestre")
     public Object addSemestre(@RequestBody Semestres semestre){

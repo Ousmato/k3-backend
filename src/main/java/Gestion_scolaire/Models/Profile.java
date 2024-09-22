@@ -4,11 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.time.LocalDate;
-
 @Data
 @Entity
-public class StudentsClasse {
+public class Profile{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,15 +14,9 @@ public class StudentsClasse {
 
     @NotNull
     @ManyToOne
-    private AnneeScolaire idAnneeScolaire;
+    private Teachers idTeacher;
 
     @NotNull
-    private int effectifs = 0;
-
-
-    @NotNull
-    private boolean fermer;
-
     @ManyToOne
-    private NiveauFilieres idFiliere;
+    private Filiere idFiliere;
 }
