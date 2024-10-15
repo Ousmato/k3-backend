@@ -25,14 +25,13 @@ public class Soutenance {
     private LocalTime heureFin;
 
     @NotNull
-    @OneToOne
+    @ManyToOne
     private StudentDoc idDoc;
 
-    private int note = 0;
+
     @NotNull
     @OneToOne
     private Salles idSalle;
-
 
 
 }

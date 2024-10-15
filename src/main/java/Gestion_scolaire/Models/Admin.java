@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.time.LocalDate;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
@@ -19,5 +21,7 @@ public class Admin extends UsersAbstract{
     @Enumerated(EnumType.STRING)
     private Admin_role role;
 
+    @NotNull
+    private LocalDate updateDate = LocalDate.now();
 }
 

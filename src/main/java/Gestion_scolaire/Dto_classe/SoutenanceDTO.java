@@ -14,9 +14,9 @@ public class SoutenanceDTO {
     private LocalTime heureDebut;
     private LocalTime heureFin;
     private LocalDate date;
+    private List<JuryDto> idJury;
     private String filiere;
     private String niveaux;
-    private List<Jury> idJury;
     private Teachers idTeacher;
     private long idDoc;
     private List<Studens> students;

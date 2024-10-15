@@ -102,7 +102,6 @@ public class Student_service {
 
     //    -----------------------------------------------------------------------------------
     public Object update(Studens studens, MultipartFile file) throws IOException {
-//System.out.println(studens +" ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;"+ file);
         String telephone = String.valueOf(studens.getTelephone());
         if (telephone.length() > 8) {
             throw new NoteFundException("Le numéro de téléphone ne doit pas dépasser 8 chiffres");
@@ -120,6 +119,13 @@ public class Student_service {
             throw new NoteFundException("L'étudiant n'existe pas");
         }
 
+        System.out.println("--------------------je suis ici");
+        // Vérification du mot de passe
+        if (studens.getPassword() != null && !studens.getPassword().isEmpty()) {
+            studentExist.setPassword(passwordEncoder.encode(studens.getPassword()));
+        }else {
+            studentExist.setPassword(studentExist.getPassword());
+        }
         // Mise à jour de la photo si le fichier est fourni
         if (file != null && !file.isEmpty()) {
             String urlPhoto = fileManagers.updateFile(file, studentExist.getUrlPhoto());
@@ -135,7 +141,6 @@ public class Student_service {
         studentExist.setLieuNaissance(studens.getLieuNaissance());
         studentExist.setNom(studens.getNom());
         studentExist.setPrenom(studens.getPrenom());
-        studentExist.setPassword(passwordEncoder.encode(studens.getPassword()));
 
         students_repositorie.save(studentExist);
         return DTO_response_string.fromMessage("Modification effectuée avec succé", 200);
@@ -242,7 +247,6 @@ public class Student_service {
 
     //-------------------------------------------------------------------------------------
     public Object reinscription(Studens student, long idClasse) {
-
         // Trouver l'étudiant
         Studens studentExist = students_repositorie.findByIdEtudiant(student.getIdEtudiant());
         if (studentExist == null) {
@@ -255,38 +259,37 @@ public class Student_service {
             throw new NoteFundException("La classe est introuvable");
         }
 
+        System.out.println("-------------------------student------------" + student);
+
         // Trouver l'année scolaire
         AnneeScolaire newYear = annee_repositorie.findById(newClass.getIdAnneeScolaire().getId());
         if (newYear == null) {
             throw new NoteFundException("L'année scolaire est introuvable");
         }
 
-        // Récupérer l'ancienne classe de l'étudiant
-        StudentsClasse oldClass = studentExist.getIdClasse();
-
         // Vérifier si l'étudiant est déjà inscrit dans la nouvelle classe et l'année scolaire
-        if (oldClass != null && oldClass.equals(newClass) && studentExist.getIdClasse().getIdAnneeScolaire().equals(newYear)) {
+        if (studentExist.getIdClasse() != null && studentExist.getIdClasse().equals(newClass) && studentExist.getIdClasse().getIdAnneeScolaire().equals(newYear)) {
             throw new NoteFundException("L'étudiant est déjà inscrit dans cette classe pour cette année scolaire");
         }
 
+        // Vérifier que l'étudiant n'est pas déjà inscrit
+        Studens studentInscrit = students_repositorie.findByIdClasseIdAndMatriculeAndNom(newClass.getId(), student.getMatricule(), student.getNom());
+        if (studentInscrit != null) {
+            throw new NoteFundException("L'étudiant est déjà inscrit dans cette classe");
+        }
+
         // Vérifier que le niveau de la nouvelle classe est supérieur à l'ancien niveau
-        if (oldClass != null && studentExist.getIdClasse().getIdFiliere().getIdNiveau().equals(newClass.getIdFiliere().getIdNiveau())) {
+        if (studentExist.getIdClasse() != null && studentExist.getIdClasse().getIdFiliere().getIdNiveau().equals(newClass.getIdFiliere().getIdNiveau())) {
             throw new NoteFundException("Réinscription invalide, veuillez choisir un niveau supérieur");
         }
 
         // Vérifier la filière
-        if (oldClass != null && !studentExist.getIdClasse().getIdFiliere().getIdFiliere().equals(newClass.getIdFiliere().getIdFiliere())) {
+        if (studentExist.getIdClasse() != null && !studentExist.getIdClasse().getIdFiliere().getIdFiliere().equals(newClass.getIdFiliere().getIdFiliere())) {
             throw new NoteFundException("Réinscription invalide, la filière ne correspond pas");
         }
 
+        // Création d'un nouvel étudiant pour la réinscription
         Studens newStudent = new Studens();
-//        student.setDate(LocalDate.now());
-//        student.setIdClasse(newClass);
-//        student.setPayer(false);
-//        student.setScolarite(0);
-//        student.setPassword(studentExist.getPassword());
-
-//
         newStudent.setIdClasse(newClass);
         newStudent.setIdAdmin(studentExist.getIdAdmin());
         newStudent.setNom(studentExist.getNom());
@@ -294,23 +297,21 @@ public class Student_service {
         newStudent.setEmail(studentExist.getEmail());
         newStudent.setTelephone(studentExist.getTelephone());
         newStudent.setSexe(studentExist.getSexe());
-
         newStudent.setUrlPhoto(studentExist.getUrlPhoto());
         newStudent.setDateNaissance(studentExist.getDateNaissance());
         newStudent.setDate(LocalDate.now());
         newStudent.setPayer(false);
-        newStudent.setIdAdmin(studentExist.getIdAdmin());
         newStudent.setPassword(studentExist.getPassword());
         newStudent.setMatricule(studentExist.getMatricule());
         newStudent.setLieuNaissance(studentExist.getLieuNaissance());
         newStudent.setStatus(studentExist.getStatus());
+
         students_repositorie.save(newStudent);
         newClass.setEffectifs(newClass.getEffectifs() + 1);
         classe_repositorie.save(newClass);
-
-        return DTO_response_string.fromMessage("Inscription effectuée avec succé ", 200);
-
+        return DTO_response_string.fromMessage("Inscription effectuée avec succès", 200);
     }
+
 
     //    -------------------------------------------get all student by id annee and idClasse
     public Page<Studens> getStudentByIDAnneeAndIdClasse(long idAnnee, long idClasse, int page, int size) {
@@ -320,6 +321,17 @@ public class Student_service {
             return Page.empty(pageable);
         }
         return studensPage;
+    }
+
+    //    -------------------------------------------------
+    public List<Studens> getListByIdAnneeAndIdClase(long idAnnee, long idClasse) {
+        List<Studens> list = students_repositorie.findByIdClasseIdAnneeScolaireIdAndIdClasseId(idAnnee, idClasse);
+        if (list.isEmpty()) {
+            return new ArrayList<>();
+        }
+        list.sort(Comparator.comparing(Studens::getNom));
+        return list;
+
     }
 
     public Object addStudentsImport(AddStudentsImport students){
@@ -370,5 +382,23 @@ public class Student_service {
         }
         return DTO_response_string.fromMessage("Ajout effectuer avec succès", 200);
 
+    }
+
+    public Page<Studens> readAllByEtat(int value, int page, int size){
+        Sort sort = Sort.by(Sort.Order.asc("nom"));
+        Pageable pageable = PageRequest.of(page, size, sort);
+        if(value == 1){
+            Page<Studens> studensList = students_repositorie.findStudentOfCurrentYearByEtat(pageable, true);
+            if (studensList.isEmpty()) {
+                return Page.empty(pageable);
+            }
+            return studensList;
+        }
+
+            Page<Studens> studensList = students_repositorie.findStudentOfCurrentYearByEtat(pageable, false);
+        if (studensList.isEmpty()) {
+            return Page.empty(pageable);
+        }
+        return studensList;
     }
 }

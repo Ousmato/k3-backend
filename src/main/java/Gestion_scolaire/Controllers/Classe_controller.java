@@ -94,4 +94,10 @@ public class Classe_controller {
         return classe_service.getAllCurrentClasseWithUe();
     }
 
+    //-----------------------------------get all classe for depot doc by type doc
+    @GetMapping("classe-type-of-doc/{type}")
+    @Operation(summary = "Recuper les classes pour le depot de doc par type de doc")
+    public List<StudentsClasse> getClassTypeOfDoc(@PathVariable long type){
+        return classe_service.getListClassForDepotDoc(type);
+    }
 }

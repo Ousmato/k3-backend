@@ -22,4 +22,8 @@ public interface Teacher_repositorie extends JpaRepository<Teachers, Long> {
 
     int countByActive(boolean isActive);
 
+    Teachers getAllByTelephone(int telephone);
+
+    List<Teachers> findByNomContaining(String nom);
+
 }

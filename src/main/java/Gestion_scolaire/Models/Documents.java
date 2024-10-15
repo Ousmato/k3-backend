@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-public class Documents {
+public class  Documents {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,13 +28,18 @@ public class Documents {
     @NotNull
     private LocalDate date = LocalDate.now();
 
-
     @NotNull
-    @ManyToOne
+    @OneToOne
     private Teachers idEncadrant;
 
     @NotNull
     private boolean soutenue = false;
+
+    @NotNull
+    private boolean programmer = false;
+
+    @NotNull
+    private double note = 0;
 
 
 }

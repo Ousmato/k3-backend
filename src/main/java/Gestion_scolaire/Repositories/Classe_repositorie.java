@@ -17,12 +17,14 @@ public interface Classe_repositorie extends JpaRepository<StudentsClasse, Long> 
     StudentsClasse findByIdFiliereIdAndIdFiliereIdNiveauId(long idFiliereId, long idFiliereIdNiveauId);
     List<StudentsClasse> findStudentsClasseById(long idclasse);
 
+    List<StudentsClasse> findByIdFiliereIdNiveauNom(String nom);
+
     List<StudentsClasse> findByIdAnneeScolaireId(long idanneeScolaireId);
 
     List<StudentsClasse>  findByIdFiliereIdNiveauId(long idNiveau);
 
-    @Query("SELECT c FROM StudentsClasse c WHERE YEAR(c.idAnneeScolaire.finAnnee) = :year AND c.idFiliere.idFiliere.id = :idFiliereId")
-    List<StudentsClasse> findByIdFiliereIdFiliereIdAndNextYear(@Param("year") int year, @Param("idFiliereId") long idFiliereId);
+    @Query("SELECT c FROM StudentsClasse c WHERE YEAR(c.idAnneeScolaire.finAnnee) = :year AND c.idFiliere.idFiliere.id = :idFiliereId AND c.idFiliere.idNiveau.id = :idNiveau")
+   List<StudentsClasse> findByIdFiliereIdFiliereIdAndNextYear(@Param("year") int year, @Param("idFiliereId") long idFiliereId, @Param("idNiveau") long idNiveau);
 
     List<StudentsClasse> findByIdFiliereId(long idFiliere);
 
@@ -35,4 +37,5 @@ public interface Classe_repositorie extends JpaRepository<StudentsClasse, Long> 
     @Query("SELECT c  FROM StudentsClasse c WHERE YEAR (c.idAnneeScolaire.finAnnee ) < :year and c.idFiliere.id =:idClasse")
     List<StudentsClasse> getAllArchivesByIdClasse(@Param("year") int year, @Param("idClasse") long idClasse);
 
+    StudentsClasse getByIdAndIdFiliereIdNiveauId(long idClasse, long idFiliereIdNiveauId);
 }

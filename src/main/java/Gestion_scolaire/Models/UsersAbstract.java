@@ -7,6 +7,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+
+import java.time.LocalDate;
+
 @MappedSuperclass
 @Data
 public abstract class UsersAbstract {
@@ -35,4 +38,6 @@ public abstract class UsersAbstract {
 
     @NotNull
     private String sexe;
+
+
 }

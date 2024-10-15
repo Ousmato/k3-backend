@@ -3,7 +3,9 @@ package Gestion_scolaire.Services;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Dto_classe.EmploisDTO;
 import Gestion_scolaire.Models.Emplois;
+import Gestion_scolaire.Models.Journee;
 import Gestion_scolaire.Repositories.Emplois_repositorie;
+import Gestion_scolaire.Repositories.Journee_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,8 @@ public class Emplois_service {
 
     @Autowired
     private Emplois_repositorie emplois_repositorie;
+    @Autowired
+    private Journee_repositorie journee_repositorie;
 
 
     public Object add(Emplois emplois) {
@@ -29,7 +33,7 @@ public class Emplois_service {
         LocalDate dateFin = emplois.getDateFin();
         LocalDate dateDebutSemestre = emplois.getIdSemestre().getDateDebut();
         LocalDate dateFinSemestre = emplois.getIdSemestre().getDatFin();
-
+//
 //        System.out.println("dateDebutSemestre: " + dateDebutSemestre);
 //        System.out.println("dateFinSemestre: " + dateFinSemestre);
 //
@@ -60,11 +64,17 @@ public class Emplois_service {
         Emplois emploisExist = emplois_repositorie.findById(emplois.getId());
         if (emploisExist != null) {
 
-            LocalDate dateDebut = emploisExist.getDateDebut();
-            LocalDate dateFin = emploisExist.getDateFin();
-            LocalDate dateDebutSemestre = emploisExist.getIdSemestre().getDateDebut();
-            LocalDate dateFinSemestre = emploisExist.getIdSemestre().getDatFin();
+            List<Journee> journees = journee_repositorie.findByIdEmploisId(emploisExist.getId());
+            if(!journees.isEmpty()){
+                if(emploisExist.getDateDebut().isBefore(LocalDate.now())){
+                    throw new NoteFundException("Impossible de modifier l'emploi du temps, des séances sont déjà programmées pour cet emploi.");
 
+                }
+            }
+            LocalDate dateDebut = emplois.getDateDebut();
+            LocalDate dateFin = emplois.getDateFin();
+            LocalDate dateDebutSemestre = emplois.getIdSemestre().getDateDebut();
+            LocalDate dateFinSemestre = emplois.getIdSemestre().getDatFin();
 
             if (dateDebut.isBefore(dateDebutSemestre) || dateFin.isAfter(dateFinSemestre)) {
                 throw new NoteFundException("Les dates de l'emploi doivent être comprises entre les dates du semestre.");
@@ -78,8 +88,8 @@ public class Emplois_service {
 
             emploisExist.setDateDebut(emplois.getDateDebut());
             emploisExist.setDateFin(emplois.getDateFin());
-            emplois.setIdSemestre(emplois.getIdSemestre());
-            emplois.setIdClasse(emplois.getIdClasse());
+            emploisExist.setIdSemestre(emplois.getIdSemestre());
+            emploisExist.setIdModule(emplois.getIdModule());
 
             emplois_repositorie.save(emploisExist);
             return DTO_response_string.fromMessage("Modification effectué avec succès", 200);

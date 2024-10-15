@@ -3,8 +3,10 @@ package Gestion_scolaire.Services;
 import Gestion_scolaire.Dto_classe.AddModuleDTO;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Dto_classe.ModuleDTO;
+import Gestion_scolaire.Models.ClasseModule;
 import Gestion_scolaire.Models.Modules;
 import Gestion_scolaire.Models.Notes;
+import Gestion_scolaire.Repositories.ClasseModule_repositorie;
 import Gestion_scolaire.Repositories.Modules_repositories;
 import Gestion_scolaire.configuration.NoteFundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,9 @@ public class Modules_service {
 
     @Autowired
     private Modules_repositories modules_repositories;
+
+    @Autowired
+    private ClasseModule_repositorie classeModule_repositorie;
 
     @Autowired
     private Note_service note_service;
@@ -53,5 +58,19 @@ public class Modules_service {
 
         }
         throw new NoteFundException("Le module n'est peut pas etre modifier en raison de notes deja associer");
+    }
+
+//    ----------------------------------------
+    public List<Modules> getModulesByIdclasseAndIdSemestre(long idclasse, long semestre){
+        List<ClasseModule> clm = classeModule_repositorie.getAllByIdNiveauFiliereIdAndIdSemestreId(idclasse, semestre);
+        List<Modules> modulesList = new ArrayList<>();
+        for (ClasseModule cm : clm){
+            List<Modules> modules = modules_repositories.findByIdUeId(cm.getIdUE().getId());
+            modulesList.addAll(modules);
+        }
+        if (modulesList.isEmpty()){
+            return new ArrayList<>();
+        }
+        return  modulesList;
     }
 }

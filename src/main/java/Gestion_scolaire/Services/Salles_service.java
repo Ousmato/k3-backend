@@ -7,6 +7,7 @@ import Gestion_scolaire.configuration.NoteFundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class Salles_service {
     public List<Salles> getAllSalles_non_occuper() {
         List<Salles> sallesList = sallesRepositorie.findAll();
         List<Salles> newListe = new ArrayList<>();
-        List<Salles> salleOccupe = common_service.salle_occuper();
+        List<Salles> salleOccupe = common_service.salle_occuper(LocalDate.now());
 
         for (Salles salle : sallesList) {
             if (!salleOccupe.contains(salle)) {
@@ -68,4 +69,13 @@ public class Salles_service {
         return sallesList;
     }
 
+    //    -------------------------------------
+    public Salles getSallesFilteredByNom(String nom) {
+        List<Salles> list = sallesRepositorie.findByNomContaining(nom);
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.getFirst();
+
+    }
 }

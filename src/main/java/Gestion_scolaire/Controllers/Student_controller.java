@@ -2,20 +2,15 @@ package Gestion_scolaire.Controllers;
 
 import Gestion_scolaire.Dto_classe.*;
 import Gestion_scolaire.Models.*;
-import Gestion_scolaire.Services.Common_service;
 import Gestion_scolaire.Services.Doc_service;
 import Gestion_scolaire.Services.Groupe_service;
 import Gestion_scolaire.Services.Student_service;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -54,7 +49,7 @@ public class Student_controller {
     @GetMapping("/list")
     public Page<Studens> getAllStudents(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "20") int size) {
         return student_service.readAll(page, size);
     }
 //    ----------------------------methode find all student
@@ -70,10 +65,11 @@ public class Student_controller {
 //        System.out.println("------------------" + urlFile.getOriginalFilename() + "--------------" + studensString + "---------------------------");
 
         ObjectMapper objectMapper = new ObjectMapper();
-//        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.registerModule(new JavaTimeModule());
         Studens studens = objectMapper.readValue(studensString, Studens.class);
         // Vérifie si urlFile est null ou vide
         if (urlFile == null) {
+
             System.out.println("file is ");
             return student_service.update(studens, null);
         }
@@ -224,19 +220,19 @@ public class Student_controller {
         return doc_service.getDocsByIdClass(idClasse);
     }
 
-//    //    -------------------------------------------
-//    @PostMapping("/add-soutenance")
-//    @Operation(summary = "Programer une soutenance")
-//    public Object addSoutenance(@RequestBody SoutenanceDTO soutenance){
-//        return doc_service.addProgramSoutenance(soutenance);
-//    }
+    //    -------------------------------------------
+    @PostMapping("/add-soutenance")
+    @Operation(summary = "Programer une soutenance")
+    public Object addSoutenance(@RequestBody ProgramSoutenanceDto dto){
+        return doc_service.addProgramSoutenance(dto);
+    }
 
-    //-------------------------------------
-//    @GetMapping("/all-soutenance-actif")
-//    @Operation(summary = "Recuperer la liste des soutenance programmer actif")
-//    public List<SoutenanceDTO> getAllSoutenanceActif(){
-//        return doc_service.getAllSoutenancesActive();
-//    }
+//    -------------------------------------
+    @GetMapping("/all-soutenance-actif")
+    @Operation(summary = "Recuperer la liste des soutenance programmer actif")
+    public List<SoutenanceDTO> getAllSoutenanceActif(){
+        return doc_service.getAllSoutenancesActive();
+    }
     //-------------------------------------------
     @GetMapping("/memoire-number")
     @Operation(summary = "Recuperer les nombre de memoire ")
@@ -267,5 +263,37 @@ public class Student_controller {
     @Operation(summary = "Ajout des etudiant du fichier excel importer")
     public Object addStudentImport(@RequestBody AddStudentsImport students){
         return student_service.addStudentsImport(students);
+    }
+
+    //-------------------------------
+    @GetMapping("get-list-student-by-idAnnee-and-idClasse/{idAnnee}/{idClasse}")
+    @Operation(summary = "Recuperer la list des etudiant d'une classe par année avec l'idClass")
+    public List<Studens> getListStudentAnneeAndIdClasse(
+            @PathVariable long idAnnee,
+            @PathVariable long idClasse){
+        return student_service.getListByIdAnneeAndIdClase(idAnnee, idClasse);
+    }
+    //-----------------------------
+    @GetMapping("/desaprouve-doc/{idDoc}")
+    @Operation(summary = "Annuler une soutenance programer")
+    public boolean desaprouveDoc(@PathVariable long idDoc){
+        return doc_service.annulerProgramSoutenance(idDoc);
+    }
+
+    //-----------------------
+    @PostMapping("/add-soutenance-note/{idDoc}")
+    @Operation(summary = "Noter une soutenance par id doc")
+    public Object addSoutenanceNote(@PathVariable long idDoc, @RequestBody double note){
+        return doc_service.addSoutenanceNote(idDoc, note);
+    }
+
+    //-----------------------
+    @GetMapping("get-student-by-etats/{value}")
+    @Operation(summary = "Recuperer les etudiants par etat")
+    public Page<Studens> getAllStudentsByEtats(
+            @PathVariable int value,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return student_service.readAllByEtat(value,page, size);
     }
 }

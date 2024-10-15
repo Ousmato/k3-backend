@@ -68,6 +68,12 @@ public class Groupe_service {
                 throw new NoteFundException("Veuillez choisir un groupe d'étudiants pour le participant : " + participant);
             }
 
+            Participant oldParticipant = participant_repositorie.findByIdStudentIdEtudiantAndIdStudentGroupIdEmploiId(
+                    participant.getIdStudent().getIdEtudiant(), participant.getIdStudentGroup().getIdEmploi().getId());
+            if(oldParticipant != null){
+                throw new NoteFundException("Invalide un étudiant ne dois pas etre dans deux groupe a la fois");
+            }
+
             // Recherche de la participation existante
             Participant p_Exist = participant_repositorie.findByIdStudentIdEtudiantAndIdStudentGroupId(
                     participant.getIdStudent().getIdEtudiant(),

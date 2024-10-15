@@ -1,5 +1,6 @@
 package Gestion_scolaire.Services;
 
+import Gestion_scolaire.Dto_classe.AdminDTO;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.EnumClasse.Admin_role;
 import Gestion_scolaire.MailSender.MessaSender;
@@ -50,8 +51,9 @@ public class Admin_service {
             a.setPrenom("Toure");
             a.setTelephone(73855156);
             a.setSexe("Homme");
-            a.setRole(Admin_role.admin);
+            a.setRole(Admin_role.dg);
             a.setActive(true);
+            a.setUpdateDate(LocalDate.now());
             a.setUrlPhoto("image.jpg");
             admin_repositorie.save(a);
         }
@@ -59,8 +61,7 @@ public class Admin_service {
 
     //  =======================================================================================
     public Object add(Admin admin, MultipartFile file) throws Exception {
-        System.out.println("----------------------------------------"+admin);
-        Admin adminExist = admin_repositorie.findByRole(admin.getRole());
+        Admin adminExist = admin_repositorie.findByRoleAndActive(admin.getRole(), true);
         if (adminExist != null) {
            throw new NoteFundException("Impossible d'attribuer le meme role a deux administrateur");
         }
@@ -82,6 +83,67 @@ public class Admin_service {
 
 //    ----------------------------------------get all admin
     public List<Admin> list_admin() {
-        return admin_repositorie.findAll();
+        return admin_repositorie.findAllByActive(true);
+    }
+
+    public List<Admin> getAllByEtat(long value) {
+        if(value == 1){
+            return admin_repositorie.findAllByActive(true);
+        }
+        return admin_repositorie.findAllByActive(false);
+
+    }
+//    ---------------------------------------
+    public Object chageEtatByIdAdmin(long id) {
+        Admin admin = admin_repositorie.findByIdAdministra(id);
+        if(admin != null){
+
+            if(!admin.isActive() && admin_repositorie.findByRoleAndActive(admin.getRole(), true) != null){
+                throw new NoteFundException("Il existe déjà un "+ admin.getRole().toString().toUpperCase() + " en activité");
+            }
+            admin.setActive(!admin.isActive());
+            admin_repositorie.save(admin);
+            return DTO_response_string.fromMessage("Mises à jour éffectuer avec succès", 200);
+        }
+        throw new NoteFundException("L'administrateur est introuvable");
+    }
+
+//    ------------------------
+    public Admin getAdminBy(long id) {
+        Admin admin = admin_repositorie.findByIdAdministra(id);
+        if(admin != null){
+            return admin;
+        }
+        throw new NoteFundException("L'administrateur est introuvable");
+    }
+
+//    --------------------
+    public Admin changeImage(long id, MultipartFile file) throws Exception {
+        Admin admin = admin_repositorie.findByIdAdministra(id);
+        System.out.println("----------------------" + admin);
+        if (admin == null) {
+            throw new NoteFundException("L'administrateur est introuvable");
+        }
+        String oldPath = admin.getUrlPhoto();
+        String urPhoto = fileManagers.updateFile(file, oldPath);
+        admin.setUrlPhoto(urPhoto);
+        admin.setUpdateDate(LocalDate.now());
+        admin_repositorie.save(admin);
+        return admin;
+    }
+
+//    ------------------
+    public Object updatAdmin(AdminDTO admin){
+        Admin adminExist = admin_repositorie.findByIdAdministra(admin.getIdAdministra());
+        if(adminExist == null){
+            throw new NoteFundException("L'administrateur est introuvable");
+        }
+        adminExist.setNom(admin.getNom());
+        adminExist.setPrenom(admin.getPrenom());
+        adminExist.setEmail(admin.getEmail());
+        adminExist.setTelephone(admin.getTelephone());
+        adminExist.setUpdateDate(LocalDate.now());
+        admin_repositorie.save(adminExist);
+        return adminExist;
     }
 }

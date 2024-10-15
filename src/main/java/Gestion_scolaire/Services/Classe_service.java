@@ -76,6 +76,7 @@ public class Classe_service {
     //    --------------------method pour appeler tous les classes ouverte-------
     public List<StudentsClasse> readAllClass(){
         List<StudentsClasse> classeList = classe_repositorie.getClasseForCurrentYear(LocalDate.now().getYear());
+        System.out.println("---------------------" + classeList);
         if(!classeList.isEmpty()){
             for(StudentsClasse classe : classeList){
                 int studentInscrit = students_repositorie.countAllByIdClasseIdAndIdClasseIdAnneeScolaireId(classe.getId(), classe.getIdAnneeScolaire().getId());
@@ -205,13 +206,53 @@ public class Classe_service {
         AnneeScolaire oldAnnee = classeExist.getIdAnneeScolaire();
         int nextYear = oldAnnee.getFinAnnee().getYear() + 1;
 
-        Niveau oldNiv = classeExist.getIdFiliere().getIdNiveau();
-        List<StudentsClasse> list = classe_repositorie.findByIdFiliereIdFiliereIdAndNextYear(nextYear, classeExist.getIdFiliere().getIdFiliere().getId());
-        // Enlever l'élément avec le même nom de filière
-        ;
-        list.removeIf(classe -> classe.getIdFiliere().getIdNiveau().equals(oldNiv));
+        List<Niveau> niveauList = niveau_repositorie.findAll();
+        Niveau nextNiveau = new Niveau();
+        List<Integer> niveauLevel = new ArrayList<>();
+        for(Niveau niveau : niveauList){
+            switch (niveau.getNom()) {
+                case "LICENCE 1" -> niveauLevel.add(1);
+                case "LICENCE 2" -> niveauLevel.add(2);
+                case "LICENCE 3" -> niveauLevel.add(3);
+                case "MASTER 1" -> niveauLevel.add(4);
+                case "MASTER 2" -> niveauLevel.add(5);
+            }
 
-        return list;
+        }
+         // Trouver le niveau supérieur
+        int finalCurrentLevel = getFinalCurrentLevel(classeExist);
+        Integer nextLevel = niveauLevel.stream()
+                .filter(level -> level > finalCurrentLevel) // Filtrer pour les niveaux supérieurs
+                .findFirst() // Prendre le premier niveau supérieur
+                .orElse(null); // Si aucun niveau supérieur n'est trouvé
+
+//        Niveau nextNiveau = null;
+        if (nextLevel != null) {
+            for (Niveau niveau : niveauList) {
+                if ((nextLevel == 1 && niveau.getNom().equals("LICENCE 1")) ||
+                        (nextLevel == 2 && niveau.getNom().equals("LICENCE 2")) ||
+                        (nextLevel == 3 && niveau.getNom().equals("LICENCE 3")) ||
+                        (nextLevel == 4 && niveau.getNom().equals("MASTER 1")) ||
+                        (nextLevel == 5 && niveau.getNom().equals("MASTER 2"))) {
+                    nextNiveau = niveau;
+                    break;
+                }
+            }
+        }
+
+        long idFiliereId = classeExist.getIdFiliere().getIdFiliere().getId();
+
+        // Utiliser la requête pour récupérer la classe du même filière pour l'année suivante
+       List<StudentsClasse> nextClasse = classe_repositorie.findByIdFiliereIdFiliereIdAndNextYear(nextYear, idFiliereId, nextNiveau.getId());
+
+       List<StudentsClasse> newClassSup = new ArrayList<>();
+        if (nextClasse.isEmpty()) {
+            throw new NoteFundException("Aucune classe trouvée pour l'année suivante");
+        }
+        newClassSup.add(nextClasse.getFirst());
+        // Retourner la classe supérieure trouvée
+        return newClassSup;
+
     }
 
 
@@ -234,6 +275,45 @@ public class Classe_service {
         }
         studentsClasses.sort(Comparator.comparing(classe -> classe.getIdFiliere().getIdFiliere().getNomFiliere()));
         return studentsClasses;
+    }
+
+    private  int getFinalCurrentLevel(StudentsClasse classeExist) {
+        Niveau oldNiv = classeExist.getIdFiliere().getIdNiveau();
+        int currentLevel = 0;
+
+// Trouver le niveau correspondant à l'ancien niveau
+        switch (oldNiv.getNom()) {
+            case "LICENCE 1" -> currentLevel = 1;
+            case "LICENCE 2" -> currentLevel = 2;
+            case "LICENCE 3" -> currentLevel = 3;
+            case "MASTER 1" -> currentLevel = 4;
+            case "MASTER 2" -> currentLevel = 5;
+        }
+
+        // Trouver le niveau supérieur
+        return currentLevel;
+    }
+
+    //---------------------------------------------
+    public List<StudentsClasse> getListClassForDepotDoc(long type){
+        String nomNiveau1 = "LICENCE 2";
+        String nomNiveau2 = "LICENCE 3";
+        if (type == 1){
+           List<StudentsClasse> listClasse = classe_repositorie.findByIdFiliereIdNiveauNom(nomNiveau1);
+           if (listClasse.isEmpty()){
+               return new ArrayList<>();
+           }
+           System.out.println("-------------licence 2-------------" + listClasse);
+           return listClasse;
+        }
+        if (type == 2){
+            List<StudentsClasse> listClasse = classe_repositorie.findByIdFiliereIdNiveauNom(nomNiveau2);
+            if (listClasse.isEmpty()){
+                return new ArrayList<>();
+            }
+            return listClasse;
+        }
+        throw new NoteFundException("Aucune classe trouver");
     }
 
 }

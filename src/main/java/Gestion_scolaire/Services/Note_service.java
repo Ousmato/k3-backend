@@ -3,10 +3,12 @@ package Gestion_scolaire.Services;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Dto_classe.NoteDTO;
 import Gestion_scolaire.Dto_classe.NoteModuleDTO;
+import Gestion_scolaire.Dto_classe.StudentsNotesDTO;
 import Gestion_scolaire.Models.*;
 import Gestion_scolaire.Repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -120,16 +122,70 @@ public class Note_service {
         return new ArrayList<>(modulesSet);
     }
 //    ----------------------------------method get all notes by idClasse and current semestre
-    public Page<Notes> listNotes(int page, int pageSize, long idClasse){
-        Semestres currentSemestre = semestre_repositorie.getCurrentSemestre(LocalDate.now());
-        Pageable pageable = PageRequest.of(page, pageSize);
-        Page<Notes> list = notes_repositorie.getByIdSemestreIdAndIdStudentsIdClasseId(currentSemestre.getId(), idClasse, pageable);
-        if(list.isEmpty()){
-            return Page.empty(pageable);
+    public Page<StudentsNotesDTO> listNotes(int page, int pageSize, long idClasse, long idSemestre) {
+        List<Studens> students = students_repositorie.findByIdClasseIdAndActive(idClasse, true);
+        List<StudentsNotesDTO> studentsNotesDTOList = new ArrayList<>();
+
+        // Pour chaque étudiant, calculer les notes et remplir l'objet StudentsNotesDTO
+        for (Studens student : students) {
+            List<ClasseModule> classeWithModule = classeModule_repositorie.getAllByIdNiveauFiliereIdAndIdSemestreId(
+                    idClasse, idSemestre);
+
+            List<Notes> notesList = notes_repositorie.findByIdStudentsIdEtudiantAndIdSemestreId(student.getIdEtudiant(), idSemestre);
+
+            boolean hasAllModuleNotes = true;
+
+            // Vérifier que l'étudiant a des notes pour tous les modules
+            for (ClasseModule clm : classeWithModule) {
+                UE ue = clm.getIdUE();
+                List<Modules> modulesList = modules_repositories.findByIdUeId(ue.getId());
+
+                for (Modules module : modulesList) {
+                    Notes moduleNote = notesList.stream()
+                            .filter(note -> note.getIdModule().equals(module))
+                            .findFirst()
+                            .orElse(null);
+
+                    if (moduleNote == null) {
+                        hasAllModuleNotes = false;  // Si un module n'a pas de note, on exclut cet étudiant
+                        break;
+                    }
+                }
+
+                if (!hasAllModuleNotes) break; // Stopper si un module sans note est trouvé
+            }
+
+            if (hasAllModuleNotes) {
+                StudentsNotesDTO studentsNotesDTO = new StudentsNotesDTO();
+                studentsNotesDTO.setNom(student.getNom());
+
+                studentsNotesDTO.setPrenom(student.getPrenom());
+                studentsNotesDTO.setDate_naissance(student.getDateNaissance());
+                studentsNotesDTO.setLieuNaissance(student.getLieuNaissance());
+
+                // Calcul des notes de l'étudiant et association avec le DTO
+                List<NoteDTO> noteDTOList = moyenOfStudent(student.getIdEtudiant(), idSemestre);
+                studentsNotesDTO.setNoteDTO(noteDTOList);
+
+                studentsNotesDTOList.add(studentsNotesDTO);
+            }
         }
-        return list;
+
+        if (studentsNotesDTOList.isEmpty()) {
+            return Page.empty();
+        }
+
+        // Logique de pagination pour StudentsNotesDTO
+        int start = Math.min(page * pageSize, studentsNotesDTOList.size());
+        int end = Math.min((page + 1) * pageSize, studentsNotesDTOList.size());
+        List<StudentsNotesDTO> pageContent = studentsNotesDTOList.subList(start, end);
+
+        // Retourner la page avec StudentsNotesDTO
+        return new PageImpl<>(pageContent, PageRequest.of(page, pageSize), studentsNotesDTOList.size());
     }
-//    ----------------------------------------methode pour appler les notes par id du module
+
+
+    //    ----------------------------------------methode pour appler les notes par id du module
     public List<Notes> getNotesByIdModule(long idModule){
         Semestres currentSemestre = semestre_repositorie.getCurrentSemestre(LocalDate.now());
         List<Notes> notesList = notes_repositorie.getByIdSemestreIdAndIdModuleId(currentSemestre.getId(), idModule);
@@ -161,6 +217,7 @@ public List<NoteDTO> moyenOfStudent(long idStudent, long idSemestre) {
         UE ue = classeModule.getIdUE(); // On récupère l'UE associée
 
         NoteDTO nDTO = new NoteDTO();
+        nDTO.setIdUe(ue.getId());
         nDTO.setNomUE(ue.getNomUE());
 
         // Récupération des modules associés à l'UE
@@ -182,6 +239,7 @@ public List<NoteDTO> moyenOfStudent(long idStudent, long idSemestre) {
                 NoteModuleDTO noteModuleDTO = new NoteModuleDTO();
                 noteModuleDTO.setNomModule(module.getNomModule());
                 noteModuleDTO.setIdModule(module.getId());
+                noteModuleDTO.setIdUe(ue.getId());
                 noteModuleDTO.setCoefficient(module.getCoefficient());
 
                 // Calcul de la note du module pondérée par le coefficient
@@ -206,6 +264,8 @@ public List<NoteDTO> moyenOfStudent(long idStudent, long idSemestre) {
             nDTO.setCoefficientUe(totalCoefficients);
             double noteUe = (totalSum / totalCoefficients);
             noteUe = Math.round(noteUe * 100.0) / 100.0;
+            double noteUeCoef = noteUe * totalCoefficients;
+            nDTO.setNoteUeCoefficient(noteUeCoef);
             nDTO.setNoteUE(noteUe);
         } else {
             // Si aucun module avec des notes n'a été trouvé, on peut décider de ne pas ajouter cet UE
@@ -215,6 +275,7 @@ public List<NoteDTO> moyenOfStudent(long idStudent, long idSemestre) {
         // Ajouter le DTO de l'UE à la liste des résultats
         noteDTOList.add(nDTO);
     }
+
 
     return noteDTOList; // Retourner la liste de tous les NoteDTO
 }

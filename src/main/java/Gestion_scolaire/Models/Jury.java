@@ -14,8 +14,7 @@ public class Jury {
     private long id;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
-    private Jury_role role;
+    private String role;
 
     @NotNull
     @ManyToOne

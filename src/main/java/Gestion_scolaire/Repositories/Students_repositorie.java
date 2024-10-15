@@ -15,11 +15,12 @@ public interface Students_repositorie extends JpaRepository<Studens, Long> {
    Studens findByEmailAndPassword(String email, String password);
    Studens findByEmail(String password);
 
+   Studens findByIdClasseIdAndMatriculeAndNom(long idClasseId, String matricule, String nom);
    Studens findByMatriculeAndTelephone(String matricule, int telephone);
 
    Page<Studens> getByIdClasseIdAnneeScolaireId(long anneeScolaireId, Pageable pageable);
 
-   List<Studens> getByIdClasseIdAnneeScolaireId(long anneeScolaireId);
+   List<Studens> findByIdClasseIdAnneeScolaireIdAndIdClasseId(long anneeScolaireId, long classeId);
 
    Studens findByIdEtudiant (long id);
 
@@ -49,6 +50,9 @@ public interface Students_repositorie extends JpaRepository<Studens, Long> {
 
    @Query("SELECT e FROM Studens e WHERE YEAR(e.date) = YEAR(CURRENT_DATE)")
    Page<Studens> findStudentOfCurrentYear( Pageable pageable);
+
+   @Query("SELECT e FROM Studens e WHERE YEAR(e.date) = YEAR(CURRENT_DATE) and e.payer =:isActive")
+   Page<Studens> findStudentOfCurrentYearByEtat( Pageable pageable, boolean isActive);
 
    Page<Studens> findByIdClasseIdAnneeScolaireIdAndIdClasseId(long idAnneeScolaireId, long idClasseId, Pageable pageable);
 

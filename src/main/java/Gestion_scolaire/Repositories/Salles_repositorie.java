@@ -11,5 +11,7 @@ public interface Salles_repositorie extends JpaRepository<Salles, Long> {
 
     Salles findByNom(String name);
 
+   List<Salles> findByNomContaining(String nom);
+
 
 }

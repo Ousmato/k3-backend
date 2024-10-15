@@ -22,5 +22,11 @@ public interface Soutenance_repositorie extends JpaRepository<Soutenance, Long> 
 
    List<Soutenance> findByDate(LocalDate date);
 
+   Soutenance findById(long idSoutenance);
+
+   Soutenance findByIdDocId(long idDoc);
+
+   Soutenance getByIdDocIdDocumentId(long idDoc);
+
 //   Soutenance getByDateAndIdDocIdAndIdTeacherIdEnseignant(LocalDate date, long idDocId, long idTeacherId);
 }

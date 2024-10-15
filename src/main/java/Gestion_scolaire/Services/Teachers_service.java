@@ -21,9 +21,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -286,6 +284,24 @@ public class Teachers_service {
         }
         return dtoList;
     }
+
+    //    ---------------------
+    public List<PaieDTO> getAllPaieByMonth(int month) {
+        LocalDate startDate = LocalDate.of(2024, month, 1);
+        LocalDate endDate = startDate.plusMonths(1).minusDays(1);
+        List<Paie> paieList = paie_repositorie.findByDateBetween(startDate, endDate);
+        if (paieList.isEmpty()){
+            return new ArrayList<>();
+        }
+        List<PaieDTO> dtoList = paieList.stream()
+                .map(PaieDTO::fromPaieDTO)
+                .toList();
+        for (PaieDTO paie : dtoList) {
+            int teacherHours = paie_repositorie.findTotalHoursByTeacherId(paie.getIdTeacher());
+            paie.setNbreHeures(teacherHours);
+        }
+        return dtoList;
+    }
 //    -------------------------------------method pour appeler les heures paiyer de teacher
     public List<Paie> getAll_paie_byIdTeacher(long idTeacher){
 
@@ -348,34 +364,60 @@ public class Teachers_service {
     }
     //---------------------------------
     public Page<ProfilDTO> getAllProfile(int page, int size) {
-
         Pageable pageable = PageRequest.of(page, size);
-        Page<Profile> profilePage = profile_repositorie.findAll(pageable);
+        List<Profile> profilePage = profile_repositorie.findAll();
 
         if (profilePage.isEmpty()) {
             return Page.empty(); // Retourne une page vide si aucun profil n'est trouvé
         }
 
-        // Transformer chaque Profile en ProfilDTO
-        List<ProfilDTO> profilDTOList = profilePage.stream().map(profile -> {
-            ProfilDTO profilDTO = new ProfilDTO();
-            List<Filiere> filiereList = new ArrayList<>();
+        // Filtrer les enseignants uniques avant de les transformer en DTO
+        Map<Long, ProfilDTO> enseignantMap = new HashMap<>();
 
-            List<Profile> list = profile_repositorie.getByIdTeacherIdEnseignant(profile.getIdTeacher().getIdEnseignant());
-            // Ajouter les filières associées au profil
-            for (Profile prof : list) {
-                filiereList.add(prof.getIdFiliere());
+        for (Profile profile : profilePage) {
+            Long enseignantId = profile.getIdTeacher().getIdEnseignant();
+
+            System.out.println("------------------id enseignant: " + profile);
+            if (!enseignantMap.containsKey(enseignantId)) {
+                ProfilDTO profilDTO = new ProfilDTO();
+                profilDTO.setId(profile.getId());
+                profilDTO.setTeachers(profile.getIdTeacher());
+
+                // Ajouter les filières associées
+                List<Filiere> filiereList = profile_repositorie
+                        .getByIdTeacherIdEnseignant(enseignantId)
+                        .stream()
+                        .map(Profile::getIdFiliere)
+                        .collect(Collectors.toList());
+
+                profilDTO.setFilieres(filiereList);
+                enseignantMap.put(enseignantId, profilDTO);
             }
+        }
 
-            profilDTO.setId(profile.getId());
-            profilDTO.setTeachers(profile.getIdTeacher());
-            profilDTO.setFilieres(filiereList);
+        // Transformer la map en liste et appliquer la pagination sur les enseignants uniques
+        List<ProfilDTO> uniqueEnseignants = new ArrayList<>(enseignantMap.values());
 
-            return profilDTO; // Retourner l'objet ProfilDTO pour chaque Profile
-        }).collect(Collectors.toList());
+        // Appliquer la pagination sur les enseignants uniques
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), uniqueEnseignants.size());
+        List<ProfilDTO> paginatedList = uniqueEnseignants.subList(start, end);
 
-        // Retourner un objet Page de ProfilDTO avec les mêmes informations de pagination
-        return new PageImpl<>(profilDTOList, pageable, profilePage.getTotalElements());
+        // Retourner un objet Page de ProfilDTO avec les enseignants uniques
+        return new PageImpl<>(paginatedList, pageable, uniqueEnseignants.size());
     }
 
+
+    //-----------------------------------------
+    public Teachers getTeacersFiltered(int searchTream){
+        return teacher_repositorie.getAllByTelephone(searchTream);
+    }
+
+    public List<Teachers> getListFiltered(String searchTream){
+        List<Teachers> list = teacher_repositorie.findByNomContaining(searchTream);
+        if (list.isEmpty()){
+            return new ArrayList<>();
+        }
+       return  list.stream().limit(10).toList();
+    }
 }

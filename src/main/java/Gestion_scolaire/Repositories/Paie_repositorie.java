@@ -20,6 +20,7 @@ public interface Paie_repositorie extends JpaRepository<Paie, Long> {
 
     @Query("SELECT SUM(p.nbreHeures) FROM Paie p WHERE p.journee.idTeacher.idEnseignant = :idTeacher")
     int findTotalHoursByTeacherId(@Param("idTeacher") long idTeacher);
+
     Page<Paie> findByDateBetween(LocalDate debut, LocalDate fin, Pageable pageable);
 
     List<Paie> getByDateBetweenAndJourneeIdTeacherIdEnseignant(LocalDate debut, LocalDate fin, long id);

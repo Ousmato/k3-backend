@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -31,7 +32,7 @@ public class Salles_controller {
 
     @GetMapping("/all-salles-ocuper")
     public List<Salles> allSallesOccuper() {
-        return common_service.salle_occuper();
+        return common_service.salle_occuper_toDay(LocalDate.now());
     }
 
     //    ----------------get list of all salle
@@ -50,6 +51,13 @@ public class Salles_controller {
     @GetMapping("/number-salle-occupe")
     @Operation(summary = "Recuperer le nombre de salle occuper")
     public int numberSalleOccupe() {
-        return common_service.salle_occuper().size();
+        return common_service.salle_occuper_toDay(LocalDate.now()).size();
+    }
+
+    //----------------------------------get all classe by nom
+    @PostMapping("/get-salle-by-nom")
+    @Operation(summary = "Recuperer les salles par nom")
+    public Salles getSalleByNom(@RequestBody String nom) {
+        return salles_service.getSallesFilteredByNom(nom);
     }
 }

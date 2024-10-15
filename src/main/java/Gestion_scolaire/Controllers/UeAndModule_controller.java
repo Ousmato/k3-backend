@@ -51,6 +51,12 @@ public class UeAndModule_controller {
     public List<Modules> getListModule(@PathVariable long idClasse){
         return ue_service.listModule(idClasse);
     }
+
+    @GetMapping("/all-module-by-classe-semestre/{idClasse}/{idSemestre}")
+    @Operation(summary = "Recuperer les module du classe d'une semestre")
+    public List<Modules> getModuleByClassAndSemestre(@PathVariable long idClasse, @PathVariable long idSemestre){
+        return modules_service.getModulesByIdclasseAndIdSemestre(idClasse, idSemestre);
+    }
 //    -----------------------------------methode get list ue---------------------
     @GetMapping("/all-ue")
     public List<UE> getListUe(){

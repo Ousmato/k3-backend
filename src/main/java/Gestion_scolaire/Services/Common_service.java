@@ -30,12 +30,12 @@ public class Common_service {
     @Autowired
     private Paie_repositorie paie_repositorie;
 
-    public List<Salles> salle_occuper(){
+    public List<Salles> salle_occuper(LocalDate date){
         List<Salles> salles = sallesRepositorie.findAll();
         List<Salles> salles_occuper = new ArrayList<>();
 
         for (Salles salle : salles) {
-            List<Journee> seancesActif = getAllSeancesActive(salle.getId());
+            List<Journee> seancesActif = journee_repositorie.getJoureeActif(salle.getId(), date);
             boolean hasSeanceActif = false;
             for (Journee jour : seancesActif) {
 
@@ -53,14 +53,16 @@ public class Common_service {
         return salles_occuper;
     }
 
-    //    -------------------------all seance active by id salle
+    //    -------------------------all seance active by id salle in to day and current time
     public List<Journee> getAllSeancesActive(long idSalle){
-        List<Journee> seancesList = journee_repositorie.getAllByIdSalle_Id(idSalle, LocalDate.now());
+        List<Journee> seancesList = journee_repositorie.getAllByIdSalle_Id(idSalle, LocalDate.now(), LocalTime.now());
         if (seancesList.isEmpty()) {
             return new ArrayList<>();
         }
         return seancesList;
     }
+
+//    --------------------
 
 //    liste des salles occuper a la meme date
     public List<Salles> salle_occuper_toDay( LocalDate date){
@@ -116,6 +118,11 @@ public class Common_service {
 
     //    ------------------------------------------------------------------------------
     public void validateSeance(Journee seances) {
+
+        Duration duration = Duration.between(seances.getHeureDebut(), seances.getHeureFin());
+        if(duration.toHours() > 10){
+            throw new NoteFundException("Invalide la durée maximum est 10 hours");
+        }
         Journee jourExist = journee_repositorie.findByDateAndIdEmploisIdAndIdTeacherIdEnseignantAndHeureFin(
                 seances.getDate(), seances.getIdEmplois().getId(), seances.getIdTeacher().getIdEnseignant(), seances.getHeureFin());
         if(jourExist != null){
@@ -129,6 +136,7 @@ public class Common_service {
             throw new NoteFundException("Invalid, l'heure de fin est inférieure à l'heure de début");
         }
 
+
         Emplois emploisExist = emplois_repositorie.findById(seances.getIdEmplois().getId());
         if(emploisExist == null){
             throw new NoteFundException("L'emploi du temps n'existe pas");
@@ -138,19 +146,20 @@ public class Common_service {
         if (dateSeance.isBefore(emploisExist.getDateDebut()) || dateSeance.isAfter(emploisExist.getDateFin())) {
             throw new RuntimeException("La date de la séance doit être comprise entre la date de début et de fin de l'emploi du temps");
         }
-
-
-
-//        for (Seances existingSeance : seance_repositorie.getAllByDate(seances.getDate())) {
-//            if (seances.getHeureFin().isAfter(existingSeance.getHeureDebut()) && seances.getHeureFin().isBefore(existingSeance.getHeureFin())) {
-//                throw new NoteFundException("L'heure de fin de la séance se trouve dans l'intervalle d'une autre séance existante.");
-//            }
-//        }
     }
 //-----------------------------------------create paie for config
     public void createPaieForConfig(Journee jour) {
         Duration duration = Duration.between(jour.getHeureDebut(), jour.getHeureFin());
-        long heures = duration.toHours() - 2;
+        long heures = duration.toHours();
+
+        if(heures < 1){
+            throw new NoteFundException("la durée minimum  de payement est égale a 1 heure");
+        }
+        if(heures > 8){
+           heures =  duration.toHours() - 2;
+
+        }
+
 
         Paie paie = new Paie();
         paie.setJournee(jour);
@@ -165,5 +174,6 @@ public class Common_service {
         paie.setNbreHeures((int) heures);
         paie_repositorie.save(paie);
     }
+
 
 }

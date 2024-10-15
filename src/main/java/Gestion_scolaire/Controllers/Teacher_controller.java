@@ -103,6 +103,13 @@ public class Teacher_controller {
     public List<PaieDTO> getListPaie(){
         return teachers_service.readAllPaie();
     }
+
+    //-----------------all paie of month
+    @GetMapping("/all-paie-of-month/{month}")
+    @Operation(summary = "Recuperer la liste de paie par mois")
+    public List<PaieDTO> getAllPaieOfMonth(@PathVariable int month){
+        return teachers_service.getAllPaieByMonth(month);
+    }
 //    ------------------------method add paie----------------------------------
     @GetMapping("/count-teacher-number")
     @Operation(summary = "Recuperer le nombre de d'enseignant")
@@ -144,4 +151,19 @@ public class Teacher_controller {
             @RequestParam(defaultValue = "10") int size){
         return teachers_service.getAllProfile(page, size);
     }
+
+    //-----------------------get teachers suggers by seachTream
+    @PostMapping("teachers-filtered")
+    @Operation(summary = "Recuperer la liste des teachers filtrer par numero")
+    public Teachers getFilteredTeachers(@RequestBody int telephone){
+        return teachers_service.getTeacersFiltered(telephone);
+    }
+
+    //-------------------------get teachers by nom
+    @PostMapping("teachers-filtered-list")
+    @Operation(summary = "Recuperer la liste des teachers filtrer par nom")
+    public List<Teachers> getListFilteredTeachers(@RequestBody String nomTeacher){
+        return teachers_service.getListFiltered(nomTeacher);
+    }
+
 }

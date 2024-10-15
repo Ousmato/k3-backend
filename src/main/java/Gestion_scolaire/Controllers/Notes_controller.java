@@ -1,6 +1,7 @@
 package Gestion_scolaire.Controllers;
 
 import Gestion_scolaire.Dto_classe.NoteDTO;
+import Gestion_scolaire.Dto_classe.StudentsNotesDTO;
 import Gestion_scolaire.Models.Modules;
 import Gestion_scolaire.Models.Notes;
 import Gestion_scolaire.Services.Note_service;
@@ -67,12 +68,12 @@ public class Notes_controller {
         return ue_service.getByIdStudentAndIdClasse(idStudent,idClasse, idSemestre);
     }
 //    --------------------------------------read all notes of current semestre
-    @GetMapping("/read-all-of-semestre/{idClasse}")
-    public Page<Notes> semestreNote(
+    @GetMapping("/read-all-of-semestre/{idClasse}/{idSemestre}")
+    public Page<StudentsNotesDTO> semestreNote(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @PathVariable long idClasse){
-        return note_service.listNotes(page, size, idClasse);
+            @PathVariable long idClasse, @PathVariable long idSemestre){
+        return note_service.listNotes(page, size, idClasse, idSemestre);
     }
 
     @GetMapping("/calculate-studen-moyen-by-semestre/{idStudent}/{idSemestre}")

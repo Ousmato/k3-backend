@@ -86,7 +86,7 @@ public class fileManagers {
 
         // Supprimer l'ancien fichier s'il existe
         if (existingFilePath != null && !existingFilePath.isEmpty()) {
-            Path oldFilePath = Paths.get(existingFilePath);
+            Path oldFilePath = Paths.get(location, existingFilePath);
             if (Files.exists(oldFilePath)) {
                 Files.delete(oldFilePath);
             }
