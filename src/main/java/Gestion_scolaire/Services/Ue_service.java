@@ -1,19 +1,21 @@
 package Gestion_scolaire.Services;
 
-import Gestion_scolaire.Dto_classe.AddModuleDTO;
 import Gestion_scolaire.Dto_classe.AddUeDTO;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
-import Gestion_scolaire.Dto_classe.ModuleDTO;
 import Gestion_scolaire.Models.*;
 import Gestion_scolaire.Repositories.*;
 import Gestion_scolaire.configuration.NoteFundException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class Ue_service {
@@ -34,7 +36,7 @@ public class Ue_service {
     private Semestre_repositorie semestre_repositorie;
 
     @Autowired
-    private  Modules_service modules_service;
+    private Validator validator;
     @Autowired
     private Classe_repositorie classe_repositorie;
 
@@ -49,6 +51,10 @@ public class Ue_service {
 
         UE uEexist = ue_repositorie.findByNomUE(dto.getIdUe().getNomUE());
         if (uEexist != null) {
+            Set<ConstraintViolation<UE>> violation = validator.validate(dto.getIdUe());
+            if (!violation.isEmpty()) {
+                throw new ConstraintViolationException(violation);
+            }
             List<ClasseModule> list  = classeModule_repositorie.getClasseModuleByIdUEId(uEexist.getId());
             for (ClasseModule cm : list) {
                 if(cm.getIdSemestre().equals(dto.getSemestre())){
@@ -83,6 +89,10 @@ public class Ue_service {
 
         boolean hasModule = false;
         for (Modules module : dto.getModules()) {
+            Set<ConstraintViolation<Modules>> violation = validator.validate(module);
+            if (!violation.isEmpty()) {
+                throw new ConstraintViolationException(violation);
+            }
             Modules modExist = modules_repositories.findByIdUeAndNomModule(ueSaved, module.getNomModule());
             if (modExist != null) {
                 hasModule = true;
@@ -203,7 +213,7 @@ public  List<Modules> listModule_without_note_all(){
         }
 
 //        Semestres semestre = semestre_repositorie.getCurrentSemestre(LocalDate.now());
-        List<Notes> notesList = notes_repositorie.getByIdSemestreIdAndIdStudentsIdEtudiant(idSemestre, idStudent);
+        List<Notes> notesList = notes_repositorie.getByIdSemestreIdAndIdInscriptionIdEtudiantIdEtudiant(idSemestre, idStudent);
 
         System.out.println("------note----------------------------" + notesList);
 

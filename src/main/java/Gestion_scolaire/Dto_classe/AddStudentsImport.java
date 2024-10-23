@@ -10,5 +10,6 @@ public class  AddStudentsImport{
 
     private long idClasse;
     private long idAnnee;
+    private long idAdmin;
     private List<Studens> students;
 }

@@ -1,10 +1,7 @@
 package Gestion_scolaire.Dto_classe;
 
 import Gestion_scolaire.EnumClasse.DocType;
-import Gestion_scolaire.Models.Admin;
-import Gestion_scolaire.Models.Documents;
-import Gestion_scolaire.Models.Studens;
-import Gestion_scolaire.Models.StudentDoc;
+import Gestion_scolaire.Models.*;
 import lombok.Data;
 
 import javax.print.Doc;
@@ -18,7 +15,7 @@ public class DocDTO {
     private Documents idDocument;
     private long id;
     private int telephone;
-    private List<Studens> idEtudiant;
+    private List<Inscription> idInscription;
     private String nom;
     private String prenom;
     private String niveau;
@@ -27,12 +24,12 @@ public class DocDTO {
 
     public static DocDTO toDocDTO(StudentDoc doc) {
         DocDTO docDTO = new DocDTO();
-        docDTO.setFiliere(doc.getIdEtudiant().getIdClasse().getIdFiliere().getIdFiliere().getNomFiliere());
+        docDTO.setFiliere(doc.getIdInscription().getIdClasse().getIdFiliere().getIdFiliere().getNomFiliere());
         docDTO.setIdDocument(doc.getIdDocument());
-        docDTO.setNom(doc.getIdEtudiant().getNom());
-        docDTO.setPrenom(doc.getIdEtudiant().getPrenom());
-        docDTO.setTelephone(doc.getIdEtudiant().getTelephone());
-        docDTO.setNiveau(doc.getIdEtudiant().getIdClasse().getIdFiliere().getIdNiveau().getNom());
+        docDTO.setNom(doc.getIdInscription().getIdEtudiant().getNom());
+        docDTO.setPrenom(doc.getIdInscription().getIdEtudiant().getPrenom());
+        docDTO.setTelephone(doc.getIdInscription().getIdEtudiant().getTelephone());
+        docDTO.setNiveau(doc.getIdInscription().getIdClasse().getIdFiliere().getIdNiveau().getNom());
         return docDTO;
     }
 }

@@ -83,4 +83,9 @@ public class MessaSender {
         return  ", Vous êtes invité à vous connecter à votre compte avec votre adresse email : %s et votre mot de passe : %s".formatted(admin.getEmail(), password);
 
     }
+
+    public String messageResetPassword(String prenom, String link, String token) {
+        return "Bonjour M. %s,\n\nCliquez sur le lien ci-dessous pour réinitialiser votre mot de passe : \n%s\n\nCode de confirmation : %s\n\nSi vous n'avez pas demandé cette réinitialisation, veuillez ignorer cet email.".formatted(prenom, link, token);
+    }
+
 }

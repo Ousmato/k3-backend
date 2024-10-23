@@ -19,4 +19,8 @@ public class Profile{
     @NotNull
     @ManyToOne
     private Filiere idFiliere;
+
+    @NotNull
+    @ManyToOne
+    private Admin idAdmin;
 }

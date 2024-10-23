@@ -2,7 +2,9 @@ package Gestion_scolaire.Models;
 
 import Gestion_scolaire.EnumClasse.Seance_type;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -20,13 +22,15 @@ public class Journee {
     @ManyToOne
     private Participant idParticipant;
 
-    @NotNull(message = "Heure de debut est invalide")
+    @NotBlank(message = "Le champ ne doit pas être nul ou vide.\n")
     private LocalTime heureDebut;
 
-    @NotNull(message = "Heure de fin est invalide")
+
+    @NotBlank(message = "Le champ ne doit pas être nul ou vide.\n")
     private LocalTime heureFin;
 
-    @NotNull
+
+    @NotBlank(message = "Le champ ne doit pas être nul ou vide.\n")
     private LocalDate date;
 
     @NotNull(message = "veillez choisir un emploi du temps")

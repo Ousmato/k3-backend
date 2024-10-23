@@ -10,10 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,7 +27,7 @@ public class Note_service {
     private Students_repositorie students_repositorie;
 
     @Autowired
-    private Emplois_repositorie emplois_repositorie;
+    private Inscription_repositorie inscription_repositorie;
 
     @Autowired
     private Modules_repositories modules_repositories;
@@ -40,46 +38,46 @@ public class Note_service {
     @Autowired
     private ClasseModule_repositorie classeModule_repositorie;
 
-    public double calculerMoyenneGenerale(long idStudent, long idSemestre) {
-        // Récupérer toutes les notes de l'étudiant pour le semestre spécifié
-        List<Notes> notesList = notes_repositorie.findByIdStudentsIdEtudiantAndIdSemestreId(idStudent, idSemestre);
-
-        // Vérifier si la liste de notes est vide
-        if (notesList.isEmpty()) {
-            return 0.0;
-        }
-
-        // Calculer la somme des coefficients
-        double sommeCoef = notes_repositorie.findTotalCoefByIdStudent(idStudent);
-
-        // Calculer la somme des notes d'examen
-        double sommeNoteExamen = notes_repositorie.findTotalNoteByIdStudent(idStudent);
-
-        // Calculer la somme des notes de classe
-        double sommeNoteClass = notes_repositorie.findTotalClassByIdStudent(idStudent);
-
-        // Calculer la moyenne pondérée générale
-        double moyenCoef = (sommeNoteExamen * 2) + (sommeNoteClass / 3);
-
-        // Calculer la moyenne générale en divisant la moyenne pondérée par la somme des coefficients
-        double moyeneGeneral = moyenCoef / sommeCoef;
-
-        return moyeneGeneral;
-    }
+//    public double calculerMoyenneGenerale(long idStudent, long idSemestre) {
+//        // Récupérer toutes les notes de l'étudiant pour le semestre spécifié
+//        List<Notes> notesList = notes_repositorie.findByIdInscriptionIdEtudiantIdEtudiantAndIdSemestreId(idStudent, idSemestre);
+//
+//        // Vérifier si la liste de notes est vide
+//        if (notesList.isEmpty()) {
+//            return 0.0;
+//        }
+//
+//        // Calculer la somme des coefficients
+//        double sommeCoef = notes_repositorie.findTotalCoefByIdStudent(idStudent);
+//
+//        // Calculer la somme des notes d'examen
+//        double sommeNoteExamen = notes_repositorie.findTotalNoteByIdStudent(idStudent);
+//
+//        // Calculer la somme des notes de classe
+//        double sommeNoteClass = notes_repositorie.findTotalClassByIdStudent(idStudent);
+//
+//        // Calculer la moyenne pondérée générale
+//        double moyenCoef = (sommeNoteExamen * 2) + (sommeNoteClass / 3);
+//
+//        // Calculer la moyenne générale en divisant la moyenne pondérée par la somme des coefficients
+//        double moyeneGeneral = moyenCoef / sommeCoef;
+//
+//        return moyeneGeneral;
+//    }
 //----------------------methode de cacule des moyens de tous les etudiants--------------------------
-    public List<Double> calculerMoyennesClasse(long idClasse, long idSemestre) {
-        // get all students
-        List<Studens> etudiants = students_repositorie.findByIdClasseIdAndActive(idClasse, true);
-
-        // new list for moyen
-        List<Double> moyennes = new ArrayList<>();
-
-        for (Studens etudiant : etudiants) {
-            double moyenne = calculerMoyenneGenerale(etudiant.getIdEtudiant(), idSemestre);
-            moyennes.add(moyenne);
-        }
-        return moyennes;
-    }
+//    public List<Double> calculerMoyennesClasse(long idClasse, long idSemestre) {
+//        // get all students
+//        List<Inscription> etudiants = inscription_repositorie.findByIdClasseIdAndActive(idClasse, true);
+//
+//        // new list for moyen
+//        List<Double> moyennes = new ArrayList<>();
+//
+//        for (Inscription etudiant : etudiants) {
+//            double moyenne = calculerMoyenneGenerale(etudiant.getIdEtudiant().getIdEtudiant(), idSemestre);
+//            moyennes.add(moyenne);
+//        }
+//        return moyennes;
+//    }
 //    ------------------------------methode pour modifier la note d'un etudiant---------------------
     public Object update(Notes notes){
         Notes noteExist = notes_repositorie.findById(notes.getId());
@@ -94,8 +92,8 @@ public class Note_service {
 
 //    ---------------------------------------------mehode pour ajouter une note----------------------
     public Object addNote(Notes notes) {
-       Notes noteExist = notes_repositorie.findByIdStudentsIdEtudiantAndIdModuleIdAndIdSemestreId(
-               notes.getIdStudents().getIdEtudiant(),notes.getIdModule().getId(),notes.getIdSemestre().getId());
+       Notes noteExist = notes_repositorie.findByIdInscriptionIdEtudiantIdEtudiantAndIdModuleIdAndIdSemestreId(
+               notes.getIdInscription().getIdEtudiant().getIdEtudiant(),notes.getIdModule().getId(),notes.getIdSemestre().getId());
         if(noteExist != null){
             throw new RuntimeException("cet etudian a deja de note pour ce module dans cette semestre");
         }
@@ -123,15 +121,15 @@ public class Note_service {
     }
 //    ----------------------------------method get all notes by idClasse and current semestre
     public Page<StudentsNotesDTO> listNotes(int page, int pageSize, long idClasse, long idSemestre) {
-        List<Studens> students = students_repositorie.findByIdClasseIdAndActive(idClasse, true);
+        List<Inscription> students = inscription_repositorie.findByIdClasseIdAndActive(idClasse, true);
         List<StudentsNotesDTO> studentsNotesDTOList = new ArrayList<>();
 
         // Pour chaque étudiant, calculer les notes et remplir l'objet StudentsNotesDTO
-        for (Studens student : students) {
+        for (Inscription student : students) {
             List<ClasseModule> classeWithModule = classeModule_repositorie.getAllByIdNiveauFiliereIdAndIdSemestreId(
                     idClasse, idSemestre);
 
-            List<Notes> notesList = notes_repositorie.findByIdStudentsIdEtudiantAndIdSemestreId(student.getIdEtudiant(), idSemestre);
+            List<Notes> notesList = notes_repositorie.findByIdInscriptionIdEtudiantIdEtudiantAndIdSemestreId(student.getIdEtudiant().getIdEtudiant(), idSemestre);
 
             boolean hasAllModuleNotes = true;
 
@@ -157,14 +155,14 @@ public class Note_service {
 
             if (hasAllModuleNotes) {
                 StudentsNotesDTO studentsNotesDTO = new StudentsNotesDTO();
-                studentsNotesDTO.setNom(student.getNom());
+                studentsNotesDTO.setNom(student.getIdEtudiant().getNom());
 
-                studentsNotesDTO.setPrenom(student.getPrenom());
-                studentsNotesDTO.setDate_naissance(student.getDateNaissance());
-                studentsNotesDTO.setLieuNaissance(student.getLieuNaissance());
+                studentsNotesDTO.setPrenom(student.getIdEtudiant().getPrenom());
+                studentsNotesDTO.setDate_naissance(student.getIdEtudiant().getDateNaissance());
+                studentsNotesDTO.setLieuNaissance(student.getIdEtudiant().getLieuNaissance());
 
                 // Calcul des notes de l'étudiant et association avec le DTO
-                List<NoteDTO> noteDTOList = moyenOfStudent(student.getIdEtudiant(), idSemestre);
+                List<NoteDTO> noteDTOList = moyenOfStudent(student.getIdEtudiant().getIdEtudiant(), idSemestre);
                 studentsNotesDTO.setNoteDTO(noteDTOList);
 
                 studentsNotesDTOList.add(studentsNotesDTO);
@@ -198,7 +196,7 @@ public class Note_service {
 //    -----------------------------------
 public List<NoteDTO> moyenOfStudent(long idStudent, long idSemestre) {
     // Vérification de l'existence de l'étudiant
-    Studens studentExist = students_repositorie.findByIdEtudiant(idStudent);
+    Inscription studentExist = inscription_repositorie.findByIdEtudiantIdEtudiant(idStudent);
     if (studentExist == null) {
         throw new RuntimeException("L'étudiant n'existe pas");
     }
@@ -208,7 +206,7 @@ public List<NoteDTO> moyenOfStudent(long idStudent, long idSemestre) {
             studentExist.getIdClasse().getIdFiliere().getId(), idSemestre);
 
     // Récupération des notes associées à l'étudiant
-    List<Notes> notesList = notes_repositorie.getByIdSemestreIdAndIdStudentsIdEtudiant(idSemestre, idStudent);
+    List<Notes> notesList = notes_repositorie.getByIdSemestreIdAndIdInscriptionIdEtudiantIdEtudiant(idSemestre, idStudent);
 
     List<NoteDTO> noteDTOList = new ArrayList<>();
 

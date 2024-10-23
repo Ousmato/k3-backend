@@ -25,4 +25,5 @@ public class Teachers extends UsersAbstract {
 
     @ManyToOne
     private UE idUe;
+
 }

@@ -1,6 +1,7 @@
 package Gestion_scolaire.Models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -15,13 +16,16 @@ public class Soutenance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotNull
+
+    @NotBlank(message = "Le champ ne doit pas être nul ou vide.\n")
     private LocalDate date;
 
-    @NotNull
+
+    @NotBlank(message = "Le champ ne doit pas être nul ou vide.\n")
     private LocalTime heureDebut;
 
-    @NotNull
+
+    @NotBlank(message = "Le champ ne doit pas être nul ou vide.\n")
     private LocalTime heureFin;
 
     @NotNull
@@ -32,6 +36,11 @@ public class Soutenance {
     @NotNull
     @OneToOne
     private Salles idSalle;
+
+    @NotNull
+    @ManyToOne
+    private Admin idAdmin;
+
 
 
 }

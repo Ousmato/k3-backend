@@ -6,11 +6,13 @@ import Gestion_scolaire.Dto_classe.NivauFilierDTO;
 import Gestion_scolaire.Models.*;
 import Gestion_scolaire.Repositories.*;
 import Gestion_scolaire.configuration.NoteFundException;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -28,6 +30,17 @@ public class Filieres_service {
 
     @Autowired
     private Classe_repositorie classe_repositorie;
+
+    @PostConstruct
+    public void init() {
+        if (filiere_repositorie.findAll().isEmpty()) {
+            defaultFiliere().forEach(filiereName -> {
+                Filiere filiere = new Filiere();
+                filiere.setNomFiliere(filiereName);
+                filiere_repositorie.save(filiere);
+            });
+        }
+    }
 
 
     public NiveauFilieres add(Filiere filiere, Niveau niveau, AnneeScolaire annee){
@@ -53,6 +66,8 @@ public class Filieres_service {
         NiveauFilieres niveauFilieres = new NiveauFilieres();
         niveauFilieres.setIdNiveau(niveau);
         niveauFilieres.setIdFiliere(filiere);
+        niveauFilieres.setScolarite(300000);
+
 
         // Sauvegarder la nouvelle relation
        return niveauFiliere_repositorie.save(niveauFilieres);
@@ -166,6 +181,20 @@ public class Filieres_service {
             return DTO_response_string.fromMessage("Suppression effectué avec succès", 200);
         }
         throw new NoteFundException("La filière n'existe pas ");
+    }
+
+
+    private List<String> defaultFiliere(){
+        return Arrays.asList(
+               "Marketing et Communication",
+               "Comptabilité Finance et Audit",
+               "Machinisme Agricole",
+               "Eaux Environnement et Energies Rénouvelable",
+               "Hotellerie et Tourisme",
+               "Génie Informatique",
+               "Assistant de Gestion",
+               "Agro Business"
+       );
     }
 
 

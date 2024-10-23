@@ -7,14 +7,14 @@ import Gestion_scolaire.Models.Journee;
 import Gestion_scolaire.Repositories.Emplois_repositorie;
 import Gestion_scolaire.Repositories.Journee_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class Emplois_service {
@@ -22,10 +22,19 @@ public class Emplois_service {
     @Autowired
     private Emplois_repositorie emplois_repositorie;
     @Autowired
+    private Validator validator;
+
+    @Autowired
     private Journee_repositorie journee_repositorie;
 
 
     public Object add(Emplois emplois) {
+        Set<ConstraintViolation<Emplois>> violation = validator.validate(emplois);
+        if (!violation.isEmpty()) {
+            throw new ConstraintViolationException(violation);
+        }
+        System.out.println("---------------" + emplois);
+
         List<Emplois> emplois_de_la_classe = emplois_repositorie.findEmploisActifByIdClass(LocalDate.now(), emplois.getIdClasse().getId());
 
 //        // Vérification des dates par rapport au semestre

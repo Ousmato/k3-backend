@@ -8,11 +8,17 @@ import Gestion_scolaire.Services.Admin_service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Valid;
+import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RequestMapping("/api-admin")
 @RestController
@@ -23,7 +29,7 @@ public class Admin_controller {
 
     @PostMapping("/add")
     public Object add(
-            @RequestParam("admin") String adminString,
+           @RequestParam("admin" ) String adminString,
             @RequestParam(value = "file", required = false)MultipartFile file) throws Exception {
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -86,5 +92,21 @@ public class Admin_controller {
     @Operation(summary = "Modifier les information de l'admin")
     public Object updateAdmin(@RequestBody AdminDTO admin) {
         return adminService.updatAdmin(admin);
+    }
+
+    @PostMapping("/forgot-password")
+    @Operation(summary = "Recuperer l'utilisateur par email pour reunitialiser")
+    public Admin forgotPassword(@RequestBody String email) {
+        return adminService.forgotPassword(email);
+    }
+
+    @PostMapping("/validate-token")
+    public boolean validateToken(HttpSession session, @RequestBody Map<String, String> request) {
+
+        String sessionToken = (String) session.getAttribute("resetToken");
+        String token = request.get("token");
+        System.out.println("Session token : " + sessionToken);
+        System.out.println("Token reçu : " + token);
+        return sessionToken != null && sessionToken.equals(token);
     }
 }

@@ -13,7 +13,9 @@ import java.util.List;
 public interface Classe_repositorie extends JpaRepository<StudentsClasse, Long> {
 
     StudentsClasse findById(long id);
-    int countAllByFermer(boolean fermer);
+    @Query("select  count(c) from StudentsClasse c where  YEAR (c.idAnneeScolaire.finAnnee) =:year and c.fermer =:isFermer")
+    int countAllByFermer(@Param("year") int year, @Param("isFermer") boolean isFermer);
+
     StudentsClasse findByIdFiliereIdAndIdFiliereIdNiveauId(long idFiliereId, long idFiliereIdNiveauId);
     List<StudentsClasse> findStudentsClasseById(long idclasse);
 

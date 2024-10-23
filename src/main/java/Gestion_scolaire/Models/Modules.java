@@ -1,7 +1,10 @@
 package Gestion_scolaire.Models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
@@ -11,10 +14,13 @@ public class Modules {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotNull
+
+    @NotBlank(message = "Le champ ne doit pas être nul ou vide.\n")
     private String nomModule;
 
-    @NotNull
+
+    @NotNull(message = "Le coefficient ne doit pas être nul.")
+    @Max(value = 6, message = "Le coefficient ne doit pas être supérieur à 6.")
     private  int coefficient;
 
     @ManyToOne

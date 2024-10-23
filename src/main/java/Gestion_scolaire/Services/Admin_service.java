@@ -11,14 +11,23 @@ import Gestion_scolaire.Repositories.Admin_repositorie;
 import Gestion_scolaire.Repositories.InfoSchool_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.rmi.server.UID;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class Admin_service {
@@ -30,17 +39,26 @@ public class Admin_service {
     private fileManagers fileManagers;
 
     @Autowired
+    private Validator validator;
+
+    @Autowired
+    MessaSender messaSender;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
     private MessaSender messages;
+
+    @Autowired
+    private HttpSession session;
 
     String adminEmail = "ousmatotoure98@gmail.com";
 
     @PostConstruct
     public void init() {
         String email = "ousmato98@gmail.com";
-        String password = "12345@";
+        String password = "Test@123";
 
         Admin adminExist = admin_repositorie.findByEmail(email);
         if (adminExist == null) {
@@ -61,15 +79,20 @@ public class Admin_service {
 
     //  =======================================================================================
     public Object add(Admin admin, MultipartFile file) throws Exception {
+        Set<ConstraintViolation<Admin>> violations = validator.validate(admin);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
         Admin adminExist = admin_repositorie.findByRoleAndActive(admin.getRole(), true);
         if (adminExist != null) {
            throw new NoteFundException("Impossible d'attribuer le meme role a deux administrateur");
         }
+
         String passWordPlan = admin.getPassword();
         admin.setPassword(passwordEncoder.encode(admin.getPassword()));
         String urPhoto = fileManagers.saveFile(file);
         admin.setUrlPhoto(urPhoto);
-        admin_repositorie.save(admin);
+
 
         PendingEmail emailPend = new PendingEmail();
         emailPend.setToSend(admin.getEmail());
@@ -78,6 +101,7 @@ public class Admin_service {
         emailPend.setSubject("Confirmation");
 
         messages.messageAdmin(admin,passWordPlan);
+        admin_repositorie.save(admin);
         return DTO_response_string.fromMessage("Ajout effectué avec succès", 200);
     }
 
@@ -118,9 +142,15 @@ public class Admin_service {
     }
 
 //    --------------------
+
     public Admin changeImage(long id, MultipartFile file) throws Exception {
+
         Admin admin = admin_repositorie.findByIdAdministra(id);
         System.out.println("----------------------" + admin);
+        Set<ConstraintViolation<Admin>> violations = validator.validate(admin);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
         if (admin == null) {
             throw new NoteFundException("L'administrateur est introuvable");
         }
@@ -128,7 +158,10 @@ public class Admin_service {
         String urPhoto = fileManagers.updateFile(file, oldPath);
         admin.setUrlPhoto(urPhoto);
         admin.setUpdateDate(LocalDate.now());
+        System.out.println("-----------------------"+urPhoto);
+
         admin_repositorie.save(admin);
+        System.out.println("------------save-----------"+admin);
         return admin;
     }
 
@@ -146,4 +179,28 @@ public class Admin_service {
         admin_repositorie.save(adminExist);
         return adminExist;
     }
+
+    public Admin forgotPassword(String email) {
+        Admin admin = admin_repositorie.findByEmail(email);
+        if(admin == null){
+            throw new NoteFundException("L'administrateur est introuvable");
+        }
+        String token = String.format("%04d", new Random().nextInt(10000));
+        session.setAttribute("resetToken", token);
+        String sessionToken = (String) session.getAttribute("resetToken");
+        System.out.println("----session to add-------" + sessionToken);
+        String link = "http://localhost:8080/reset-password";
+        PendingEmail emailPend = new PendingEmail();
+
+        emailPend.setToSend(admin.getEmail());
+        emailPend.setFromAdmin(adminEmail);
+        emailPend.setBody(messages.messageResetPassword(admin.getPrenom(), link, token));
+        emailPend.setSubject("Réinitialisation de mot de passe");
+        messaSender.sendSimpleMail(emailPend);
+
+        return admin;
+    }
+
+    //    ---------------validation code de confirmation
+
 }

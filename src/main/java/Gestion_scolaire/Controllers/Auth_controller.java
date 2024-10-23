@@ -7,6 +7,7 @@ import Gestion_scolaire.Models.InfoSchool;
 import Gestion_scolaire.Models.Studens;
 import Gestion_scolaire.Models.UsersAbstract;
 import Gestion_scolaire.Services.InfoScool_service;
+import Gestion_scolaire.Services.PromotionAutomaticAdd_service;
 import Gestion_scolaire.configuration.NoteFundException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,6 +40,9 @@ public class Auth_controller {
 
     @Autowired
     private InfoScool_service infoScool_service;
+
+    @Autowired
+    private PromotionAutomaticAdd_service promotionAutomaticAdd_service;
 
     @PostMapping("/login")
     public Object login(@RequestBody LoginRequest loginRequest) {
@@ -79,7 +83,7 @@ public class Auth_controller {
 //    ----------------------------add annee scolaire
     @PostMapping("/add-annee-scolaire")
     public Object add_annee_scolaire(@RequestBody AnneeScolaire scolaire){
-        return infoScool_service.add_anneeScolaire(scolaire);
+        return promotionAutomaticAdd_service.autoPromotionForAllStudentClasses(scolaire);
     }
 
 //    ---------------------------get all annee scolaire

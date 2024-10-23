@@ -42,15 +42,15 @@ public class Notes_controller {
 
     }
 //        -------------------------------method get all moyen in classe and curente semestre-----------
-    @GetMapping("/allMoyen/{idClasse}/{idSemestre}")
-    public List<Double> getAllNoteByClasse(@PathVariable long idClasse, @PathVariable long idSemestre){
-        return note_service.calculerMoyennesClasse(idClasse, idSemestre);
-    }
+//    @GetMapping("/allMoyen/{idClasse}/{idSemestre}")
+//    public List<Double> getAllNoteByClasse(@PathVariable long idClasse, @PathVariable long idSemestre){
+//        return note_service.calculerMoyennesClasse(idClasse, idSemestre);
+//    }
 //    ---------------------------------------method get moyene by student----------------------------
-    @GetMapping("/moyene/{idStudent}/{idSemestre}")
-    public Double getMoyenStudent(@PathVariable long idStudent, @PathVariable long idSemestre){
-        return note_service.calculerMoyenneGenerale(idStudent, idSemestre);
-    }
+//    @GetMapping("/moyene/{idStudent}/{idSemestre}")
+//    public Double getMoyenStudent(@PathVariable long idStudent, @PathVariable long idSemestre){
+//        return note_service.calculerMoyenneGenerale(idStudent, idSemestre);
+//    }
 //--------------------------------------methode pour appeler tout le module de la
 //    classe de l'étudiant qui on deja ete programmer pour un emploi du temps
     @GetMapping("/allModules/{idClasse}")

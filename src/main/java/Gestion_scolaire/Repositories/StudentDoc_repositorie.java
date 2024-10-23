@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface StudentDoc_repositorie extends JpaRepository<StudentDoc, Long> {
 
-    List<StudentDoc> findAllByIdEtudiantIdClasseId(long idClasse);
+    List<StudentDoc> findAllByIdInscriptionIdClasseId(long idClasse);
 
     StudentDoc findById(long id);
 
@@ -21,9 +21,8 @@ public interface StudentDoc_repositorie extends JpaRepository<StudentDoc, Long> 
 
     List<StudentDoc> findByIdDocumentId(long idDocument);
 
-    Page<StudentDoc> getAllByIdEtudiantIdClasseIdAnneeScolaireId(long idAnnee, Pageable pageable);
+    Page<StudentDoc> getAllByIdInscriptionIdClasseIdAnneeScolaireId(long idAnnee, Pageable pageable);
 
-    StudentDoc findByIdDocumentDocTypeAndIdEtudiantIdEtudiant(DocType docType, long idEtudiant);
-
+    StudentDoc findByIdDocumentDocTypeAndIdInscriptionIdEtudiantIdEtudiant(DocType docType, long idEtudiant);
 
 }

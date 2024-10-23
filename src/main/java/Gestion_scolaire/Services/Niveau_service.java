@@ -10,6 +10,7 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -21,7 +22,17 @@ public class Niveau_service {
     @Autowired
     private Classe_repositorie classe_repositorie;
 
-
+    @PostConstruct
+    public void init(){
+        List<Niveau> niveauList = niveau_repositorie.findAll();
+        if(niveauList.isEmpty()){
+            defaultNiveau().forEach(name ->{
+                Niveau niveau = new Niveau();
+                niveau.setNom(name);
+                niveau_repositorie.save(niveau);
+            });
+        }
+    }
 //    ===============================================methode get All niveau==============================
     public List<Niveau> readAll(){
         return niveau_repositorie.findAll();
@@ -69,5 +80,13 @@ public class Niveau_service {
             return DTO_response_string.fromMessage("Suppression effectué avec succès", 200);
         }
         throw new NoteFundException("Le niveau est introuvable");
+    }
+
+    private List<String> defaultNiveau(){
+        return  Arrays.asList(
+                "LICENCE 1",
+                "LICENCE 2",
+                "LICENCE 3"
+        );
     }
 }

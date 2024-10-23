@@ -3,10 +3,12 @@ package Gestion_scolaire.Controllers;
 import Gestion_scolaire.Dto_classe.EmploisDTO;
 import Gestion_scolaire.Models.Emplois;
 import Gestion_scolaire.Services.Emplois_service;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +22,11 @@ public class Emplois_controller {
     private Emplois_service emplois_service;
 
     @PostMapping("/add")
-    public Object addEmplois(@RequestBody Emplois emplois){
+    public Object addEmplois(@Valid @RequestBody Emplois emplois, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            // Gérer les erreurs de validation
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+        }
             return emplois_service.add(emplois);
     }
 //    ------------------------get emplois by idClasse--------------------------------------

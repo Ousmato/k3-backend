@@ -1,16 +1,13 @@
 package Gestion_scolaire.Services;
 
 import Gestion_scolaire.Dto_classe.DTO_response_string;
-import Gestion_scolaire.Models.AnneeScolaire;
-import Gestion_scolaire.Models.InfoSchool;
-import Gestion_scolaire.Models.Studens;
-import Gestion_scolaire.Models.StudentsClasse;
-import Gestion_scolaire.Repositories.AnneeScolaire_repositorie;
-import Gestion_scolaire.Repositories.Classe_repositorie;
-import Gestion_scolaire.Repositories.InfoSchool_repositorie;
-import Gestion_scolaire.Repositories.Students_repositorie;
+import Gestion_scolaire.Models.*;
+import Gestion_scolaire.Repositories.*;
 import Gestion_scolaire.configuration.NoteFundException;
 import jakarta.annotation.PostConstruct;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +19,8 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+
 @Slf4j
 @Service
 public class InfoScool_service {
@@ -31,6 +30,12 @@ public class InfoScool_service {
 
     @Autowired
     private fileManagers fileManagers;
+
+    @Autowired
+    private Admin_repositorie admin_repositorie;
+
+    @Autowired
+    private Validator validator;
 
     @Autowired
     private Classe_repositorie classe_repositorie;
@@ -90,8 +95,11 @@ public class InfoScool_service {
         throw new NoteFundException("School with id " + school.getId() + " does not exist");
     }
     //-----------------------------------------
-    public Object add_anneeScolaire(AnneeScolaire anneeScolaire) {
-
+    public AnneeScolaire add_anneeScolaire(AnneeScolaire anneeScolaire) {
+        Set<ConstraintViolation<AnneeScolaire>> violation = validator.validate(anneeScolaire);
+        if (!violation.isEmpty()) {
+            throw new ConstraintViolationException(violation);
+        }
         // Vérification si l'année scolaire existe déjà
         List<AnneeScolaire> anneeExist = anneeScolaire_repositorie.findByFinAnneeBetween(anneeScolaire.getDebutAnnee(), anneeScolaire.getFinAnnee());
         if (!anneeExist.isEmpty()) {
@@ -116,8 +124,10 @@ public class InfoScool_service {
         }
 
         // Sauvegarder l'année scolaire si toutes les validations passent
-        anneeScolaire_repositorie.save(anneeScolaire);
-        return DTO_response_string.fromMessage("Ajout effectué avec succès", 200);
+
+       return  anneeScolaire_repositorie.save(anneeScolaire);
+
+
     }
 
 

@@ -31,23 +31,24 @@ public class Student_controller {
 
     @PostMapping("/add")
     public Object addStudent(
-            @RequestParam("student") String studensString,
+            @RequestParam("inscription") String studensString,
             @RequestParam(value = "file", required = false) MultipartFile urlFile) throws IOException {
 
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.registerModule(new JavaTimeModule());
-            Studens students = objectMapper.readValue(studensString, Studens.class);
+            InscriptionDTO dto = objectMapper.readValue(studensString, InscriptionDTO.class);
+
 
             if (!urlFile.isEmpty()) {
-                return student_service.add(students, urlFile);
+                return student_service.add(dto, urlFile);
             }
 
-        return student_service.add(students, null);
+        return student_service.add(dto, null);
     }
 
     //    ----------------------------------------method get all students----------------------------------
     @GetMapping("/list")
-    public Page<Studens> getAllStudents(
+    public Page<Inscription> getAllStudents(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         return student_service.readAll(page, size);
@@ -84,9 +85,9 @@ public class Student_controller {
     }
 //    ------------------------method get all student in classe------------------
     @GetMapping("/list-student-by-classe/{idClasse}")
-    public Page<Studens> AllStudentClass(
+    public Page<Inscription> AllStudentClass(
             @RequestParam (defaultValue = "0") int page,
-            @RequestParam (defaultValue = "10") int size,
+            @RequestParam (defaultValue = "20") int size,
             @PathVariable long idClasse){
         return student_service.readAllByClassId(page, size, idClasse);
 
@@ -99,9 +100,9 @@ public class Student_controller {
     }
 
 //    --------------------------update scolarite
-    @PutMapping("/update-scolarite/{idStudent}")
-    public Object updateScolarite(@PathVariable long idStudent, @RequestBody DTO_scolarite dtoScolarite){
-        return student_service.update_scolarite(idStudent, dtoScolarite.getScolarite());
+    @PutMapping("/update-scolarite/{idStudent}/{idAdmin}")
+    public Object updateScolarite(@PathVariable long idStudent, @PathVariable long idAdmin, @RequestBody DTO_scolarite dtoScolarite){
+        return student_service.update_scolarite(idStudent, idAdmin, dtoScolarite.getScolarite());
     }
 //------------------list des etudians valider de la classe
     @GetMapping("/student-by-classe-id/{idClasse}")
@@ -109,11 +110,17 @@ public class Student_controller {
         return student_service.get_by_classId(idClasse);
     }
 
+    @GetMapping("/inscription-by-id/{idInscription}")
+    @Operation(summary = "Recupere une inscription par id")
+    public Inscription getInscriptionById(@PathVariable long idInscription){
+        return student_service.getInscriptionById(idInscription);
+    }
+
 //    -------------------------------------get all student by id annee scolaire
     @GetMapping("/student-by-anneScolaire-id/{idAnne}")
-    public Page<Studens> getListByIaAnne(
+    public Page<Inscription> getListByIaAnne(
             @RequestParam (defaultValue = "0") int page,
-            @RequestParam (defaultValue = "10") int size,
+            @RequestParam (defaultValue = "20") int size,
             @PathVariable long idAnne){
         return student_service.get_by_idAnneeScolaire(page, size, idAnne);
     }
@@ -173,9 +180,9 @@ public class Student_controller {
         return student_service.cunt_student_inscrit();
     }
 //    -------------------------------------------------reincreiption method
-    @PostMapping("/re-inscription/{idClasse}")
-    public Object reInscription(@RequestBody Studens student, @PathVariable long idClasse){
-            return student_service.reinscription(student, idClasse);
+    @PostMapping("/re-inscription/{idClasse}/{idAdmin}")
+    public Object reInscription(@RequestBody Inscription student, @PathVariable long idClasse, @PathVariable long idAdmin){
+            return student_service.reinscription(student, idClasse, idAdmin);
     }
 
     //    ---------------------------------------
@@ -248,27 +255,28 @@ public class Student_controller {
     }
 
     //------------------------
-    @GetMapping("/get-student-annee-and-classe/{idAnnee}/{idClasse}")
-    @Operation(summary = "Recuperer la list des etudiant d'une classe par année")
-    public Page<Studens> getStudentAnneeAndIdClasse(
-            @PathVariable long idAnnee,
-            @PathVariable long idClasse,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return student_service.getStudentByIDAnneeAndIdClasse(idAnnee, idClasse, page, size);
-    }
+//    @GetMapping("/get-student-annee-and-classe/{idAnnee}/{idClasse}")
+//    @Operation(summary = "Recuperer la list des etudiant d'une classe par année")
+//    public Page<Inscription> getStudentAnneeAndIdClasse(
+//            @PathVariable long idAnnee,
+//            @PathVariable long idClasse,
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size) {
+//        return student_service.getStudentByIDAnneeAndIdClasse(idAnnee, idClasse, page, size);
+//    }
 
     //    ----------------------------
     @PostMapping("/students-import")
     @Operation(summary = "Ajout des etudiant du fichier excel importer")
-    public Object addStudentImport(@RequestBody AddStudentsImport students){
+    public Object addStudentImport(@RequestBody List<Inscription> students){
+
         return student_service.addStudentsImport(students);
     }
 
     //-------------------------------
     @GetMapping("get-list-student-by-idAnnee-and-idClasse/{idAnnee}/{idClasse}")
     @Operation(summary = "Recuperer la list des etudiant d'une classe par année avec l'idClass")
-    public List<Studens> getListStudentAnneeAndIdClasse(
+    public List<Inscription> getListStudentAnneeAndIdClasse(
             @PathVariable long idAnnee,
             @PathVariable long idClasse){
         return student_service.getListByIdAnneeAndIdClase(idAnnee, idClasse);
@@ -290,10 +298,16 @@ public class Student_controller {
     //-----------------------
     @GetMapping("get-student-by-etats/{value}")
     @Operation(summary = "Recuperer les etudiants par etat")
-    public Page<Studens> getAllStudentsByEtats(
+    public Page<Inscription> getAllStudentsByEtats(
             @PathVariable int value,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         return student_service.readAllByEtat(value,page, size);
+    }
+//    //------------------------
+    @GetMapping("/change-state-inscription/{idInscription}/{idClasse}")
+    @Operation(summary = "Changer l'etat de l'inscription par id inscription")
+    public Object changeEtatById(@PathVariable long idInscription, @PathVariable long idClasse){
+        return student_service.desabledInscription(idInscription, idClasse);
     }
 }

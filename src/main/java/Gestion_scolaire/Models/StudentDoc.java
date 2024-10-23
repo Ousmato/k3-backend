@@ -14,9 +14,13 @@ public class StudentDoc {
 
     @NotNull
     @ManyToOne
-    private Studens idEtudiant;
+    private Inscription idInscription;
 
     @NotNull
     @ManyToOne
     private Documents idDocument;
+
+    @NotNull
+    @ManyToOne
+    private Admin idAdmin;
 }

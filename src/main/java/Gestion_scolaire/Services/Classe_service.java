@@ -22,7 +22,7 @@ public class Classe_service {
     private Classe_repositorie classe_repositorie;
 
     @Autowired
-    private Filieres_service filieresService;
+    private Inscription_repositorie inscription_repositorie;
 
     @Autowired
     private Niveau_repositorie niveau_repositorie;
@@ -79,7 +79,7 @@ public class Classe_service {
         System.out.println("---------------------" + classeList);
         if(!classeList.isEmpty()){
             for(StudentsClasse classe : classeList){
-                int studentInscrit = students_repositorie.countAllByIdClasseIdAndIdClasseIdAnneeScolaireId(classe.getId(), classe.getIdAnneeScolaire().getId());
+                int studentInscrit = inscription_repositorie.countAllByIdClasseIdAndIdClasseIdAnneeScolaireId(classe.getId(), classe.getIdAnneeScolaire().getId());
                 classe.setEffectifs(studentInscrit);
             }
             classeList.sort(Comparator.comparing(classe ->classe.getIdFiliere().getIdFiliere().getNomFiliere()));
@@ -96,7 +96,8 @@ public class Classe_service {
 
 //    ----------------------------------cunt number of class
     public int cunt_class(){
-        return classe_repositorie.countAllByFermer(false);
+        LocalDate today = LocalDate.now();
+        return classe_repositorie.countAllByFermer(today.getYear(), false);
     }
     //-------------------------------------------methode pour appeler une classe par id---------------
     public StudentsClasse readByIdClasse(long id){
@@ -112,7 +113,7 @@ public class Classe_service {
             throw new NoteFundException("La promotion n'existe pas");
         }
         if (classExist != null){
-            List<Studens> list = students_repositorie.findByIdClasseIdAndActive(classExist.getId(), true);
+            List<Inscription> list = inscription_repositorie.findByIdClasseIdAndActive(classExist.getId(), true);
             if(!list.isEmpty()){
                 throw new NoteFundException("La promotion ne peut pas etre modifier, des étudiants sont déjà inscrit ");
 

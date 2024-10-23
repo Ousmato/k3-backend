@@ -1,15 +1,16 @@
 package Gestion_scolaire.Services;
 
 import Gestion_scolaire.Dto_classe.DTO_response_string;
-import Gestion_scolaire.Models.ClasseModule;
-import Gestion_scolaire.Models.Emplois;
-import Gestion_scolaire.Models.Semestres;
-import Gestion_scolaire.Models.StudentsClasse;
+import Gestion_scolaire.Models.*;
 import Gestion_scolaire.Repositories.ClasseModule_repositorie;
 import Gestion_scolaire.Repositories.Emplois_repositorie;
 import Gestion_scolaire.Repositories.Semestre_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
 import jakarta.annotation.PostConstruct;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class Semestre_service {
@@ -27,10 +29,17 @@ public class Semestre_service {
     private Emplois_repositorie emplois_repositorie;
 
     @Autowired
+    private Validator validator;
+
+    @Autowired
     private ClasseModule_repositorie classeModule_repositorie;
 
 
     public Object add_semestre(Semestres semestre) throws NoteFundException {
+        Set<ConstraintViolation<Semestres>> violations = validator.validate(semestre);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
         // Vérifie si un semestre avec le même nom et la même date de fin existe déjà
         Semestres s = semestre_repositorie.findByNomSemetreAndIdAnneeScolaireId(semestre.getNomSemetre(), semestre.getIdAnneeScolaire().getId());
         if (s != null) {

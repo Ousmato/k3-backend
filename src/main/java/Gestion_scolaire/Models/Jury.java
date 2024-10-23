@@ -2,7 +2,9 @@ package Gestion_scolaire.Models;
 
 import Gestion_scolaire.EnumClasse.Jury_role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
@@ -13,7 +15,8 @@ public class Jury {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotNull
+
+    @NotBlank(message = "Le champ ne doit pas être nul ou vide.\n")
     private String role;
 
     @NotNull

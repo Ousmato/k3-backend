@@ -32,6 +32,9 @@ public class Doc_service {
     private Jury_repositorie jury_repositorie;
 
     @Autowired
+    private Inscription_repositorie inscription_repositorie;
+
+    @Autowired
     private StudentDoc_repositorie studentDoc_repositorie;
 
     @Autowired
@@ -42,10 +45,10 @@ public class Doc_service {
     public Object addDoc(DocDTO dto) {
 
           Documents docSaved = doc_repositorie.save(dto.getIdDocument());
-          for (Studens student: dto.getIdEtudiant()){
+          for (Inscription inscription: dto.getIdInscription()){
               StudentDoc newStudentDoc = new StudentDoc();
               newStudentDoc.setIdDocument(docSaved);
-              newStudentDoc.setIdEtudiant(student);
+              newStudentDoc.setIdInscription(inscription);
             studentDoc_repositorie.save(addStudentDoc(newStudentDoc, docSaved));
           }
 
@@ -67,9 +70,8 @@ public class Doc_service {
 //    -------------------------------------------------get all by annee and id classe
     public Page<DocDTO> getByIdAnneeAndIdClasse(int page, int pageSize, long idAnnee){
 
-//        Sort sort = Sort.by(Sort.Order.asc("docType"));
         Pageable pageable = PageRequest.of(page, pageSize);
-        Page<StudentDoc> docs = studentDoc_repositorie.getAllByIdEtudiantIdClasseIdAnneeScolaireId( idAnnee, pageable);
+        Page<StudentDoc> docs = studentDoc_repositorie.getAllByIdInscriptionIdClasseIdAnneeScolaireId( idAnnee, pageable);
         System.out.println("----------------------------------------------------"+docs+ "-----------------------------------------");
 
         if(docs.isEmpty()){
@@ -106,12 +108,12 @@ public class Doc_service {
             List<StudentDoc> studensList = studentDoc_repositorie.findByIdDocumentId(docDTO.getIdDocument().getId());
 
             // Extraire les étudiants de la liste
-            List<Studens> listStudent = studensList.stream()
-                    .map(StudentDoc::getIdEtudiant) // On récupère chaque étudiant
+            List<Inscription> listStudent = studensList.stream()
+                    .map(StudentDoc::getIdInscription) // On récupère chaque étudiant
                     .toList();
 
             // Associer la liste des étudiants au DocDTO
-            docDTO.setIdEtudiant(listStudent);
+            docDTO.setIdInscription(listStudent);
         }
         // Retour d'une nouvelle PageImpl avec les DTOs, la pagination et le nombre total d'éléments
         return new PageImpl<>(docDTOs, pageable, docs.getTotalElements());
@@ -120,22 +122,22 @@ public class Doc_service {
 
     //    ---------------------------------------get all doc by classe id
     public List<DocDTO> getDocsByIdClass(long idClass){
-        List<StudentDoc> listDocs = studentDoc_repositorie.findAllByIdEtudiantIdClasseId(idClass);
+        List<StudentDoc> listDocs = studentDoc_repositorie.findAllByIdInscriptionIdClasseId(idClass);
         if(listDocs.isEmpty()){
             return new ArrayList<>();
         }
-        List<Studens> listStudent = new ArrayList<>();
+        List<Inscription> listStudent = new ArrayList<>();
         for (StudentDoc doc: listDocs){
             List<StudentDoc> studensList = studentDoc_repositorie.findByIdDocumentId(doc.getIdDocument().getId());
             for (StudentDoc student : studensList){
-                listStudent.add(student.getIdEtudiant());
+                listStudent.add(student.getIdInscription());
             }
         }
 
         List<DocDTO> docDTOs = listDocs.stream().map(DocDTO::toDocDTO).toList();
 
         for(DocDTO docDTO: docDTOs){
-            docDTO.setIdEtudiant(listStudent);
+            docDTO.setIdInscription(listStudent);
         }
 
         return docDTOs;
@@ -250,12 +252,13 @@ public class Doc_service {
             List<StudentDoc> studentDocs = studentDoc_repositorie.findByIdDocumentId(soutenance.getIdDoc().getId());
 
             List<Studens> listStudent = studentDocs.stream()
-                    .map(StudentDoc::getIdEtudiant) // On récupère chaque étudiant
+                    .map(studentDoc -> studentDoc.getIdInscription().getIdEtudiant()) // On récupère chaque étudiant
                     .toList();
 
             for (Studens student : listStudent) {
-                newDto.setFiliere(student.getIdClasse().getIdFiliere().getIdFiliere().getNomFiliere());
-                newDto.setNiveaux(student.getIdClasse().getIdFiliere().getIdNiveau().getNom());
+                Inscription incription = inscription_repositorie.findByIdEtudiantIdEtudiant(student.getIdEtudiant());
+                newDto.setFiliere(incription.getIdClasse().getIdFiliere().getIdFiliere().getNomFiliere());
+                newDto.setNiveaux(incription.getIdClasse().getIdFiliere().getIdNiveau().getNom());
             }
 
            List<Jury> jurys = jury_repositorie.findByIdSoutenanceId(soutenance.getId());
@@ -283,7 +286,7 @@ public class Doc_service {
 
 //    -----------------------------------------------
     public StudentDoc addStudentDoc(StudentDoc studentDoc, Documents doc){
-        StudentDoc docExist = studentDoc_repositorie.findByIdDocumentDocTypeAndIdEtudiantIdEtudiant(studentDoc.getIdDocument().getDocType(), studentDoc.getIdEtudiant().getIdEtudiant());
+        StudentDoc docExist = studentDoc_repositorie.findByIdDocumentDocTypeAndIdInscriptionIdEtudiantIdEtudiant(studentDoc.getIdDocument().getDocType(), studentDoc.getIdInscription().getIdEtudiant().getIdEtudiant());
             if (docExist != null) {
                 if(doc.getId() != 0){
                     doc_repositorie.delete(doc);
@@ -292,7 +295,7 @@ public class Doc_service {
             }
 
         if(studentDoc.getIdDocument().getDocType() == DocType.memoire){
-                StudentsClasse classe = studentDoc.getIdEtudiant().getIdClasse();
+                StudentsClasse classe = studentDoc.getIdInscription().getIdClasse();
                 if(!Objects.equals(classe.getIdFiliere().getIdNiveau().getNom(), "LICENCE 3") &&
                         !Objects.equals(classe.getIdFiliere().getIdNiveau().getNom(), "MASTER 1 ") &&
                         !Objects.equals(classe.getIdFiliere().getIdNiveau().getNom(), "MASTER 2 ")){
@@ -304,7 +307,7 @@ public class Doc_service {
         }
 
         if(studentDoc.getIdDocument().getDocType() == DocType.rapport){
-            StudentsClasse classe = studentDoc.getIdEtudiant().getIdClasse();
+            StudentsClasse classe = studentDoc.getIdInscription().getIdClasse();
             if(!classe.getIdFiliere().getIdNiveau().getNom().equals("LICENCE 2")){
                 throw new NoteFundException("Un étudiant avec ce niveau : "+ classe.getIdFiliere().getIdNiveau().getNom() + "n'est pas autoriser a déposer un Rapport");
             }
