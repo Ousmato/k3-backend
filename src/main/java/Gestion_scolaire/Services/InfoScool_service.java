@@ -14,8 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.Duration;
-import java.time.LocalDate;
 import java.time.Period;
 import java.util.Comparator;
 import java.util.List;
@@ -32,7 +30,7 @@ public class InfoScool_service {
     private fileManagers fileManagers;
 
     @Autowired
-    private Admin_repositorie admin_repositorie;
+    private AdminRepositorie adminRepositorie;
 
     @Autowired
     private Validator validator;

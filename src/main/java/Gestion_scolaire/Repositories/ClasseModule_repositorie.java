@@ -25,7 +25,9 @@ public interface ClasseModule_repositorie extends JpaRepository<ClasseModule, Lo
 
     List<ClasseModule> getClasseModuleByIdUEId(long idUE);
 
-    ClasseModule  getClasseModuleByIdNiveauFiliereId(long idStudentClasse);
+    ClasseModule  getClasseModuleByIdNiveauFiliereIdAndIdSemestreId(long idStudentClasse, long idSemestre);
+
+//    List
 
     List<ClasseModule> getAllByIdNiveauFiliereIdAndIdSemestreId(long idNiveauFiliere, long idSemestre);
 

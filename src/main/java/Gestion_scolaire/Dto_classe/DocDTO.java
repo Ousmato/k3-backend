@@ -14,6 +14,7 @@ import java.util.List;
 public class DocDTO {
     private Documents idDocument;
     private long id;
+    private Admin idAdmin;
     private int telephone;
     private List<Inscription> idInscription;
     private String nom;
@@ -26,6 +27,8 @@ public class DocDTO {
         DocDTO docDTO = new DocDTO();
         docDTO.setFiliere(doc.getIdInscription().getIdClasse().getIdFiliere().getIdFiliere().getNomFiliere());
         docDTO.setIdDocument(doc.getIdDocument());
+        docDTO.setIdAdmin(doc.getIdAdmin());
+        docDTO.setId(doc.getId());
         docDTO.setNom(doc.getIdInscription().getIdEtudiant().getNom());
         docDTO.setPrenom(doc.getIdInscription().getIdEtudiant().getPrenom());
         docDTO.setTelephone(doc.getIdInscription().getIdEtudiant().getTelephone());

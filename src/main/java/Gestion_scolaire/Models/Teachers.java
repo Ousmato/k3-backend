@@ -15,15 +15,13 @@ public class Teachers extends UsersAbstract {
     private long idEnseignant;
 
 
-    @NotNull
+    @NotNull(message = "Le status de l'enseignant est obligatoire")
     @Enumerated(EnumType.STRING)
     private Teachers_status status;
 
-    @NotNull
+    @NotNull(message = "Diplome obligatoire")
     @Enumerated(EnumType.STRING)
     private Diplomes diplome;
 
-    @ManyToOne
-    private UE idUe;
 
 }

@@ -9,12 +9,14 @@ import java.util.List;
 @Repository
 public interface Participant_repositorie extends JpaRepository<Participant, Long> {
 
-    Participant findByIdStudentIdEtudiantAndIdStudentGroupId(long idStudentId, long idStudentGroupId);
+    Participant findByIdInscriptionIdAndIdStudentGroupId(long IdInscription, long idStudentGroupId);
 
     List<Participant> findByIdStudentGroupId(long idStudentGroupId);
 
     List<Participant> getByIdStudentGroupIdEmploiIdClasseId(long idClasse);
 
-    Participant findByIdStudentIdEtudiantAndIdStudentGroupIdEmploiId(long idStudentId, long idEmploi);
+    Participant findByIdInscriptionIdAndIdStudentGroupIdEmploiId(long IdInscription, long idEmploi);
+
+    List<Participant> getAllByIdStudentGroupIdEmploiId(long idEmploi);
 
 }

@@ -1,6 +1,5 @@
 package Gestion_scolaire.Services;
 
-import Gestion_scolaire.Dto_classe.DTO_ClassModule;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Models.*;
 import Gestion_scolaire.Repositories.*;
@@ -299,19 +298,30 @@ public class Classe_service {
     public List<StudentsClasse> getListClassForDepotDoc(long type){
         String nomNiveau1 = "LICENCE 2";
         String nomNiveau2 = "LICENCE 3";
+
+        int currentYear = LocalDate.now().getYear();
+        int earlyYear = currentYear - 2;
+        LocalDate dateTroisAns = LocalDate.now().minusYears(3);
+
         if (type == 1){
-           List<StudentsClasse> listClasse = classe_repositorie.findByIdFiliereIdNiveauNom(nomNiveau1);
+            System.out.println("currentYear: " + currentYear + ", earlyYear: " + earlyYear + ", nomNiveau1: " + nomNiveau1);
+            List<StudentsClasse> listClasse = classe_repositorie.findClassesFromLastThreeYears(dateTroisAns, nomNiveau1);
+
+            System.out.println("Résultats de la requête : " + listClasse);
            if (listClasse.isEmpty()){
                return new ArrayList<>();
            }
-           System.out.println("-------------licence 2-------------" + listClasse);
+//           System.out.println("-------------licence 2-------------" + listClasse);
+         listClasse.sort(Comparator.comparing(classe -> classe.getIdAnneeScolaire().getFinAnnee()));
            return listClasse;
         }
         if (type == 2){
-            List<StudentsClasse> listClasse = classe_repositorie.findByIdFiliereIdNiveauNom(nomNiveau2);
+            List<StudentsClasse> listClasse = classe_repositorie.findClassesFromLastThreeYears(dateTroisAns,nomNiveau2);
             if (listClasse.isEmpty()){
                 return new ArrayList<>();
             }
+            listClasse.sort(Comparator.comparing(classe -> classe.getIdAnneeScolaire().getFinAnnee()));
+
             return listClasse;
         }
         throw new NoteFundException("Aucune classe trouver");

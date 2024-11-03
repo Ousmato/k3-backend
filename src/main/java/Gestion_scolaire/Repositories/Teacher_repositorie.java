@@ -18,7 +18,7 @@ public interface Teacher_repositorie extends JpaRepository<Teachers, Long> {
     Teachers findByIdEnseignant(long id);
     List<Teachers> findByActive(boolean isActive);
 
-    List<Teachers> findByIdUeId(long idUe);
+//    List<Teachers> findByIdUeId(long idUe);
 
     int countByActive(boolean isActive);
 

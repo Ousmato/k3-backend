@@ -13,16 +13,20 @@ import java.util.List;
 @Repository
 public interface StudentDoc_repositorie extends JpaRepository<StudentDoc, Long> {
 
-    List<StudentDoc> findAllByIdInscriptionIdClasseId(long idClasse);
+    List<StudentDoc> findAllByIdInscriptionIdClasseIdAndIdDocumentDeleted(long idClasse, boolean isNodelete);
 
     StudentDoc findById(long id);
 
-    Page<StudentDoc> getByIdDocumentDateBetween(LocalDate start, LocalDate end, Pageable pageable);
+    Page<StudentDoc> getByIdDocumentDeletedAndIdDocumentDateBetween(boolean noDeleted, LocalDate start, LocalDate end, Pageable pageable);
 
     List<StudentDoc> findByIdDocumentId(long idDocument);
 
-    Page<StudentDoc> getAllByIdInscriptionIdClasseIdAnneeScolaireId(long idAnnee, Pageable pageable);
+    List<StudentDoc> findByIdDocumentIdAndIdDocumentProgrammer(long idDocument, boolean isNoProgram);
 
-    StudentDoc findByIdDocumentDocTypeAndIdInscriptionIdEtudiantIdEtudiant(DocType docType, long idEtudiant);
+    StudentDoc findByIdInscriptionIdAndIdDocumentDeleted(long idInscription, boolean isDeleted);
+
+    Page<StudentDoc> getAllByIdInscriptionIdClasseIdAnneeScolaireIdAndIdDocumentDeleted(long idAnnee, Pageable pageable, boolean noDeleted);
+
+    StudentDoc findByIdDocumentDocTypeAndIdInscriptionId(DocType docType, long idInscription);
 
 }

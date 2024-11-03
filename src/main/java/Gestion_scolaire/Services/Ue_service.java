@@ -1,5 +1,6 @@
 package Gestion_scolaire.Services;
 
+import Gestion_scolaire.Dto_classe.AddNoteDTO;
 import Gestion_scolaire.Dto_classe.AddUeDTO;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Models.*;
@@ -213,7 +214,7 @@ public  List<Modules> listModule_without_note_all(){
         }
 
 //        Semestres semestre = semestre_repositorie.getCurrentSemestre(LocalDate.now());
-        List<Notes> notesList = notes_repositorie.getByIdSemestreIdAndIdInscriptionIdEtudiantIdEtudiant(idSemestre, idStudent);
+        List<Notes> notesList = notes_repositorie.getByIdSemestreIdAndIdInscriptionId(idSemestre, idStudent);
 
         System.out.println("------note----------------------------" + notesList);
 
@@ -331,17 +332,42 @@ public  List<Modules> listModule_without_note_all(){
         return ues_without_modules_and_classes;
     }
 
-    public List<AddUeDTO> getAllUeByIdNiveauFiliereAndIdSemestre(long idNiveauFiliere, long idSemestre){
+    public List<AddNoteDTO> getAllUeByIdNiveauFiliereAndIdSemestre(long idNiveauFiliere, long idSemestre, long idEtudiant){
         List<ClasseModule> classeModuleList =  classeModule_repositorie.getAllByIdNiveauFiliereIdAndIdSemestreId(idNiveauFiliere, idSemestre);
-        List<AddUeDTO> addUeDTOList = new ArrayList<>();
+//        ClasseModule classeModule = classeModule_repositorie.getClasseModuleByIdNiveauFiliereIdAndIdSemestreId(idNiveauFiliere, idSemestre);
+        List<AddNoteDTO> addUeDTOList = new ArrayList<>();
 
         for (ClasseModule classeModule : classeModuleList) {
+
+        
             List<Modules> modulesForUe = modules_repositories.findByIdUeId(classeModule.getIdUE().getId());
             AddUeDTO dto = AddUeDTO.getAddUeDTO(classeModule);
-
             dto.setModules(modulesForUe);
 
-            addUeDTOList.add(dto);
+            boolean hasNote = false;
+            for (Modules module : modulesForUe) {
+                AddNoteDTO noteDTO = new AddNoteDTO();
+
+                Notes note = notes_repositorie.findByIdSemestreIdAndIdModuleIdAndIdInscriptionId(idSemestre, module.getId(), idEtudiant);
+//                System.out.println("------------note------" + note);
+                if(note != null){
+                    System.out.println("Note trouvée : " + note);
+                    noteDTO.setIdNote(note.getId());
+                    noteDTO.setIdModule(note.getIdModule().getId());
+                    noteDTO.setNoteClasse(note.getClasseNote());
+                    noteDTO.setNoteExam(note.getExamNote());
+
+                }else {
+//                    noteDTO.setIdModule(note.getIdModule().getId());
+                    noteDTO.setIdModule(module.getId());
+                    noteDTO.setNoteExam(0.0);
+
+                    noteDTO.setNoteClasse(0.0);
+                }
+                noteDTO.setAddUeDto(dto);
+
+                addUeDTOList.add(noteDTO);
+            }
 
         }
         return addUeDTOList;

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class Salles_service {
     public List<Salles> getAllSalles_non_occuper() {
         List<Salles> sallesList = sallesRepositorie.findAll();
         List<Salles> newListe = new ArrayList<>();
-        List<Salles> salleOccupe = common_service.salle_occuper(LocalDate.now());
+        List<Salles> salleOccupe = common_service.salle_occuper(LocalDate.now(), LocalTime.now());
 
         for (Salles salle : sallesList) {
             if (!salleOccupe.contains(salle)) {

@@ -5,6 +5,7 @@ import Gestion_scolaire.Models.Journee;
 import Gestion_scolaire.Services.Common_service;
 import Gestion_scolaire.Services.Jounee_service;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +40,7 @@ public class Seance_controller {
 
     @PostMapping("/add-journee")
     @Operation(summary = "Ajout des journee pour un emplois")
-    public Object add_jour(@RequestBody List<Journee> journeeList){
+    public Object add_jour(@Valid  @RequestBody List<Journee> journeeList){
         return jounee_service.addJournee(journeeList);
     }
 

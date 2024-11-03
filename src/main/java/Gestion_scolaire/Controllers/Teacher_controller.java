@@ -148,7 +148,7 @@ public class Teacher_controller {
     @Operation(summary = "Recuperer la liste de profile de l'enseignant (filiere associer)")
     public Page<ProfilDTO> getAllFiliereByTeacher(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size){
+            @RequestParam(defaultValue = "20") int size){
         return teachers_service.getAllProfile(page, size);
     }
 

@@ -2,13 +2,12 @@ package Gestion_scolaire.Controllers;
 
 import Gestion_scolaire.Authentification.Auth;
 import Gestion_scolaire.Authentification.Jeton_Auth;
-import Gestion_scolaire.Models.AnneeScolaire;
-import Gestion_scolaire.Models.InfoSchool;
-import Gestion_scolaire.Models.Studens;
-import Gestion_scolaire.Models.UsersAbstract;
+import Gestion_scolaire.Models.*;
+import Gestion_scolaire.Services.Admin_service;
 import Gestion_scolaire.Services.InfoScool_service;
 import Gestion_scolaire.Services.PromotionAutomaticAdd_service;
 import Gestion_scolaire.configuration.NoteFundException;
+import Gestion_scolaire.configuration.SecurityConfigs.JwtService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -39,17 +38,31 @@ public class Auth_controller {
     private Auth authService;
 
     @Autowired
+    private Admin_service adminService;
+
+    @Autowired
+    private JwtService jwtService;
+
+    @Autowired
     private InfoScool_service infoScool_service;
 
     @Autowired
     private PromotionAutomaticAdd_service promotionAutomaticAdd_service;
 
     @PostMapping("/login")
-    public Object login(@RequestBody LoginRequest loginRequest) {
+    public LoginResponse login(@RequestBody LoginRequest loginRequest) {
+        System.out.println("entre en methode" + loginRequest);
         Object userDetails = authService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
+        System.out.println("es ce que tu es retourne "+ userDetails);
         if (userDetails != null) {
-            String token = jetonAuth.generateToken(userDetails);
-            return userDetails;
+            ObjectMapper adminMapper = new ObjectMapper();
+            adminMapper.registerModule(new JavaTimeModule());
+            Admin admin = adminMapper.convertValue(userDetails, Admin.class);
+            String token = jwtService.generateToken(admin.getEmail());
+            System.out.println("------------------token---------------" +token);
+            System.out.println("------------------user---------------" +userDetails);
+
+            return new LoginResponse(userDetails, token);
         } else {
             throw  new NoteFundException("Address mail ou mot de passe est incorrect");
         }
@@ -102,7 +115,18 @@ public class Auth_controller {
     public Object delete_annee_scolaire(@PathVariable long idAnnee){
         return infoScool_service.delete_annee(idAnnee);
     }
-//    ---------------------------------------
+
+    @PostMapping("/refresh-token")
+    @Operation(summary = "Racfrechire le token")
+    public Object refreshToken(@RequestBody Map<String, String> payload){
+        String email = payload.get("email");
+        String token = jwtService.generateToken(email);
+
+        // Créer une réponse JSON avec le token
+        Map<String, String> response = new HashMap<>();
+        response.put("token", token);
+        return response;
+    }
 
 
     @Data
@@ -110,5 +134,16 @@ public class Auth_controller {
         private String email;
         private String password;
 
+    }
+
+    @Data
+    static class LoginResponse {
+        private String token;
+        private Object user;
+
+        public LoginResponse(Object userDetails, String token) {
+            this.user = userDetails;
+            this.token = token;
+        }
     }
 }

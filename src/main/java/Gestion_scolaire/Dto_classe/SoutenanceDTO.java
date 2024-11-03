@@ -14,12 +14,13 @@ public class SoutenanceDTO {
     private LocalTime heureDebut;
     private LocalTime heureFin;
     private LocalDate date;
+    private long idAdmin;
     private List<JuryDto> idJury;
     private String filiere;
     private String niveaux;
     private Teachers idTeacher;
     private long idDoc;
-    private List<Studens> students;
+    private List<Inscription> inscriptions;
     private Salles idSalle;
 
     public static SoutenanceDTO toDto(Soutenance soutenance) {

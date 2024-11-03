@@ -6,34 +6,33 @@ import Gestion_scolaire.EnumClasse.Admin_role;
 import Gestion_scolaire.MailSender.MessaSender;
 import Gestion_scolaire.MailSender.PendingEmail;
 import Gestion_scolaire.Models.Admin;
-import Gestion_scolaire.Models.InfoSchool;
-import Gestion_scolaire.Repositories.Admin_repositorie;
-import Gestion_scolaire.Repositories.InfoSchool_repositorie;
+import Gestion_scolaire.Repositories.AdminRepositorie;
 import Gestion_scolaire.configuration.NoteFundException;
+import Gestion_scolaire.configuration.SecurityConfigs.AdminInfoDetails;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpSession;
-import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.rmi.server.UID;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
-import java.util.UUID;
 
 @Service
-public class Admin_service {
+public class Admin_service implements UserDetailsService {
 
     @Autowired
-    private Admin_repositorie admin_repositorie;
+    private AdminRepositorie adminRepositorie;
 
     @Autowired
     private fileManagers fileManagers;
@@ -60,7 +59,7 @@ public class Admin_service {
         String email = "ousmato98@gmail.com";
         String password = "Test@123";
 
-        Admin adminExist = admin_repositorie.findByEmail(email);
+        Admin adminExist = adminRepositorie.findByEmail(email);
         if (adminExist == null) {
             Admin a = new Admin();
             a.setEmail(email);
@@ -73,8 +72,17 @@ public class Admin_service {
             a.setActive(true);
             a.setUpdateDate(LocalDate.now());
             a.setUrlPhoto("image.jpg");
-            admin_repositorie.save(a);
+            adminRepositorie.save(a);
         }
+    }
+
+
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Optional<Admin> userDetail = adminRepositorie.getAdminByEmailAndActive(email, true); // Assuming 'email' is used as username
+
+        // Converting admin to UserDetails
+        return userDetail.map(AdminInfoDetails::new)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
     }
 
     //  =======================================================================================
@@ -83,7 +91,7 @@ public class Admin_service {
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
-        Admin adminExist = admin_repositorie.findByRoleAndActive(admin.getRole(), true);
+        Admin adminExist = adminRepositorie.findByRoleAndActive(admin.getRole(), true);
         if (adminExist != null) {
            throw new NoteFundException("Impossible d'attribuer le meme role a deux administrateur");
         }
@@ -101,32 +109,32 @@ public class Admin_service {
         emailPend.setSubject("Confirmation");
 
         messages.messageAdmin(admin,passWordPlan);
-        admin_repositorie.save(admin);
+        adminRepositorie.save(admin);
         return DTO_response_string.fromMessage("Ajout effectué avec succès", 200);
     }
 
 //    ----------------------------------------get all admin
     public List<Admin> list_admin() {
-        return admin_repositorie.findAllByActive(true);
+        return adminRepositorie.findAllByActive(true);
     }
 
     public List<Admin> getAllByEtat(long value) {
         if(value == 1){
-            return admin_repositorie.findAllByActive(true);
+            return adminRepositorie.findAllByActive(true);
         }
-        return admin_repositorie.findAllByActive(false);
+        return adminRepositorie.findAllByActive(false);
 
     }
 //    ---------------------------------------
     public Object chageEtatByIdAdmin(long id) {
-        Admin admin = admin_repositorie.findByIdAdministra(id);
+        Admin admin = adminRepositorie.findByIdAdministra(id);
         if(admin != null){
 
-            if(!admin.isActive() && admin_repositorie.findByRoleAndActive(admin.getRole(), true) != null){
+            if(!admin.isActive() && adminRepositorie.findByRoleAndActive(admin.getRole(), true) != null){
                 throw new NoteFundException("Il existe déjà un "+ admin.getRole().toString().toUpperCase() + " en activité");
             }
             admin.setActive(!admin.isActive());
-            admin_repositorie.save(admin);
+            adminRepositorie.save(admin);
             return DTO_response_string.fromMessage("Mises à jour éffectuer avec succès", 200);
         }
         throw new NoteFundException("L'administrateur est introuvable");
@@ -134,7 +142,7 @@ public class Admin_service {
 
 //    ------------------------
     public Admin getAdminBy(long id) {
-        Admin admin = admin_repositorie.findByIdAdministra(id);
+        Admin admin = adminRepositorie.findByIdAdministra(id);
         if(admin != null){
             return admin;
         }
@@ -145,7 +153,7 @@ public class Admin_service {
 
     public Admin changeImage(long id, MultipartFile file) throws Exception {
 
-        Admin admin = admin_repositorie.findByIdAdministra(id);
+        Admin admin = adminRepositorie.findByIdAdministra(id);
         System.out.println("----------------------" + admin);
         Set<ConstraintViolation<Admin>> violations = validator.validate(admin);
         if (!violations.isEmpty()) {
@@ -160,14 +168,14 @@ public class Admin_service {
         admin.setUpdateDate(LocalDate.now());
         System.out.println("-----------------------"+urPhoto);
 
-        admin_repositorie.save(admin);
+        adminRepositorie.save(admin);
         System.out.println("------------save-----------"+admin);
         return admin;
     }
 
 //    ------------------
     public Object updatAdmin(AdminDTO admin){
-        Admin adminExist = admin_repositorie.findByIdAdministra(admin.getIdAdministra());
+        Admin adminExist = adminRepositorie.findByIdAdministra(admin.getIdAdministra());
         if(adminExist == null){
             throw new NoteFundException("L'administrateur est introuvable");
         }
@@ -176,12 +184,12 @@ public class Admin_service {
         adminExist.setEmail(admin.getEmail());
         adminExist.setTelephone(admin.getTelephone());
         adminExist.setUpdateDate(LocalDate.now());
-        admin_repositorie.save(adminExist);
+        adminRepositorie.save(adminExist);
         return adminExist;
     }
 
     public Admin forgotPassword(String email) {
-        Admin admin = admin_repositorie.findByEmail(email);
+        Admin admin = adminRepositorie.findByEmail(email);
         if(admin == null){
             throw new NoteFundException("L'administrateur est introuvable");
         }

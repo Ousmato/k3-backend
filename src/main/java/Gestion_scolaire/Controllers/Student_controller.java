@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,6 +49,8 @@ public class Student_controller {
 
     //    ----------------------------------------method get all students----------------------------------
     @GetMapping("/list")
+    @Operation(summary = "Recuperer la liste des etudiant de l'annee en cours")
+    @PreAuthorize("hasAuthority('ROLE_DG')")
     public Page<Inscription> getAllStudents(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
@@ -67,14 +70,14 @@ public class Student_controller {
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        Studens studens = objectMapper.readValue(studensString, Studens.class);
+        Inscription inscrit = objectMapper.readValue(studensString, Inscription.class);
         // Vérifie si urlFile est null ou vide
         if (urlFile == null) {
 
             System.out.println("file is ");
-            return student_service.update(studens, null);
+            return student_service.update(inscrit, null);
         }
-            return student_service.update(studens, urlFile);
+            return student_service.update(inscrit, urlFile);
 
     }
 //    --------------------method desabled student-----------------------
@@ -105,16 +108,16 @@ public class Student_controller {
         return student_service.update_scolarite(idStudent, idAdmin, dtoScolarite.getScolarite());
     }
 //------------------list des etudians valider de la classe
-    @GetMapping("/student-by-classe-id/{idClasse}")
-    public List<Studens> getStudentByClasse(@PathVariable long idClasse){
-        return student_service.get_by_classId(idClasse);
-    }
+//    @GetMapping("/student-by-classe-id/{idClasse}")
+//    public List<Studens> getStudentByClasse(@PathVariable long idClasse){
+//        return student_service.get_by_classId(idClasse);
+//    }
 
-    @GetMapping("/inscription-by-id/{idInscription}")
-    @Operation(summary = "Recupere une inscription par id")
-    public Inscription getInscriptionById(@PathVariable long idInscription){
-        return student_service.getInscriptionById(idInscription);
-    }
+//    @GetMapping("/inscription-by-id/{idInscription}")
+//    @Operation(summary = "Recupere une inscription par id")
+//    public Inscription getInscriptionById(@PathVariable long idInscription){
+//        return student_service.getInscriptionById(idInscription);
+//    }
 
 //    -------------------------------------get all student by id annee scolaire
     @GetMapping("/student-by-anneScolaire-id/{idAnne}")
@@ -151,16 +154,12 @@ public class Student_controller {
     }
 
 //    --------------get all participant by emplois id
-    @GetMapping("/list-participant-by-class-id/{idClasse}")
-    public List<Participant> getListParticipantByClassId(@PathVariable long idClasse){
-        return groupe_service.ge_allBy_idClass(idClasse);
+    @GetMapping("/list-participant-by-class-id/{idEmploi}")
+    public List<Participant> getListParticipantByClassId(@PathVariable long idEmploi){
+        return groupe_service.ge_allBy_idClass(idEmploi);
     }
 
-//    -----------------------get All Students By Group
-    @GetMapping("/list-students-by-group-id/{idGroup}")
-    public List<Studens> getAllStudentByGroup(@PathVariable long idGroup){
-        return groupe_service.getAllStudentsByGroupId(idGroup);
-    }
+
 
 //    -----------------------------get sum of all scolarite of student in this year
     @GetMapping("/sum-scolarite")
@@ -201,13 +200,13 @@ public class Student_controller {
     }
 
     // ----------------------------------------------
-    @GetMapping("/all-docs-by-idClass-and-idAnnee/{idAnnee}")
+    @GetMapping("/all-docs-by-idAnnee/{idAnnee}")
     @Operation(summary = "Recuperer tous les docs avec idAnnee et id Classe")
     public Page<DocDTO> getAllDocsByIdClassAndIdAnnee(
             @RequestParam (defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "20") int size,
             @PathVariable long idAnnee) {
-        return doc_service.getByIdAnneeAndIdClasse(page, size, idAnnee);
+        return doc_service.getByIdAnnee(page, size, idAnnee);
     }
 
     //---------------------------------------------
@@ -216,7 +215,7 @@ public class Student_controller {
     @Operation(summary = "Recuperer les docs de l'annee en cours")
     public Page<DocDTO> getDefaultofYear(
             @RequestParam (defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "20") int size) {
         return doc_service.defultCurrentDocs(page, size);
     }
 

@@ -25,5 +25,7 @@ public class Admin extends UsersAbstract{
 
     @NotNull
     private LocalDate updateDate = LocalDate.now();
+
+
 }
 

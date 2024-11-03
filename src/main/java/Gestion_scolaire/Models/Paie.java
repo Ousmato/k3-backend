@@ -22,8 +22,7 @@ public class Paie {
     private int nbreHeures = 0;
 
 
-
-    @NotBlank(message = "Le champ ne doit pas être nul ou vide.\n")
+    @NotNull(message = "Le champ ne doit pas être nul ou vide.\n")
     private LocalDate date;
 
     @ManyToOne

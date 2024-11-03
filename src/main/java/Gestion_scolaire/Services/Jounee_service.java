@@ -9,6 +9,9 @@ import Gestion_scolaire.Repositories.Emplois_repositorie;
 import Gestion_scolaire.Repositories.Journee_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +30,9 @@ public class Jounee_service {
     private Common_service common_service;
 
     @Autowired
+    private Validator validator;
+
+    @Autowired
     private Emplois_repositorie emplois_repositorie;
 
     @Transactional
@@ -34,6 +40,10 @@ public class Jounee_service {
         boolean hasJour = false;
 
         for (Journee j : journeeList) {
+            Set<ConstraintViolation<Journee>> constraintViolations = validator.validate(j);
+            if (!constraintViolations.isEmpty()){
+                throw new ConstraintViolationException(constraintViolations);
+            }
 
             List<Journee> list = journee_repositorie.findByIdEmploisIdAndIdTeacherIdEnseignantAndSeanceType(
                     j.getIdEmplois().getId(), j.getIdTeacher().getIdEnseignant(), j.getSeanceType());
@@ -54,7 +64,7 @@ public class Jounee_service {
             if(teacherCofig != null) {
                throw new NoteFundException("L'enseignant : %sest déjà programmer pour cette date".formatted(j.getIdTeacher().getNom()));
             }
-            List<Salles> occuperForDate = common_service.salle_occuper(j.getDate());
+            List<Salles> occuperForDate = common_service.salle_occuper(j.getDate(), j.getHeureDebut());
             if(!occuperForDate.isEmpty()) {
                 for (Salles s : occuperForDate) {
                     if(s.equals(j.getIdSalle())){
@@ -75,6 +85,7 @@ public class Jounee_service {
                     throw new NoteFundException("L'heure de fin de la séance se trouve dans l'intervalle d'une autre séance existante.");
                 }
             }
+            System.out.println("----------------------------"+j);
             Journee saved = journee_repositorie.save(j);
             common_service.createPaieForConfig(saved);
             hasJour = true;

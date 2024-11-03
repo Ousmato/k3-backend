@@ -18,7 +18,8 @@ public class Jeton_Auth {
 
 
     // Clé de signature. Remplacez-la par une clé sécurisée et robuste.
-    private static final String SECRET_KEY = "MaCledeSecurite6876286@";
+    public static final String SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
+    ;
 
     // Durée de validité du jeton en millisecondes (par exemple, 1 heure)
     private static final long TOKEN_VALIDITY = 3600000;
@@ -33,7 +34,7 @@ public class Jeton_Auth {
 
 
     private Key getSigInKey(){
-        byte[] key = Decoders.BASE64.decode("1234677886890380964B7383990097774033635");
+        byte[] key = Decoders.BASE64.decode(SECRET);
         return Keys.hmacShaKeyFor(key);
     }
 //    ---------------------------------------------------------

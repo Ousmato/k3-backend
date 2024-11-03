@@ -101,6 +101,11 @@
 			<artifactId>spring-security-crypto</artifactId>
 			<version>6.2.1</version>
 		</dependency>
+<!--		security configs dependence-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

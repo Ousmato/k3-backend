@@ -6,6 +6,9 @@ import Gestion_scolaire.Models.*;
 import Gestion_scolaire.Repositories.*;
 import Gestion_scolaire.configuration.NoteFundException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -29,6 +32,12 @@ public class Doc_service {
     private Common_service common_service;
 
     @Autowired
+    private Validator validator;
+
+    @Autowired
+    private AdminRepositorie adminRepositorie;
+
+    @Autowired
     private Jury_repositorie jury_repositorie;
 
     @Autowired
@@ -44,10 +53,59 @@ public class Doc_service {
     @Transactional
     public Object addDoc(DocDTO dto) {
 
-          Documents docSaved = doc_repositorie.save(dto.getIdDocument());
+        Set<ConstraintViolation<Documents>>  violations = validator.validate(dto.getIdDocument());
+        if(!violations.isEmpty()){
+            throw new ConstraintViolationException(violations);
+        }
+
+        for(Inscription inscription: dto.getIdInscription()){
+            StudentDoc docExist = studentDoc_repositorie.findByIdDocumentDocTypeAndIdInscriptionId(dto.getIdDocument().getDocType(), inscription.getId());
+            if (docExist != null) {
+                List<StudentDoc> studentDocs = studentDoc_repositorie.findByIdDocumentId(docExist.getIdDocument().getId());
+                if (studentDocs.size() > 1) {
+                    String nomEtudiant1 = null;
+                    String nomEtudiant2 = null;
+
+                    for (StudentDoc std : studentDocs) {
+                        // Vérifiez si l'inscription actuelle n'est pas celle de std
+                        if (!std.getIdInscription().equals(inscription)) {
+                            if (nomEtudiant1 == null) {
+                                nomEtudiant1 = std.getIdInscription().getIdEtudiant().getNom() +" "+ std.getIdInscription().getIdEtudiant().getPrenom();
+                            } else {
+                                nomEtudiant2 = std.getIdInscription().getIdEtudiant().getNom()+" "+ std.getIdInscription().getIdEtudiant().getPrenom();
+                                break; // On a trouvé les deux noms
+                            }
+                        }
+                    }
+
+                    if (nomEtudiant1 != null && nomEtudiant2 != null) {
+                        StringBuilder etudiants = new StringBuilder("Invalide ce depot doit etre activer par ces deux etudiants : ");
+                        etudiants.append(nomEtudiant1).append(" et ").append(nomEtudiant2);
+                        throw new NoteFundException(etudiants.toString());
+                    }
+                }
+
+                if(docExist.getIdDocument().isDeleted()){
+                    System.out.println("j suis de dans---------------------------" + docExist);
+                    docExist.getIdDocument().setDeleted(false);
+                    docExist.setIdAdmin(dto.getIdAdmin());
+                    docExist.getIdDocument().setDate(dto.getIdDocument().getDate());
+                    docExist.getIdDocument().setIdEncadrant(dto.getIdDocument().getIdEncadrant());
+                    doc_repositorie.save(docExist.getIdDocument());
+                    studentDoc_repositorie.save(docExist);
+                    return docExist;
+                }
+                throw new NoteFundException("Impossible l'étudiant à déjà déposer son  "  + docExist.getIdDocument().getDocType().toString().toUpperCase() + " veillez changer le type de doccument " );
+            }
+        }
+        Documents docSaved = doc_repositorie.save(dto.getIdDocument());
+
           for (Inscription inscription: dto.getIdInscription()){
+
+
               StudentDoc newStudentDoc = new StudentDoc();
               newStudentDoc.setIdDocument(docSaved);
+              newStudentDoc.setIdAdmin(dto.getIdAdmin());
               newStudentDoc.setIdInscription(inscription);
             studentDoc_repositorie.save(addStudentDoc(newStudentDoc, docSaved));
           }
@@ -68,36 +126,52 @@ public class Doc_service {
     }
 
 //    -------------------------------------------------get all by annee and id classe
-    public Page<DocDTO> getByIdAnneeAndIdClasse(int page, int pageSize, long idAnnee){
+    public Page<DocDTO> getByIdAnnee(int page, int pageSize, long idAnnee){
 
         Pageable pageable = PageRequest.of(page, pageSize);
-        Page<StudentDoc> docs = studentDoc_repositorie.getAllByIdInscriptionIdClasseIdAnneeScolaireId( idAnnee, pageable);
-        System.out.println("----------------------------------------------------"+docs+ "-----------------------------------------");
+        Page<StudentDoc> docs = studentDoc_repositorie.getAllByIdInscriptionIdClasseIdAnneeScolaireIdAndIdDocumentDeleted( idAnnee, pageable, false);
+//        System.out.println("----------------------------------------------------"+docs+ "-----------------------------------------");
 
         if(docs.isEmpty()){
-            return Page.empty();
+            return new PageImpl<>(Collections.emptyList(), pageable, 0);
         }
-
         List<DocDTO> docDTOs = docs.stream()
                 .map(DocDTO::toDocDTO)
                 .toList();
 
+        //        List<Studens> listStudent = new ArrayList<>();
+        for (DocDTO docDTO : docDTOs) {
+            // Récupérer les étudiants associés à ce document spécifique
+            List<StudentDoc> studensList = studentDoc_repositorie.findByIdDocumentId(docDTO.getIdDocument().getId());
+
+            // Extraire les étudiants de la liste
+            List<Inscription> listStudent = studensList.stream()
+                    .map(StudentDoc::getIdInscription) // On récupère chaque étudiant
+                    .toList();
+
+            // Associer la liste des étudiants au DocDTO
+            docDTO.setIdInscription(listStudent);
+        }
         // Retour d'une nouvelle PageImpl avec les DTOs, la pagination et le nombre total d'éléments
         return new PageImpl<>(docDTOs, pageable, docs.getTotalElements());
+
 
     }
 
     //    --------------------------------------------get  all current doc
     public Page<DocDTO> defultCurrentDocs(int page, int size){
 
-        //        Sort sort = Sort.by(Sort.Order.asc("date"),Sort.Order.asc("docType"));
-        Pageable pageable = PageRequest.of(page, size);
+                Sort sort = Sort.by(Sort.Order.asc("idDocument.date"),Sort.Order.asc("idDocument.docType"));
+        Pageable pageable = PageRequest.of(page, size, sort);
         LocalDate date = LocalDate.now();
         LocalDate startDate =  date.minusYears(1);
-        Page<StudentDoc> docs = studentDoc_repositorie.getByIdDocumentDateBetween(startDate, LocalDate.now(), pageable);
+
+        Page<StudentDoc> docs = studentDoc_repositorie.getByIdDocumentDeletedAndIdDocumentDateBetween(false, startDate, LocalDate.now(), pageable);
+
         if(docs.isEmpty()){
-            return Page.empty();
+            return new PageImpl<>(Collections.emptyList(), pageable, 0);
         }
+//        System.out.println("-------------------------------docs");
         List<DocDTO> docDTOs = docs.stream()
                 .map(DocDTO::toDocDTO)
                 .toList();
@@ -122,7 +196,7 @@ public class Doc_service {
 
     //    ---------------------------------------get all doc by classe id
     public List<DocDTO> getDocsByIdClass(long idClass){
-        List<StudentDoc> listDocs = studentDoc_repositorie.findAllByIdInscriptionIdClasseId(idClass);
+        List<StudentDoc> listDocs = studentDoc_repositorie.findAllByIdInscriptionIdClasseIdAndIdDocumentDeleted(idClass, false);
         if(listDocs.isEmpty()){
             return new ArrayList<>();
         }
@@ -146,7 +220,6 @@ public class Doc_service {
 //    ---------------------------------add soutenance program
     @Transactional
     public Object addProgramSoutenance(ProgramSoutenanceDto dto){
-
         StudentDoc docExist = studentDoc_repositorie.findById(dto.getSoutenance().getIdDoc());
         if(docExist == null){
             throw new NoteFundException("Invalide le document est introuvable");
@@ -155,6 +228,7 @@ public class Doc_service {
         if(docExist.getIdDocument().isSoutenue()){
             throw new NoteFundException("L'étudiant  est déjà soutenu");
         }
+        System.out.println("----------------les jurys------------" + dto.getJurys().size());
         if(dto.getJurys().size() != 3){
             throw new NoteFundException("Invalide, Verifier la présence de tout les jurys.");
         }
@@ -185,17 +259,20 @@ public class Doc_service {
         }
 
         Soutenance stn =  soutenance_repositorie.findByIdDocId(docExist.getId());
+        Admin admin = adminRepositorie.findByIdAdministra(dto.getSoutenance().getIdAdmin());
+
         if(stn != null){
             stn.setHeureDebut(dto.getSoutenance().getHeureDebut());
             stn.setHeureFin(dto.getSoutenance().getHeureFin());
             stn.setDate(dto.getSoutenance().getDate());
+            stn.setIdAdmin(admin);
             stn.setIdSalle(dto.getSoutenance().getIdSalle());
             stn.getIdDoc().getIdDocument().setProgrammer(true);
             soutenance_repositorie.save(stn);
             return DTO_response_string.fromMessage("Ajout éffectué avec succès", 200);
 
         }
-        Soutenance saved = soutenance_repositorie.save(getSoutenance(dto.getSoutenance(), docExist));
+        Soutenance saved = soutenance_repositorie.save(getSoutenance(dto.getSoutenance(), docExist, admin));
 
         for (JuryDto jr: dto.getJurys()){
 
@@ -227,14 +304,20 @@ public class Doc_service {
 //        return newSouenance;
 //    }
 
-    public Soutenance getSoutenance(SoutenanceDTO dto, StudentDoc docExist) {
+    public Soutenance getSoutenance(SoutenanceDTO dto, StudentDoc docExist, Admin admin) {
 
+        Set<ConstraintViolation<SoutenanceDTO>> violations = validator.validate(dto);
+        if(!violations.isEmpty()){
+            throw new ConstraintViolationException(violations);
+        }
 
+        System.out.println("-------------soutenance----------");
         Soutenance soutenance = new Soutenance();
 
         soutenance.setIdDoc(docExist);
         soutenance.setDate(dto.getDate());
         soutenance.setHeureDebut(dto.getHeureDebut());
+        soutenance.setIdAdmin(admin);
         soutenance.setHeureFin(dto.getHeureFin());
         soutenance.setIdSalle(dto.getIdSalle());
         return soutenance;
@@ -249,14 +332,15 @@ public class Doc_service {
             SoutenanceDTO newDto = SoutenanceDTO.toDto(soutenance);
 
 
-            List<StudentDoc> studentDocs = studentDoc_repositorie.findByIdDocumentId(soutenance.getIdDoc().getId());
+            List<StudentDoc> studentDocs = studentDoc_repositorie.findByIdDocumentIdAndIdDocumentProgrammer(soutenance.getIdDoc().getIdDocument().getId(), true);
 
-            List<Studens> listStudent = studentDocs.stream()
-                    .map(studentDoc -> studentDoc.getIdInscription().getIdEtudiant()) // On récupère chaque étudiant
+            System.out.println("--------------stusent doct progamer = true  "+ studentDocs );
+            List<Inscription> listStudent = studentDocs.stream()
+                    .map(StudentDoc::getIdInscription) // On récupère chaque étudiant
                     .toList();
 
-            for (Studens student : listStudent) {
-                Inscription incription = inscription_repositorie.findByIdEtudiantIdEtudiant(student.getIdEtudiant());
+            for (Inscription inscrit : listStudent) {
+                Inscription incription = inscription_repositorie.findById(inscrit.getId());
                 newDto.setFiliere(incription.getIdClasse().getIdFiliere().getIdFiliere().getNomFiliere());
                 newDto.setNiveaux(incription.getIdClasse().getIdFiliere().getIdNiveau().getNom());
             }
@@ -276,7 +360,7 @@ public class Doc_service {
                     }).collect(Collectors.toList());
 
             newDto.setIdJury(juryList);
-            newDto.setStudents(listStudent);
+            newDto.setInscriptions(listStudent);
 
             dtos.add(newDto);
 
@@ -286,22 +370,19 @@ public class Doc_service {
 
 //    -----------------------------------------------
     public StudentDoc addStudentDoc(StudentDoc studentDoc, Documents doc){
-        StudentDoc docExist = studentDoc_repositorie.findByIdDocumentDocTypeAndIdInscriptionIdEtudiantIdEtudiant(studentDoc.getIdDocument().getDocType(), studentDoc.getIdInscription().getIdEtudiant().getIdEtudiant());
-            if (docExist != null) {
-                if(doc.getId() != 0){
-                    doc_repositorie.delete(doc);
-                }
-                throw new NoteFundException("Impossible l'étudiant à déjà déposer son  "  + docExist.getIdDocument().getDocType().toString().toUpperCase() + " veillez changer le type de doccument " );
-            }
+        Set<ConstraintViolation<StudentDoc>> violations = validator.validate(studentDoc);
+        if(!violations.isEmpty()){
+            throw new ConstraintViolationException(violations);
+        }
+
+        System.out.println("j ne suis pas de dans---------------------------");
 
         if(studentDoc.getIdDocument().getDocType() == DocType.memoire){
                 StudentsClasse classe = studentDoc.getIdInscription().getIdClasse();
                 if(!Objects.equals(classe.getIdFiliere().getIdNiveau().getNom(), "LICENCE 3") &&
                         !Objects.equals(classe.getIdFiliere().getIdNiveau().getNom(), "MASTER 1 ") &&
                         !Objects.equals(classe.getIdFiliere().getIdNiveau().getNom(), "MASTER 2 ")){
-                    if(doc.getId() != 0){
-                        doc_repositorie.delete(doc);
-                    }
+
                     throw new NoteFundException("L'étudiant ne pas autoriser à déposer  un " +  DocType.memoire.toString().toUpperCase() );
                 }
         }
@@ -312,6 +393,7 @@ public class Doc_service {
                 throw new NoteFundException("Un étudiant avec ce niveau : "+ classe.getIdFiliere().getIdNiveau().getNom() + "n'est pas autoriser a déposer un Rapport");
             }
         }
+
 
         return studentDoc;
     }
@@ -353,5 +435,15 @@ public class Doc_service {
         }
         return null;
     }
-    
+
+
+    public Object annulerDepot(long idIncrit){
+        StudentDoc studentDocExist = studentDoc_repositorie.findByIdInscriptionIdAndIdDocumentDeleted(idIncrit, false);
+        if(studentDocExist != null){
+            studentDocExist.getIdDocument().setDeleted(true);
+            doc_repositorie.save(studentDocExist.getIdDocument());
+            return DTO_response_string.fromMessage("Dépot annuler avec succès", 200);
+        }
+        throw new NoteFundException("Document n'existe pas");
+    }
 }

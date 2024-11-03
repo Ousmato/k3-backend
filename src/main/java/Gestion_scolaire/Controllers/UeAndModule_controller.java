@@ -1,10 +1,7 @@
 package Gestion_scolaire.Controllers;
 
-import Gestion_scolaire.Dto_classe.AddModuleDTO;
+import Gestion_scolaire.Dto_classe.AddNoteDTO;
 import Gestion_scolaire.Dto_classe.AddUeDTO;
-import Gestion_scolaire.Dto_classe.DTO_ClassModule;
-import Gestion_scolaire.Dto_classe.ModuleDTO;
-import Gestion_scolaire.Models.ClasseModule;
 import Gestion_scolaire.Models.Modules;
 import Gestion_scolaire.Models.NiveauFilieres;
 import Gestion_scolaire.Models.UE;
@@ -14,8 +11,6 @@ import Gestion_scolaire.Services.Ue_service;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,9 +32,9 @@ public class UeAndModule_controller {
         return ue_service.add(dto);
     }
 //    --------------------------------------------method get list all eu----------------------
-    @GetMapping("/list-ue/{idClasse}/{idSemestre}")
-    public List<AddUeDTO> getAllUe(@PathVariable long idClasse, @PathVariable long idSemestre){
-        return ue_service.getAllUeByIdNiveauFiliereAndIdSemestre(idClasse, idSemestre);
+    @GetMapping("/list-ue/{idClasse}/{idSemestre}/{idEtudiant}")
+    public List<AddNoteDTO> getAllUe(@PathVariable long idClasse, @PathVariable long idSemestre, @PathVariable long idEtudiant){
+        return ue_service.getAllUeByIdNiveauFiliereAndIdSemestre(idClasse, idSemestre, idEtudiant);
     }
 //    -----------------------------------method get list module -----------
     @GetMapping("/list-module")

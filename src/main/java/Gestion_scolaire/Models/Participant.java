@@ -1,6 +1,8 @@
 package Gestion_scolaire.Models;
 
 import jakarta.persistence.*;
+import jakarta.validation.Validation;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Entity
@@ -11,10 +13,17 @@ public class Participant{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne
-    private Studens idStudent;
 
     @ManyToOne
-    StudentGroupe idStudentGroup;
+    private Inscription idInscription;
+
+    @ManyToOne
+    private StudentGroupe idStudentGroup;
+
+    @NotNull(message = "Admin est obligatoire")
+    @ManyToOne
+    private Admin idAdmin;
+
+
     
 }

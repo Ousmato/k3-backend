@@ -17,8 +17,4 @@ public interface Doc_repositorie extends JpaRepository<Documents, Long> {
 
    int countByDocType(DocType docType);
 
-
-
-
-
 }

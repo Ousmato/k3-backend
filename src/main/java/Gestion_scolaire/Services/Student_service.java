@@ -39,7 +39,7 @@ public class Student_service {
     private Inscription_repositorie inscription_repositorie;
 
     @Autowired
-    private Admin_repositorie admin_repositorie;
+    private AdminRepositorie adminRepositorie;
 
     @Autowired
     MessaSender messaSender;
@@ -121,7 +121,12 @@ public class Student_service {
 
     //    -----------------------------------------------------------------------------------
     @Transactional
-    public Object update(Studens studens, MultipartFile file) throws IOException {
+    public Object update(Inscription inscrit, MultipartFile file) throws IOException {
+        Studens studens = inscrit.getIdEtudiant();
+        Inscription inscriptionExist = inscription_repositorie.findById(inscrit.getId());
+        if (inscriptionExist == null) {
+            throw new NoteFundException("L'inscription n'existe pas");
+        }
         String telephone = String.valueOf(studens.getTelephone());
         if (telephone.length() > 8) {
             throw new NoteFundException("Le numéro de téléphone ne doit pas dépasser 8 chiffres");
@@ -134,12 +139,12 @@ public class Student_service {
             throw new NoteFundException("Le matricule n'est pas valide");
         }
 
-        Studens studentExist = students_repositorie.findByIdEtudiant(studens.getIdEtudiant());
+        Studens studentExist = students_repositorie.findByIdEtudiant(inscriptionExist.getIdEtudiant().getIdEtudiant());
         if (studentExist == null) {
             throw new NoteFundException("L'étudiant n'existe pas");
         }
 
-        System.out.println("--------------------je suis ici");
+//        System.out.println("--------------------je suis ici");
         // Vérification du mot de passe
         if (studens.getPassword() != null && !studens.getPassword().isEmpty()) {
             studentExist.setPassword(passwordEncoder.encode(studens.getPassword()));
@@ -152,15 +157,20 @@ public class Student_service {
             studentExist.setUrlPhoto(urlPhoto);
         }
 
+        inscriptionExist.setIdAdmin(inscrit.getIdAdmin());
+        inscriptionExist.setIdClasse(inscrit.getIdClasse());
+        inscription_repositorie.save(inscriptionExist);
+
 //        studentExist.setDate(LocalDate.now());
         studentExist.setMatricule(studens.getMatricule());
-//        studentExist.setScolarite(studens.getScolarite());
         studentExist.setSexe(studens.getSexe());
         studentExist.setEmail(studens.getEmail());
+        studentExist.setTelephone(studens.getTelephone());
         studentExist.setDateNaissance(studens.getDateNaissance());
         studentExist.setLieuNaissance(studens.getLieuNaissance());
         studentExist.setNom(studens.getNom());
         studentExist.setPrenom(studens.getPrenom());
+
 
         students_repositorie.save(studentExist);
         return DTO_response_string.fromMessage("Modification effectuée avec succé", 200);
@@ -244,13 +254,13 @@ public class Student_service {
     }
 
     //    ----------------------------get list student by class id
-    public List<Studens> get_by_classId(long idClass) {
-        List<Inscription> list = inscription_repositorie.getByIdClasseIdAndPayer(idClass, true);
+    public List<Inscription> get_by_classId(long idAnnee,long idClass) {
+        List<Inscription> list = inscription_repositorie.getByIdClasseIdAndPayer(idAnnee,idClass, true);
         System.out.println("-----------------" + list + "--------------------------");
         if (list.isEmpty()) {
             return new ArrayList<>();
         }
-        return list.stream().map(Inscription::getIdEtudiant).toList();
+        return list;
     }
 
     //    -----------------------------get by id annee scolaire
@@ -326,7 +336,7 @@ public class Student_service {
 
 
 
-        Admin adminExist = admin_repositorie.findByIdAdministra(idAdmin);
+        Admin adminExist = adminRepositorie.findByIdAdministra(idAdmin);
         if (adminExist == null) {
             throw new NoteFundException("L'administrateur est introuvable");
 

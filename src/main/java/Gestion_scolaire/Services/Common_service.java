@@ -30,12 +30,12 @@ public class Common_service {
     @Autowired
     private Paie_repositorie paie_repositorie;
 
-    public List<Salles> salle_occuper(LocalDate date){
+    public List<Salles> salle_occuper(LocalDate date, LocalTime time){
         List<Salles> salles = sallesRepositorie.findAll();
         List<Salles> salles_occuper = new ArrayList<>();
 
         for (Salles salle : salles) {
-            List<Journee> seancesActif = journee_repositorie.getJoureeActif(salle.getId(), date);
+            List<Journee> seancesActif = journee_repositorie.getAllByIdSalle_Id(salle.getId(), date, time);
             boolean hasSeanceActif = false;
             for (Journee jour : seancesActif) {
 
@@ -87,6 +87,8 @@ public class Common_service {
         }
         return salles_occuper;
     }
+
+
 
 //    --------------------------hours traitement
     public List<String> calculerPlagesHoraires(LocalTime heureDebut, LocalTime heureFin) {

@@ -17,7 +17,7 @@ public class  Documents {
     private long id;
 
 
-    @NotNull
+    @NotNull(message = "Le type de documment est obligatoire ")
     @Enumerated(EnumType.STRING)
     private DocType docType;
 
@@ -28,8 +28,8 @@ public class  Documents {
     @NotNull
     private LocalDate date = LocalDate.now();
 
-    @NotNull
-    @OneToOne
+    @NotNull(message = "L'ancadrant est obligatoire")
+    @ManyToOne
     private Teachers idEncadrant;
 
     @NotNull

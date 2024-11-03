@@ -13,6 +13,9 @@ import Gestion_scolaire.Repositories.Profile_repositorie;
 import Gestion_scolaire.Repositories.Teacher_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -48,9 +51,16 @@ public class Teachers_service {
     @Autowired
     private fileManagers fileManagers;
 
+    @Autowired
+    private Validator validator;
+
     @Transactional
     public Object add(ProfilDTO dto){
-        System.out.println("---------dto-----------"+dto);
+        Set<ConstraintViolation<Teachers>> violations = validator.validate(dto.getTeachers());
+        if (!violations.isEmpty()){
+            throw new ConstraintViolationException(violations);
+        }
+//        System.out.println("---------dto-----------"+dto);
         if( dto.getFilieres() == null || dto.getFilieres().isEmpty() || dto.getFilieres().stream().allMatch(Objects::isNull)){
             throw new NoteFundException("Ajouter au moins une filière d'enseignement");
         }
@@ -59,8 +69,6 @@ public class Teachers_service {
         if (teachersExist != null) {
             throw new RuntimeException("L'adresse email existe déjà");
         }
-
-
 
         dto.getTeachers().setUrlPhoto("no_image.jpg"); // Exemple de valeur par défaut pour l'image
         String plainPassword = dto.getTeachers().getPassword();
@@ -85,6 +93,7 @@ public class Teachers_service {
            }
            profile.setIdTeacher(teacherSaved);
            profile.setIdFiliere(fil);
+           profile.setIdAdmin(dto.getIdAdmin());
            profile_repositorie.save(profile);
        }
        if (hasProfil){
@@ -120,10 +129,7 @@ public class Teachers_service {
             if (t.getDiplome() != null) {
                 teachersExist.setDiplome(t.getDiplome());
             }
-            System.out.println("--------------------------------------"+t.getIdUe());
-            if (t.getIdUe() != null) {
-                teachersExist.setIdUe(t.getIdUe());
-            }
+//
             if (t.getStatus() != null) {
                 teachersExist.setStatus(t.getStatus());
             }
@@ -364,14 +370,15 @@ public class Teachers_service {
     }
     //---------------------------------
     public Page<ProfilDTO> getAllProfile(int page, int size) {
+
         Pageable pageable = PageRequest.of(page, size);
         List<Profile> profilePage = profile_repositorie.findAll();
 
         if (profilePage.isEmpty()) {
-            return Page.empty(); // Retourne une page vide si aucun profil n'est trouvé
+            return new PageImpl<>(Collections.emptyList(), pageable, 0);
         }
 
-        // Filtrer les enseignants uniques avant de les transformer en DTO
+         // Filtrer les enseignants uniques avant de les transformer en DTO
         Map<Long, ProfilDTO> enseignantMap = new HashMap<>();
 
         for (Profile profile : profilePage) {

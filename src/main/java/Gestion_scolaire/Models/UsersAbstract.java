@@ -1,14 +1,10 @@
 package Gestion_scolaire.Models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
-import java.time.LocalDate;
 
 @MappedSuperclass
 @Data
@@ -45,6 +41,7 @@ public abstract class UsersAbstract {
     @NotBlank(message = "Le champ nom ne doit pas être nul ou vide.\n")
     @Size(min = 3, max = 20, message = "Le champ nom doit contenir entre 3 et 20 caractères.\n")
     private String sexe;
+
 
 
 }

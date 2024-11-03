@@ -14,4 +14,6 @@ public interface Profile_repositorie extends JpaRepository<Profile, Long> {
     List<Profile> getByIdTeacherIdEnseignant(Long idTeacherId);
 
     List<Profile> findByIdFiliereId(Long idFiliereId);
+
+    Profile findByIdTeacherIdEnseignant(Long idTeacherId);
 }

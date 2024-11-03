@@ -27,8 +27,8 @@ public interface Inscription_repositorie extends JpaRepository<Inscription, Long
     @Query("SELECT i FROM Inscription i WHERE YEAR(i.date) = YEAR(CURRENT_DATE) AND i.idClasse.id = :idClasse AND i.active = :isActive")
     List<Inscription> findByIdClasseIdAndActive(@Param("idClasse") long idClasse, @Param("isActive") boolean isActive);
 
-    @Query("SELECT i FROM Inscription i WHERE YEAR(i.date) = YEAR(CURRENT_DATE) AND i.idClasse.id = :idClasse AND i.payer = :isPayer")
-    List<Inscription> getByIdClasseIdAndPayer(@Param("idClasse") long idClasse, @Param("isPayer") boolean isPayer);
+    @Query("SELECT i FROM Inscription i WHERE i.idClasse.idAnneeScolaire.id =:idAnnee AND i.idClasse.id = :idClasse AND i.payer = :isPayer")
+    List<Inscription> getByIdClasseIdAndPayer(@Param("idAnnee") long idAnnee ,@Param("idClasse") long idClasse, @Param("isPayer") boolean isPayer);
 
     @Query("SELECT i FROM Inscription i WHERE  i.idClasse.id = :idClasse")
     Page<Inscription> findByIdClasseId(@Param("idClasse") long idClasse, Pageable pageable);

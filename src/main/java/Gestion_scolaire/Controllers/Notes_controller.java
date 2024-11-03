@@ -7,6 +7,7 @@ import Gestion_scolaire.Models.Notes;
 import Gestion_scolaire.Services.Note_service;
 import Gestion_scolaire.Services.Ue_service;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,8 +32,8 @@ public class Notes_controller {
 
     Notes noteReturn = new Notes();
     @PostMapping("/add-note")
-    private Object addNote(@RequestBody Notes notes){
-            return  note_service.addNote(notes);
+    private Object addNote(@Valid @RequestBody Notes notes){
+          return  note_service.addNote(notes);
 
     }
 //    ----------------------------------methode get AllNote by student-------------

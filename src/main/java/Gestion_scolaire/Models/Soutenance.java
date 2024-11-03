@@ -17,23 +17,23 @@ public class Soutenance {
     private long id;
 
 
-    @NotBlank(message = "Le champ ne doit pas être nul ou vide.\n")
+    @NotNull(message = "Le champ ne doit pas être nul ou vide.\n")
     private LocalDate date;
 
 
-    @NotBlank(message = "Le champ ne doit pas être nul ou vide.\n")
+    @NotNull(message = "Le champ ne doit pas être nul ou vide.\n")
     private LocalTime heureDebut;
 
 
-    @NotBlank(message = "Le champ ne doit pas être nul ou vide.\n")
+    @NotNull(message = "Le champ ne doit pas être nul ou vide.\n")
     private LocalTime heureFin;
 
-    @NotNull
+    @NotNull(message = "Document invalide")
     @ManyToOne
     private StudentDoc idDoc;
 
 
-    @NotNull
+    @NotNull(message = "La salle est obligatoire")
     @OneToOne
     private Salles idSalle;
 

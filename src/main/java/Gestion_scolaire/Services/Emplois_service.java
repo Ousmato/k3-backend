@@ -48,6 +48,9 @@ public class Emplois_service {
 //
 //        System.out.println("dateDebut: " + dateDebut);
 //        System.out.println("dateFin: " + dateFin);
+        if(dateDebut.isBefore(LocalDate.now())){
+            throw new NoteFundException("invalide la date u début ne peut pas etre inferieur a aujourd'hui");
+        }
         if (dateDebut.isBefore(dateDebutSemestre) || dateFin.isAfter(dateFinSemestre)) {
             throw new NoteFundException("Les dates de l'emploi doivent être comprises entre les dates du semestre.");
         }

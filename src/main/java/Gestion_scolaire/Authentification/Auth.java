@@ -3,11 +3,9 @@ package Gestion_scolaire.Authentification;
 import Gestion_scolaire.Models.Admin;
 import Gestion_scolaire.Models.Studens;
 import Gestion_scolaire.Models.Teachers;
-import Gestion_scolaire.Models.UsersAbstract;
-import Gestion_scolaire.Repositories.Admin_repositorie;
+import Gestion_scolaire.Repositories.AdminRepositorie;
 import Gestion_scolaire.Repositories.Students_repositorie;
 import Gestion_scolaire.Repositories.Teacher_repositorie;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,16 +20,16 @@ public class Auth {
     private Students_repositorie students_repositorie;
 
     @Autowired
-    private Admin_repositorie admin_repositorie;
+    private AdminRepositorie adminRepositorie;
 
     @Autowired
    private PasswordEncoder passwordEncoder;
 
     public Object authenticate(String email, String password) {
         Object authenticatedUser = null;
-        System.out.println(email);
+        System.out.println("-------------------------------" +email);
         System.out.println(password);
-        Admin admin = admin_repositorie.findByEmail(email);
+        Admin admin = adminRepositorie.findByEmail(email);
         System.out.println(admin);
 //        System.out.println(passwordEncoder.matches(password, admin.getPassword())+"auth----------------------------");
 

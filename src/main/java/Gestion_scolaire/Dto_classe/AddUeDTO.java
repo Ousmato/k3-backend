@@ -13,6 +13,7 @@ public class AddUeDTO {
     private UE idUe;
     private long idClasse;
     private Semestres semestre;
+
     private List<Modules> modules;
 
     public static AddUeDTO getAddUeDTO(ClasseModule clm) {
