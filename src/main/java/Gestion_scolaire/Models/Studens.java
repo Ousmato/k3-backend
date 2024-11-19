@@ -17,19 +17,12 @@ public class Studens extends UsersAbstract {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idEtudiant;
 
-//    @NotNull
-//    private double scolarite = 0;
-//
-//    @NotNull
-//    private boolean payer = false;
 
 
     @NotBlank(message = "Le champ matricule ne doit pas être nul ou vide.\n")
     @Pattern(regexp = "^(?=.*[a-zA-Z])[a-zA-Z0-9]+$", message = "Le matricule doit contenir des lettres et des chiffres, et ne doit pas être composé uniquement de chiffres.")
     private String matricule;
 
-//    @NotNull
-//    private LocalDate date;
 
     @NotBlank(message = "Le champ matricule ne doit pas être nul ou vide.\n")
     @Size(min = 3, max = 20, message = "Le champ nom doit contenir entre 3 et 20 caractères.\n")

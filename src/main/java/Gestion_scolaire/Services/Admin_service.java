@@ -6,7 +6,9 @@ import Gestion_scolaire.EnumClasse.Admin_role;
 import Gestion_scolaire.MailSender.MessaSender;
 import Gestion_scolaire.MailSender.PendingEmail;
 import Gestion_scolaire.Models.Admin;
+import Gestion_scolaire.Models.RefreshToken;
 import Gestion_scolaire.Repositories.AdminRepositorie;
+import Gestion_scolaire.Repositories.RefreshRepositorie;
 import Gestion_scolaire.configuration.NoteFundException;
 import Gestion_scolaire.configuration.SecurityConfigs.AdminInfoDetails;
 import jakarta.annotation.PostConstruct;
@@ -39,6 +41,9 @@ public class Admin_service implements UserDetailsService {
 
     @Autowired
     private Validator validator;
+
+    @Autowired
+    private RefreshRepositorie refreshRepositorie;
 
     @Autowired
     MessaSender messaSender;
@@ -166,10 +171,10 @@ public class Admin_service implements UserDetailsService {
         String urPhoto = fileManagers.updateFile(file, oldPath);
         admin.setUrlPhoto(urPhoto);
         admin.setUpdateDate(LocalDate.now());
-        System.out.println("-----------------------"+urPhoto);
+//        System.out.println("-----------------------"+urPhoto);
 
         adminRepositorie.save(admin);
-        System.out.println("------------save-----------"+admin);
+//        System.out.println("------------save-----------"+admin);
         return admin;
     }
 
@@ -209,6 +214,40 @@ public class Admin_service implements UserDetailsService {
         return admin;
     }
 
+    public  void addRefreshToken(Admin admin, String refreshToken) {
+        RefreshToken rft = refreshRepositorie.findByAdminIdAdministra(admin.getIdAdministra());
+        if (rft == null) {
+            RefreshToken newRefreshToken = new RefreshToken();
+            newRefreshToken.setToken(refreshToken);
+            newRefreshToken.setAdmin(admin);
+            refreshRepositorie.save(newRefreshToken);
+        }else {
+            rft.setToken(refreshToken);
+            rft.setAdmin(admin);
+            refreshRepositorie.save(rft);
+        }
+
+    }
+
+    public UserDetails getRefreshToken(String email) {
+      RefreshToken refreshTokenExist = refreshRepositorie.findByAdminEmail(email);
+
+//      if(refreshTokenExist.getToken()){
+          return   loadUserByUsername(refreshTokenExist.getAdmin().getEmail());
+
+//      }
+//        throw new NoteFundException("invalid-refresh-token");
+
+    }
+
+    public RefreshToken getRefresh(long idAdmin){
+       RefreshToken rft =  refreshRepositorie.findByAdminIdAdministra(idAdmin);
+         return rft;
+    }
+
+    public Admin getByEmail(String email) {
+        return adminRepositorie.findByEmail(email);
+    }
     //    ---------------validation code de confirmation
 
 }

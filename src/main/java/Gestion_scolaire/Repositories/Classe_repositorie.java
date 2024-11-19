@@ -17,7 +17,7 @@ public interface Classe_repositorie extends JpaRepository<StudentsClasse, Long> 
     int countAllByFermer(@Param("year") int year, @Param("isFermer") boolean isFermer);
 
     StudentsClasse findByIdFiliereIdAndIdFiliereIdNiveauId(long idFiliereId, long idFiliereIdNiveauId);
-    List<StudentsClasse> findStudentsClasseById(long idclasse);
+    StudentsClasse findStudentsClasseByIdFiliereId(long idNivFiliere);
 
     @Query("SELECT c FROM StudentsClasse c WHERE c.idAnneeScolaire.finAnnee >= :dateTroisAns AND c.idFiliere.idNiveau.nom = :nom")
     List<StudentsClasse> findClassesFromLastThreeYears(@Param("dateTroisAns") LocalDate dateTroisAns, @Param("nom") String nom);

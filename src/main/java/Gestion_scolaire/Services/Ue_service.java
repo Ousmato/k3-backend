@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -26,6 +27,9 @@ public class Ue_service {
 
     @Autowired
     private Modules_repositories modules_repositories;
+
+    @Autowired
+    private Emplois_repositorie emplois_repositorie;
 
     @Autowired
     private ClasseModule_repositorie classeModule_repositorie;
@@ -72,13 +76,13 @@ public class Ue_service {
         LocalDate dateFinSemestre = dto.getSemestre().getDatFin();
         LocalDate dateDebutAnne = classe.getIdAnneeScolaire().getDebutAnnee();
         LocalDate dateFinAnne = classe.getIdAnneeScolaire().getFinAnnee();
-//
+
 //        System.out.println("-------------debut s----------" + dateDebutSemestre);
 //        System.out.println("--------- fin s---------------" + dateFinSemestre);
 //        System.out.println("------------debut a------------" + dateDebutAnne);
 //        System.out.println("-------------fin a-----------" + dateFinAnne);
         if (dateDebutSemestre.isBefore(dateDebutAnne) || dateFinSemestre.isAfter(dateFinAnne)) {
-            throw new NoteFundException("Le semestre doit être dans l'intervalle de l'année scolaire");
+            throw new NoteFundException("La date de fin : " +  dateFinSemestre + " du semestre  \n doit être dans l'intervalle de l'année scolaire \n date de fin d'année " + dateFinAnne);
         }
 
         UE ueSaved = ue_repositorie.save(dto.getIdUe());
@@ -171,7 +175,7 @@ public class Ue_service {
 
         return modulesList;
     }
-//----------------------liste des tout les modules sans note pour modifier dans le parameter
+//liste des tous les modules sans note pour modifier dans le parameter
 public  List<Modules> listModule_without_note_all(){
     List<UE> list = ue_repositorie.findAll();
     List<Modules> modulesListExist = new ArrayList<>();
@@ -228,12 +232,25 @@ public  List<Modules> listModule_without_note_all(){
     return modulesList;
     }
 
-//    ---------------------------------method pour modifier l'ue---------------------------
-    public Object update(UE ue){
-        UE ueExist = ue_repositorie.findById(ue.getId());
+    //method pour modifier l'ue and this modules
+    @Transactional
+    public Object update(AddUeDTO dto){
+        UE ueExist = ue_repositorie.findById(dto.getIdUe().getId());
         if (ueExist != null){
-            ueExist.setNomUE(ue.getNomUE());
-            ue_repositorie.save(ueExist);
+            ueExist.setNomUE(dto.getIdUe().getNomUE());
+           UE ueSaved =  ue_repositorie.save(ueExist);
+            for(Modules modules: dto.getModules()){
+
+                Modules modExist = modules_repositories.findById(modules.getId());
+                if(modExist != null){
+                    modExist.setIdUe(ueSaved);
+                    modExist.setCoefficient(modules.getCoefficient());
+                    modExist.setNomModule(modules.getNomModule());
+                    modules_repositories.save(modExist);
+                }else {
+                    throw new NoteFundException("Le module " + modules.getNomModule() + " n'existe pas");
+                }
+            }
             return DTO_response_string.fromMessage("Mise à jour effectué avec succè", 200);
         }else {
             throw new RuntimeException("UE n'existe pas");
@@ -264,22 +281,35 @@ public  List<Modules> listModule_without_note_all(){
         }
         return newListUes;
     }
-//    --------------------------------methode to delete ue
+
+    //methode to delete ue
+    @Transactional
     public Object deleteUe_by_id(long idUe) {
         UE ueExist = ue_repositorie.findById(idUe);
         if (ueExist == null) {
-            return DTO_response_string.fromMessage("Ue doesn't exist", 404);
+            throw new NoteFundException("UE n'existe pas");
         }
-        List<UE> uesWithout_module = getAllUe_without_modules();
-        if (uesWithout_module.contains(ueExist)) {
 
-            ue_repositorie.delete(ueExist);
-            return DTO_response_string.fromMessage("Suppression effectuée avec succès", 200);
-        } else {
-            return DTO_response_string.fromMessage("Suppression a échoué, il existe des modules associés", 400);
+        // Vérifier si des notes sont associées aux modules de cette UE
+        boolean notesExist = notes_repositorie.existsNotesByUeId(ueExist.getId());
+        if (notesExist) {
+            throw new NoteFundException("Suppression a échoué, il existe des notes associées aux modules");
         }
+
+        // Supprimer la ligne de ClasseModule correspondant à l'UE
+        classeModule_repositorie.deleteByUeId(ueExist.getId());
+
+        // Supprimer les modules associés
+        List<Modules> modulesList = modules_repositories.findByIdUeId(ueExist.getId());
+        if (modulesList != null && !modulesList.isEmpty()) {
+            modules_repositories.deleteAll(modulesList);
+        }
+        // Supprimer l'UE
+        ue_repositorie.delete(ueExist);
+        return DTO_response_string.fromMessage("Suppression effectuée avec succès", 200);
     }
-//    -------------------------------------method delete module
+
+    //method delete module
     public Object delete_module_by_id(long idModule) {
         Modules modules = modules_repositories.findById(idModule);
         if (modules == null) {
@@ -332,45 +362,84 @@ public  List<Modules> listModule_without_note_all(){
         return ues_without_modules_and_classes;
     }
 
-    public List<AddNoteDTO> getAllUeByIdNiveauFiliereAndIdSemestre(long idNiveauFiliere, long idSemestre, long idEtudiant){
-        List<ClasseModule> classeModuleList =  classeModule_repositorie.getAllByIdNiveauFiliereIdAndIdSemestreId(idNiveauFiliere, idSemestre);
-//        ClasseModule classeModule = classeModule_repositorie.getClasseModuleByIdNiveauFiliereIdAndIdSemestreId(idNiveauFiliere, idSemestre);
-        List<AddNoteDTO> addUeDTOList = new ArrayList<>();
+    //get
 
+    public List<AddNoteDTO> getNotesForStudentInModules(long idNiveauFiliere, long idSemestre, long idEtudiant) {
+        // Récupération de la classe de l'étudiant à partir de l'idNiveauFiliere
+        StudentsClasse classe = classe_repositorie.findStudentsClasseByIdFiliereId(idNiveauFiliere);
+        if (classe == null) {
+            throw new NoteFundException("Classe non trouvée pour le niveau filière : " + idNiveauFiliere);
+        }
+
+        // Récupérer la liste des modules liés à cette classe pour ce semestre
+        List<ClasseModule> classeModuleList = classeModule_repositorie.getAllByIdNiveauFiliereIdAndIdSemestreId(idNiveauFiliere, idSemestre);
+
+        // Créer la liste pour stocker les résultats
+        List<AddNoteDTO> addNoteDTOList = new ArrayList<>();
+
+        // Récupérer les modules qui ont des emplois planifiés avant la date actuelle
+        List<Modules> modulesWithEmplois = modules_repositories.findModulesWithEmplois(
+                classe.getId(), idSemestre, LocalDate.now().minusDays(7));
+
+        // Utilisation d'un Set pour éviter les doublons
+        Set<Long> moduleIdsSeen = new HashSet<>();
+
+        // Boucle sur chaque module de la classe pour récupérer les notes de l'étudiant
         for (ClasseModule classeModule : classeModuleList) {
+            AddUeDTO dto = AddUeDTO.getAddUeDTO(classeModule); // On crée le DTO pour cette classe/module
+            dto.setModules(modulesWithEmplois);
 
-        
-            List<Modules> modulesForUe = modules_repositories.findByIdUeId(classeModule.getIdUE().getId());
-            AddUeDTO dto = AddUeDTO.getAddUeDTO(classeModule);
-            dto.setModules(modulesForUe);
+            // Boucle sur les modules récupérés
+            for (Modules module : modulesWithEmplois) {
+                // Si ce module a déjà été traité, on passe au suivant
+                if (moduleIdsSeen.contains(module.getId())) {
+                    continue;
+                }
+                moduleIdsSeen.add(module.getId());
 
-            boolean hasNote = false;
-            for (Modules module : modulesForUe) {
+                // On crée un DTO pour la note
                 AddNoteDTO noteDTO = new AddNoteDTO();
 
+                // Recherche de la note de l'étudiant pour ce module
                 Notes note = notes_repositorie.findByIdSemestreIdAndIdModuleIdAndIdInscriptionId(idSemestre, module.getId(), idEtudiant);
-//                System.out.println("------------note------" + note);
-                if(note != null){
-                    System.out.println("Note trouvée : " + note);
+                if (note != null) {
+                    // Si la note existe, on la récupère
                     noteDTO.setIdNote(note.getId());
                     noteDTO.setIdModule(note.getIdModule().getId());
                     noteDTO.setNoteClasse(note.getClasseNote());
                     noteDTO.setNoteExam(note.getExamNote());
-
-                }else {
-//                    noteDTO.setIdModule(note.getIdModule().getId());
+                } else {
+                    // Si aucune note n'est trouvée, on initialise à 0
                     noteDTO.setIdModule(module.getId());
-                    noteDTO.setNoteExam(0.0);
-
                     noteDTO.setNoteClasse(0.0);
+                    noteDTO.setNoteExam(0.0);
                 }
+
+                // On associe le DTO du module (AddUeDTO) à chaque DTO de note
                 noteDTO.setAddUeDto(dto);
 
-                addUeDTOList.add(noteDTO);
+                // Ajout du DTO de note à la liste
+                addNoteDTOList.add(noteDTO);
             }
+        }
 
+        return addNoteDTOList;
+    }
+
+
+    public List<AddUeDTO> allUesByIdClasseAndIdSemestre(long idNiveauFiliere, long idSemestre) {
+        List<ClasseModule> classeModuleList =  classeModule_repositorie.getAllByIdNiveauFiliereIdAndIdSemestreId(idNiveauFiliere, idSemestre);
+        List<AddUeDTO> addUeDTOList = new ArrayList<>();
+        for (ClasseModule classeModule : classeModuleList) {
+
+
+            List<Modules> modulesForUe = modules_repositories.findByIdUeId(classeModule.getIdUE().getId());
+            AddUeDTO dto = AddUeDTO.getAddUeDTO(classeModule);
+            dto.setModules(modulesForUe);
+            addUeDTOList.add(dto);
         }
         return addUeDTOList;
     }
+
 
 }

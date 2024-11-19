@@ -33,8 +33,15 @@ public class UeAndModule_controller {
     }
 //    --------------------------------------------method get list all eu----------------------
     @GetMapping("/list-ue/{idClasse}/{idSemestre}/{idEtudiant}")
-    public List<AddNoteDTO> getAllUe(@PathVariable long idClasse, @PathVariable long idSemestre, @PathVariable long idEtudiant){
-        return ue_service.getAllUeByIdNiveauFiliereAndIdSemestre(idClasse, idSemestre, idEtudiant);
+    @Operation(summary = "Recuperer la liste des ues de la classe pour l'etudiant")
+    public List<AddNoteDTO> getAllUeForStudent(@PathVariable long idClasse, @PathVariable long idSemestre, @PathVariable long idEtudiant){
+        return ue_service.getNotesForStudentInModules(idClasse, idSemestre, idEtudiant);
+    }
+
+    @GetMapping("/list-ue-idClasse-idSemestre/{idClasse}/{idSemestre}")
+    @Operation(summary = "Recuperer la liste des ues de la classe")
+    public List<AddUeDTO> getAllUe(@PathVariable long idClasse, @PathVariable long idSemestre){
+        return ue_service.allUesByIdClasseAndIdSemestre(idClasse, idSemestre);
     }
 //    -----------------------------------method get list module -----------
     @GetMapping("/list-module")
@@ -70,7 +77,7 @@ public class UeAndModule_controller {
 
 //    ----------------------------------------method modifier un ue
     @PutMapping("/update-ue")
-    public Object update_ue(@RequestBody UE ue){
+    public Object update_ue(@RequestBody AddUeDTO ue){
        return ue_service.update(ue);
     }
 

@@ -7,20 +7,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
 
-//    @Bean
-//    public WebMvcConfigurer corsConfigurer() {
-//        return new WebMvcConfigurer() {
-//            @Override
-//            public void addCorsMappings(CorsRegistry registry) {
-//                registry.addMapping("/**").allowedOrigins("http://localhost:4200");
-//            }
-//        };
-//    }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedOrigins("*"); // Remplacez par votre domaine front-end
+                .allowedOrigins("*")
+                .allowedHeaders("Authorization", "X-Token-Expiring-Soon", "Content-Type")
+                .exposedHeaders("X-Token-Expiring-Soon");
+
     }
 }

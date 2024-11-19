@@ -50,7 +50,7 @@ public class Student_controller {
     //    ----------------------------------------method get all students----------------------------------
     @GetMapping("/list")
     @Operation(summary = "Recuperer la liste des etudiant de l'annee en cours")
-    @PreAuthorize("hasAuthority('ROLE_DG')")
+
     public Page<Inscription> getAllStudents(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
@@ -64,7 +64,7 @@ public class Student_controller {
 //    -----------------------method update----------------------------------------
     @PutMapping("/update")
     private Object update(
-            @RequestParam("student") String studensString,
+            @RequestParam("inscription") String studensString,
             @RequestParam(value = "file", required = false) MultipartFile urlFile) throws IOException {
 //        System.out.println("------------------" + urlFile.getOriginalFilename() + "--------------" + studensString + "---------------------------");
 
@@ -161,15 +161,10 @@ public class Student_controller {
 
 
 
-//    -----------------------------get sum of all scolarite of student in this year
-    @GetMapping("/sum-scolarite")
-    public double sumScolarite(){
-        return student_service.get_scolarite_annuel();
-    }
-
 //    -----------------------get sum of reliquat in this current year
-    @GetMapping("/sum-reliquat")
-    public double sumReliquat(){
+    @GetMapping("/montants-cunt")
+    @Operation(summary = "Calculer les montant des etudiants (reliquat, scolarite)")
+    public MontantsCunt sumReliquat(){
         return student_service.getAll_reliquat();
     }
 

@@ -162,7 +162,7 @@ public class Note_service {
     }
 
 
-    //    ----------------------------------------methode pour appler les notes par id du module
+    //methode pour appler les notes par id du module
     public List<Notes> getNotesByIdModule(long idModule){
         Semestres currentSemestre = semestre_repositorie.getCurrentSemestre(LocalDate.now());
         List<Notes> notesList = notes_repositorie.getByIdSemestreIdAndIdModuleId(currentSemestre.getId(), idModule);
@@ -172,8 +172,8 @@ public class Note_service {
         return new ArrayList<>();
     }
 
-//    -----------------------------------
-public List<NoteDTO> moyenOfStudent(long idStudent, long idSemestre) {
+    //calculate note for student
+    public List<NoteDTO> moyenOfStudent(long idStudent, long idSemestre) {
     // Vérification de l'existence de l'étudiant
     Inscription studentExist = inscription_repositorie.findByIdEtudiantIdEtudiant(idStudent);
     if (studentExist == null) {
@@ -256,6 +256,5 @@ public List<NoteDTO> moyenOfStudent(long idStudent, long idSemestre) {
 
     return noteDTOList; // Retourner la liste de tous les NoteDTO
 }
-
 
 }

@@ -1,5 +1,7 @@
 package Gestion_scolaire.Repositories;
 
+import Gestion_scolaire.EnumClasse.Admin_role;
+import Gestion_scolaire.EnumClasse.Type_status;
 import Gestion_scolaire.Models.Inscription;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,11 +35,17 @@ public interface Inscription_repositorie extends JpaRepository<Inscription, Long
     @Query("SELECT i FROM Inscription i WHERE  i.idClasse.id = :idClasse")
     Page<Inscription> findByIdClasseId(@Param("idClasse") long idClasse, Pageable pageable);
 
-    @Query("SELECT SUM(i.scolarite) FROM Inscription i WHERE YEAR (i.date) = YEAR (current_date )")
-    double sumScolariteForCurrentYear();
+    @Query("SELECT SUM(i.scolarite) FROM Inscription i WHERE YEAR (i.date) = YEAR (current_date ) and i.idEtudiant.status =:professionnel")
+    double sumScolariteForCurrentYearPro(@Param("professionnel") Type_status professionnel);
 
-    @Query("SELECT SUM(i.idClasse.idFiliere.scolarite) -SUM(i.scolarite) FROM Inscription i WHERE YEAR (i.date) = YEAR (current_date )")
-    double getReliquatForCurrentYear();
+    @Query("SELECT SUM(i.scolarite) FROM Inscription i WHERE YEAR (i.date) = YEAR (current_date ) and i.idEtudiant.status =:reg")
+    double sumScolariteForCurrentYearReg(@Param("reg") Type_status reg);
+
+    @Query("SELECT SUM(i.idClasse.idFiliere.scolarite) -SUM(i.scolarite) FROM Inscription i WHERE YEAR (i.date) = YEAR (current_date ) and i.idEtudiant.status =:professionnel")
+    double getReliquatForCurrentYear(@Param("professionnel") Type_status professionnel);
+
+    @Query("SELECT COUNT(i) * 6000.00 -SUM(i.scolarite) FROM Inscription i WHERE YEAR (i.date) = YEAR (current_date ) and i.idEtudiant.status =:reg")
+    double getReliquatForCurrentYearREG(@Param("reg") Type_status reg);
 
     @Query("SELECT COUNT(c) from Inscription c WHERE YEAR(c.date) = YEAR(current_date) and c.payer =:payer")
     int countAllByPayer(@Param("payer") boolean payer);

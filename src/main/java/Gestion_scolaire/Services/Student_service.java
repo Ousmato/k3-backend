@@ -101,6 +101,7 @@ public class Student_service {
                Studens newStudent = students_repositorie.save(inscrit.getIdEtudiant());
                 newIncription.setIdClasse(inscrit.getIdClasse());
                 newIncription.setIdEtudiant(newStudent);
+                newIncription.setPayer(false);
                 newIncription.setIdAdmin(inscrit.getIdAdmin());
                 inscription_repositorie.save(newIncription);
 
@@ -275,10 +276,6 @@ public class Student_service {
         return list;
     }
 
-    //    --------------------------------get scolarite annuelle of all student
-    public double get_scolarite_annuel() {
-        return inscription_repositorie.sumScolariteForCurrentYear();
-    }
 
     public Inscription getInscriptionById(long idInscrit){
         Inscription inscrit = inscription_repositorie.findById(idInscrit);
@@ -288,8 +285,21 @@ public class Student_service {
         return inscrit;
     }
     //    ----------------------get all reliquat of current year
-    public double getAll_reliquat() {
-        return inscription_repositorie.getReliquatForCurrentYear();
+    public MontantsCunt getAll_reliquat() {
+        MontantsCunt montantsCunt = new MontantsCunt();
+        double reliquatPro = inscription_repositorie.getReliquatForCurrentYear(Type_status.professionnel);
+        double reliquatReg = inscription_repositorie.getReliquatForCurrentYearREG(Type_status.régulier);
+        double sumSocolaritePro = inscription_repositorie.sumScolariteForCurrentYearPro(Type_status.professionnel);
+        double sumScolariteReg = inscription_repositorie.sumScolariteForCurrentYearReg(Type_status.régulier);
+
+        montantsCunt.setReliquatPro(reliquatPro);
+        montantsCunt.setReliquatReg(reliquatReg);
+        montantsCunt.setSumScolaritePro(sumSocolaritePro);
+        montantsCunt.setSumScolariteReg(sumScolariteReg);
+        montantsCunt.setReliquatTotal(reliquatPro + reliquatReg);
+        montantsCunt.setSumScolariteTotal(sumSocolaritePro + sumScolariteReg);
+
+        return montantsCunt;
     }
 
     //    ------------------cunt all student inscrit

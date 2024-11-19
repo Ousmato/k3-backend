@@ -2,6 +2,8 @@ package Gestion_scolaire.Repositories;
 
 import Gestion_scolaire.Models.Notes;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,6 +22,11 @@ public interface Notes_repositorie extends JpaRepository<Notes, Long> {
 //
 //    @Query(value = "SELECT SUM(n.classeNote) FROM Notes n WHERE n.idStudents.idEtudiant = :idStudent", nativeQuery = true)
 //    int findTotalClassByIdStudent(@Param("idStudent") long idStudent);
+
+    List<Notes> getNotesByIdModuleId(long idModule);
+
+    @Query("SELECT COUNT(n) > 0 FROM Notes n WHERE n.idModule.idUe.id = :idUe")
+    boolean existsNotesByUeId(@Param("idUe") long idUe);
 
     Notes findById(long idNote);
 

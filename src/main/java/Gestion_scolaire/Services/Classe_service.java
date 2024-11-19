@@ -103,6 +103,10 @@ public class Classe_service {
         return classe_repositorie.findById(id);
     }
 
+    public StudentsClasse readByIdNivFiliere(long idNivFiliere){
+        return classe_repositorie.findStudentsClasseByIdFiliereId(idNivFiliere);
+    }
+
 //    ------------------------------------------------------update student classe methode
     public Object update(long idClasse, long idAnnee){
 
@@ -136,16 +140,7 @@ public class Classe_service {
 
     //    --------------------------all niveau/filiere
     public List<NiveauFilieres> getAllNiveauFilieres(){
-//        List<NiveauFilieres> list =  niveauFiliere_repositorie.findAll();
-//
-//        List<NiveauFilieres> niveauFilieres = new ArrayList<>();
-//        for(NiveauFilieres nivFiliere : list){
-//           List<StudentsClasse> stc = classe_repositorie.findByIdFiliereId(nivFiliere.getId());
-//           if(stc.isEmpty()){
-//               niveauFilieres.add(nivFiliere);
-//           }
-//        }
-//        return niveauFilieres;
+
         return  niveauFiliere_repositorie.findAll();
     }
 

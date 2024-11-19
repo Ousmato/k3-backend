@@ -48,9 +48,9 @@ public class Emplois_service {
 //
 //        System.out.println("dateDebut: " + dateDebut);
 //        System.out.println("dateFin: " + dateFin);
-        if(dateDebut.isBefore(LocalDate.now())){
-            throw new NoteFundException("invalide la date u début ne peut pas etre inferieur a aujourd'hui");
-        }
+//        if(dateDebut.isBefore(LocalDate.now())){
+//            throw new NoteFundException("invalide la date du début ne peut pas etre inferieur a aujourd'hui");
+//        }
         if (dateDebut.isBefore(dateDebutSemestre) || dateFin.isAfter(dateFinSemestre)) {
             throw new NoteFundException("Les dates de l'emploi doivent être comprises entre les dates du semestre.");
         }
@@ -109,27 +109,14 @@ public class Emplois_service {
         throw new NoteFundException("emplois n'existe pas");
     }
 
-//    ---------------------------------------methode pour retourner un boolean if emplois exist pour une classe
-//    public Object hasEmplois(long idClasse) {
-//        // Vérifie si des emplois existent pour la classe spécifiée avec une date de fin après la date actuelle
-//        Emplois emplois = emplois_repositorie.findByIdClasseIdAndDateFinIsAfter(idClasse, LocalDate.now());
-//
-//        if (emplois == null) {
-//            return false;
-//        }
-//
-//        // Vérifie s'il y a des séances associées à cet emploi
-//        List<Seances> seances = seance_repositorie.findByIdEmploisId(emplois.getId());
-//
-//        if (seances.isEmpty()) {
-//            return true;
-//        }
-//        // Sinon, retourne l'objet contenant l'emploi et les séances
-//        Map<String, Object> result = new HashMap<>();
-//        result.put("emplois", emplois);
-//        result.put("seances", seances);
-//        return result;
-//    }
+    //get all emplois by id class and id semestre and id module
+    public List<Emplois> listEmploisByIdClassAndIdSemestreAndModule(long idClass, long idSemestre, long idModule) {
+        List<Emplois> oldEmplois = emplois_repositorie.findAllOldEmploisOfClassBySemestre(idClass, idSemestre,LocalDate.now().minusWeeks(1));
+        if (oldEmplois.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return oldEmplois;
+    }
 
     //    --------------------------method get all emplois of teacher-------------------------
 //    public List<Emplois> findAllEmploisByTeacher(long idteacher) {

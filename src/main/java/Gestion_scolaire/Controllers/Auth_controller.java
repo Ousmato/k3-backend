@@ -11,14 +11,17 @@ import Gestion_scolaire.configuration.SecurityConfigs.JwtService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.transaction.Transactional;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,6 +52,7 @@ public class Auth_controller {
     @Autowired
     private PromotionAutomaticAdd_service promotionAutomaticAdd_service;
 
+    @Transactional
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest loginRequest) {
         System.out.println("entre en methode" + loginRequest);
@@ -59,10 +63,13 @@ public class Auth_controller {
             adminMapper.registerModule(new JavaTimeModule());
             Admin admin = adminMapper.convertValue(userDetails, Admin.class);
             String token = jwtService.generateToken(admin.getEmail());
-            System.out.println("------------------token---------------" +token);
-            System.out.println("------------------user---------------" +userDetails);
 
-            return new LoginResponse(userDetails, token);
+            String refreshToken = jwtService.generateRefreshToken(admin.getEmail());
+            adminService.addRefreshToken(admin, refreshToken);
+//            System.out.println("------------------token---------------" +token);
+//            System.out.println("------------------user---------------" +userDetails);
+
+            return new LoginResponse(userDetails, token, refreshToken);
         } else {
             throw  new NoteFundException("Address mail ou mot de passe est incorrect");
         }
@@ -116,17 +123,36 @@ public class Auth_controller {
         return infoScool_service.delete_annee(idAnnee);
     }
 
-    @PostMapping("/refresh-token")
-    @Operation(summary = "Racfrechire le token")
-    public Object refreshToken(@RequestBody Map<String, String> payload){
-        String email = payload.get("email");
-        String token = jwtService.generateToken(email);
-
-        // Créer une réponse JSON avec le token
-        Map<String, String> response = new HashMap<>();
-        response.put("token", token);
-        return response;
-    }
+//    @PostMapping("/refresh-token")
+//    @Operation(summary = "Racfrechire le token")
+//    public Object refreshToken(@RequestBody Map<String, String> payload){
+//        String email = payload.get("email");
+//        String rftToken = payload.get("refreshToken");
+//        System.out.println("refresh token" + rftToken);
+//        // Vérifiez que le token de rafraîchissement est présent
+//        if (rftToken == null || rftToken.isEmpty()) {
+//            throw new NoteFundException("Refresh token is missing backend.");
+//        }
+//
+//        // Récupérer les détails de l'utilisateur basés sur le token de rafraîchissement
+//        UserDetails rftoken = adminService.getRefreshToken(email, rftToken);
+//        if (rftoken != null) {
+//            // Valider le token de rafraîchissement
+//            if (!jwtService.validateToken(rftToken, rftoken)) {
+//                throw new NoteFundException("Invalid or expired refresh token backend.");
+//            }
+//        } else {
+//            throw new NoteFundException("Refresh token not found backend.");
+//        }
+//
+//        // Générer un nouveau token JWT
+//        String token = jwtService.generateToken(email);
+//
+//        // Créer une réponse JSON avec le nouveau token
+//        Map<String, String> response = new HashMap<>();
+//        response.put("token", token);
+//        return response;
+//    }
 
 
     @Data
@@ -140,10 +166,13 @@ public class Auth_controller {
     static class LoginResponse {
         private String token;
         private Object user;
+        private String refreshToken;
 
-        public LoginResponse(Object userDetails, String token) {
+        public LoginResponse(Object userDetails, String token, String refreshToken) {
             this.user = userDetails;
             this.token = token;
+            this.refreshToken = refreshToken;
+
         }
     }
 }

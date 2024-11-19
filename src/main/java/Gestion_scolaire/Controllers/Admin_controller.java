@@ -13,6 +13,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,6 +29,7 @@ public class Admin_controller {
     private Admin_service adminService;
 
     @PostMapping("/add")
+    @PreAuthorize("hasAuthority('ROLE_DG')")
     public Object add(
            @RequestParam("admin" ) String adminString,
             @RequestParam(value = "file", required = false)MultipartFile file) throws Exception {
@@ -47,17 +49,20 @@ public class Admin_controller {
 
 //    ------------------------------------get all admin
     @GetMapping("/administrateurs-actifs")
+    @PreAuthorize("hasAuthority('ROLE_DG')")
     public List<Admin> list() {
         return adminService.list_admin();
     }
 
     @GetMapping("/administrateurs/{value}")
+    @PreAuthorize("hasAuthority('ROLE_DG')")
     @Operation(summary = "Recuperer les admins par etat")
     public List<Admin> list(@PathVariable long value) {
         return adminService.getAllByEtat(value);
     }
 
     @GetMapping("/change-etat/{idAdmin}")
+    @PreAuthorize("hasAuthority('ROLE_DG')")
     @Operation(summary = "changer l'etat de l'admin par id")
     public Object changeEtat(@PathVariable long idAdmin) {
         return adminService.chageEtatByIdAdmin(idAdmin);
@@ -89,6 +94,7 @@ public class Admin_controller {
 
     //------------------------update
     @PutMapping("/update-admin")
+    @PreAuthorize("hasAuthority('ROLE_DG')")
     @Operation(summary = "Modifier les information de l'admin")
     public Object updateAdmin(@RequestBody AdminDTO admin) {
         return adminService.updatAdmin(admin);

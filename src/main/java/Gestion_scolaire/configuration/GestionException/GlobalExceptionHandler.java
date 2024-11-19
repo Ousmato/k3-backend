@@ -1,6 +1,7 @@
 package Gestion_scolaire.configuration.GestionException;
 
 import Gestion_scolaire.configuration.NoteFundException;
+import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -49,6 +50,17 @@ public class GlobalExceptionHandler {
     public ApiErrorResponse handleGenericException(Exception ex, WebRequest request) {
         return new ApiErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                ex.getMessage(),
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                request.getDescription(false)
+
+        );
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public ApiErrorResponse handleJwtException(JwtException ex, WebRequest request) {
+        return new ApiErrorResponse(
+                HttpStatus.UNAUTHORIZED.value(),
                 ex.getMessage(),
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
                 request.getDescription(false)
