@@ -14,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class Ue_service {
@@ -381,21 +378,35 @@ public  List<Modules> listModule_without_note_all(){
         List<Modules> modulesWithEmplois = modules_repositories.findModulesWithEmplois(
                 classe.getId(), idSemestre, LocalDate.now().minusDays(7));
 
+        System.out.println("---------------------------clm---------------------"+modulesWithEmplois);
+
         // Utilisation d'un Set pour éviter les doublons
         Set<Long> moduleIdsSeen = new HashSet<>();
 
         // Boucle sur chaque module de la classe pour récupérer les notes de l'étudiant
         for (ClasseModule classeModule : classeModuleList) {
-            AddUeDTO dto = AddUeDTO.getAddUeDTO(classeModule); // On crée le DTO pour cette classe/module
-            dto.setModules(modulesWithEmplois);
+
+
 
             // Boucle sur les modules récupérés
             for (Modules module : modulesWithEmplois) {
+
                 // Si ce module a déjà été traité, on passe au suivant
                 if (moduleIdsSeen.contains(module.getId())) {
                     continue;
                 }
                 moduleIdsSeen.add(module.getId());
+
+                // Créer un nouveau DTO pour chaque module
+                AddUeDTO dto = new AddUeDTO(); // Nouveau DTO pour chaque module
+                dto.setIdUe(module.getIdUe());  // Ici, on associe uniquement ce module
+                dto.setSemestre(classeModule.getIdSemestre());
+                List<Modules> filteredModules = modulesWithEmplois.stream()
+                        .filter(m -> m.getIdUe().equals(module.getIdUe())) // Filtrer uniquement les modules de la même UE
+                        .toList();
+
+                dto.setModules(filteredModules);
+                System.out.println("---------------------------ues---------------------"+dto.getIdUe());
 
                 // On crée un DTO pour la note
                 AddNoteDTO noteDTO = new AddNoteDTO();

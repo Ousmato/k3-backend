@@ -32,7 +32,6 @@ public class Notes {
 //    @NotNull(message = "La note du module est obligatoire")
     private double noteModule = 0.0;
 
-
     @NotNull(message = "Le semestre est obligatoire")
     @ManyToOne
     private Semestres idSemestre;

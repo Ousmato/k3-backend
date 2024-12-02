@@ -61,13 +61,30 @@ public class Modules_service {
     }
 
 //    ----------------------------------------
+//    public List<Modules> getModulesByIdclasseAndIdSemestre(long idclasse, long semestre){
+//        List<ClasseModule> clm = classeModule_repositorie.getAllByIdNiveauFiliereIdAndIdSemestreId(idclasse, semestre);
+//        List<Modules> modulesList = new ArrayList<>();
+//        for (ClasseModule cm : clm){
+//            List<Modules> modules = modules_repositories.findByIdUeId(cm.getIdUE().getId());
+//            modulesList.addAll(modules);
+//        }
+//        if (modulesList.isEmpty()){
+//            return new ArrayList<>();
+//        }
+//        return  modulesList;
+//    }
+
     public List<Modules> getModulesByIdclasseAndIdSemestre(long idclasse, long semestre){
         List<ClasseModule> clm = classeModule_repositorie.getAllByIdNiveauFiliereIdAndIdSemestreId(idclasse, semestre);
         List<Modules> modulesList = new ArrayList<>();
-        for (ClasseModule cm : clm){
-            List<Modules> modules = modules_repositories.findByIdUeId(cm.getIdUE().getId());
-            modulesList.addAll(modules);
-        }
+
+        List<Modules> modules = modules_repositories.allModulesHasNotProgram(idclasse, semestre);
+        System.out.println("-------------------------size-------------" +modules.size());
+        modulesList = modules.stream()
+                .filter(modules1 -> clm.stream()
+                        .anyMatch(classeModule -> classeModule.getIdUE().equals(modules1.getIdUe())))
+                .toList();
+
         if (modulesList.isEmpty()){
             return new ArrayList<>();
         }

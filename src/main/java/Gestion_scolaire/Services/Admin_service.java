@@ -248,6 +248,5 @@ public class Admin_service implements UserDetailsService {
     public Admin getByEmail(String email) {
         return adminRepositorie.findByEmail(email);
     }
-    //    ---------------validation code de confirmation
 
 }

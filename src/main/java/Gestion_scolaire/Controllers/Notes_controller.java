@@ -1,8 +1,10 @@
 package Gestion_scolaire.Controllers;
 
+import Gestion_scolaire.Dto_classe.GetNoteDTO;
 import Gestion_scolaire.Dto_classe.NoteDTO;
 import Gestion_scolaire.Dto_classe.StudentsNotesDTO;
 import Gestion_scolaire.Models.Modules;
+import Gestion_scolaire.Models.Moyenne;
 import Gestion_scolaire.Models.Notes;
 import Gestion_scolaire.Services.Note_service;
 import Gestion_scolaire.Services.Ue_service;
@@ -36,22 +38,14 @@ public class Notes_controller {
           return  note_service.addNote(notes);
 
     }
-//    ----------------------------------methode get AllNote by student-------------
-    @GetMapping("/read/{idStudent}/{idSemestre}")
-    public List<NoteDTO> getByIdStudent(@PathVariable long idStudent, @PathVariable long idSemestre){
-        return note_service.moyenOfStudent(idStudent, idSemestre);
 
+    //method get all note
+    @GetMapping("/all-note-and-moyen/{idStudent}/{idSemestre}")
+    @Operation(summary = "Recuperer tout les note  et la moyen general de l'etudiant ")
+    public List<GetNoteDTO> getAllNoteByClasse(@PathVariable long idStudent, @PathVariable long idSemestre){
+        return note_service.getNotesByIdStudentAndIdSemestre(idStudent, idSemestre);
     }
-//        -------------------------------method get all moyen in classe and curente semestre-----------
-//    @GetMapping("/allMoyen/{idClasse}/{idSemestre}")
-//    public List<Double> getAllNoteByClasse(@PathVariable long idClasse, @PathVariable long idSemestre){
-//        return note_service.calculerMoyennesClasse(idClasse, idSemestre);
-//    }
-//    ---------------------------------------method get moyene by student----------------------------
-//    @GetMapping("/moyene/{idStudent}/{idSemestre}")
-//    public Double getMoyenStudent(@PathVariable long idStudent, @PathVariable long idSemestre){
-//        return note_service.calculerMoyenneGenerale(idStudent, idSemestre);
-//    }
+
 //--------------------------------------methode pour appeler tout le module de la
 //    classe de l'étudiant qui on deja ete programmer pour un emploi du temps
     @GetMapping("/allModules/{idClasse}")
@@ -69,17 +63,24 @@ public class Notes_controller {
         return ue_service.getByIdStudentAndIdClasse(idStudent,idClasse, idSemestre);
     }
 //    --------------------------------------read all notes of current semestre
-    @GetMapping("/read-all-of-semestre/{idClasse}/{idSemestre}")
+    @GetMapping("/read-all-of-semestre/{idClasse}/{idSemestre}/{idNivFiliere}")
     public Page<StudentsNotesDTO> semestreNote(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @PathVariable long idClasse, @PathVariable long idSemestre){
-        return note_service.listNotes(page, size, idClasse, idSemestre);
+            @RequestParam(defaultValue = "20") int size,
+            @PathVariable long idClasse, @PathVariable long idSemestre, @PathVariable long idNivFiliere){
+        return note_service.listNotes(page, size, idClasse, idSemestre, idNivFiliere);
     }
 
     @GetMapping("/calculate-studen-moyen-by-semestre/{idStudent}/{idSemestre}")
     @Operation(summary = "Calculer la note de l'etudiant par semestre")
     public Object calculateMoyen(@PathVariable long idStudent, @PathVariable long idSemestre){
         return note_service.moyenOfStudent(idStudent, idSemestre);
+    }
+
+    //get all ids of students have note for all modules in the semestre
+    @GetMapping("/get-ids-of-students/{idSemestre}/{idNivFiliere}/{idClasse}")
+    @Operation(summary = "Recuperer les id des inscrits qui on des notes pour tous les modules pour le semestre")
+    public List<Long> getAllIdsOfStudents(@PathVariable long idSemestre, @PathVariable long idNivFiliere, @PathVariable long idClasse){
+        return note_service.getIdsOfStudents(idSemestre, idNivFiliere, idClasse);
     }
 }

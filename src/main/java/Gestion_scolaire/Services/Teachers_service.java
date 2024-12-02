@@ -82,6 +82,8 @@ public class Teachers_service {
 //
 //        messaSender.sendSimpleMail(emailPend);
        Teachers teacherSaved = teacher_repositorie.save(dto.getTeachers());
+        System.out.println("-----------------je suis la-------------------");
+
        boolean hasProfil = false;
        for (Filiere fil : dto.getFilieres()) {
 
@@ -91,6 +93,7 @@ public class Teachers_service {
                hasProfil = true;
                break;
            }
+
            profile.setIdTeacher(teacherSaved);
            profile.setIdFiliere(fil);
            profile.setIdAdmin(dto.getIdAdmin());

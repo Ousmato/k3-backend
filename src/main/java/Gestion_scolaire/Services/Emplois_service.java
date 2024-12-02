@@ -26,8 +26,7 @@ public class Emplois_service {
 
     @Autowired
     private Journee_repositorie journee_repositorie;
-
-
+    
     public Object add(Emplois emplois) {
         Set<ConstraintViolation<Emplois>> violation = validator.validate(emplois);
         if (!violation.isEmpty()) {
@@ -42,12 +41,12 @@ public class Emplois_service {
         LocalDate dateFin = emplois.getDateFin();
         LocalDate dateDebutSemestre = emplois.getIdSemestre().getDateDebut();
         LocalDate dateFinSemestre = emplois.getIdSemestre().getDatFin();
-//
-//        System.out.println("dateDebutSemestre: " + dateDebutSemestre);
-//        System.out.println("dateFinSemestre: " + dateFinSemestre);
-//
-//        System.out.println("dateDebut: " + dateDebut);
-//        System.out.println("dateFin: " + dateFin);
+
+        System.out.println("dateDebutSemestre: " + dateDebutSemestre);
+        System.out.println("dateFinSemestre: " + dateFinSemestre);
+
+        System.out.println("dateDebut: " + dateDebut);
+        System.out.println("dateFin: " + dateFin);
 //        if(dateDebut.isBefore(LocalDate.now())){
 //            throw new NoteFundException("invalide la date du début ne peut pas etre inferieur a aujourd'hui");
 //        }

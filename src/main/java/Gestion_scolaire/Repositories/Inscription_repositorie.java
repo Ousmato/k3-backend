@@ -22,7 +22,9 @@ public interface Inscription_repositorie extends JpaRepository<Inscription, Long
 
     Inscription findByIdEtudiantIdEtudiant(long etudiantId);
 
-    Inscription getByIdEtudiantIdEtudiantAndIdClasseId(long etudiantId, long idFiliere);
+
+    @Query("SELECT DISTINCT i FROM Inscription i WHERE i.idClasse.idFiliere.idNiveau.nom =:nomNiveau and year (i.idClasse.idAnneeScolaire.finAnnee) =:year and i.idClasse.idFiliere.idFiliere.nomFiliere =:nomFiliere")
+    List<Inscription> getListInscritByNiveauNameAndIdAnnee(@Param("nomNiveau") String nomNiveau, @Param("year") int year, @Param("nomFiliere") String nomFiliere);
 
     List<Inscription> findByIdClasseIdAnneeScolaireIdAndIdClasseId(long anneeScolaireId, long classeId);
 
@@ -34,6 +36,33 @@ public interface Inscription_repositorie extends JpaRepository<Inscription, Long
 
     @Query("SELECT i FROM Inscription i WHERE  i.idClasse.id = :idClasse")
     Page<Inscription> findByIdClasseId(@Param("idClasse") long idClasse, Pageable pageable);
+
+//    @Query("""
+//    SELECT DISTINCT i FROM Inscription i
+//    JOIN i.idClasse c
+//    JOIN ClasseModule cm ON cm.idNiveauFiliere.id = c.idFiliere.id
+//    JOIN cm.idUE u
+//    JOIN Modules m ON m.idUe.id = u.id
+//    WHERE c.id = :idClasse
+//      AND NOT EXISTS (
+//          SELECT 1 FROM Modules m2
+//          JOIN ClasseModule cm2 ON cm2.idUE.id = m2.idUe.id
+//          WHERE cm2.idNiveauFiliere.id = c.idFiliere.id
+//            AND NOT EXISTS (
+//                SELECT 1 FROM Notes n
+//                WHERE n.idModule.id = m2.id
+//                  AND n.idInscription.id = i.id and n.idSemestre.id =:semestreId
+//            )
+//      )
+//""")
+    @Query(value = "SELECT  DISTINCT i.* FROM inscription as i, notes as n, semestres as s, modules as m WHERE i.id_classe_id =:idClasse AND n.id_semestre_id =:semestreId", nativeQuery = true)
+    Page<Inscription> findStudentsWithNotesOnAllModules(@Param("idClasse") long idClasse, @Param("semestreId") long semestreId, Pageable pageable);
+
+
+
+    @Query("SELECT i FROM Inscription i WHERE  i.idClasse.id = :idClasse")
+    List<Inscription> findByIdClasse(@Param("idClasse") long idClasse);
+
 
     @Query("SELECT SUM(i.scolarite) FROM Inscription i WHERE YEAR (i.date) = YEAR (current_date ) and i.idEtudiant.status =:professionnel")
     double sumScolariteForCurrentYearPro(@Param("professionnel") Type_status professionnel);

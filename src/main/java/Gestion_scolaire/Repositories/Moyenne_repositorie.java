@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface Moyenne_repositorie extends JpaRepository<Moyenne, Long> {
+
+    Moyenne findByIdSemestreIdAndIdInscriptionId(long idSemestreId, long idInscriptionId);
 }

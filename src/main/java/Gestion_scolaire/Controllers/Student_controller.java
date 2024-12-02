@@ -107,19 +107,8 @@ public class Student_controller {
     public Object updateScolarite(@PathVariable long idStudent, @PathVariable long idAdmin, @RequestBody DTO_scolarite dtoScolarite){
         return student_service.update_scolarite(idStudent, idAdmin, dtoScolarite.getScolarite());
     }
-//------------------list des etudians valider de la classe
-//    @GetMapping("/student-by-classe-id/{idClasse}")
-//    public List<Studens> getStudentByClasse(@PathVariable long idClasse){
-//        return student_service.get_by_classId(idClasse);
-//    }
 
-//    @GetMapping("/inscription-by-id/{idInscription}")
-//    @Operation(summary = "Recupere une inscription par id")
-//    public Inscription getInscriptionById(@PathVariable long idInscription){
-//        return student_service.getInscriptionById(idInscription);
-//    }
-
-//    -------------------------------------get all student by id annee scolaire
+    //get all student by id annee scolaire
     @GetMapping("/student-by-anneScolaire-id/{idAnne}")
     public Page<Inscription> getListByIaAnne(
             @RequestParam (defaultValue = "0") int page,
@@ -248,17 +237,6 @@ public class Student_controller {
         return doc_service.countRapport();
     }
 
-    //------------------------
-//    @GetMapping("/get-student-annee-and-classe/{idAnnee}/{idClasse}")
-//    @Operation(summary = "Recuperer la list des etudiant d'une classe par année")
-//    public Page<Inscription> getStudentAnneeAndIdClasse(
-//            @PathVariable long idAnnee,
-//            @PathVariable long idClasse,
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "10") int size) {
-//        return student_service.getStudentByIDAnneeAndIdClasse(idAnnee, idClasse, page, size);
-//    }
-
     //    ----------------------------
     @PostMapping("/students-import")
     @Operation(summary = "Ajout des etudiant du fichier excel importer")
@@ -273,7 +251,7 @@ public class Student_controller {
     public List<Inscription> getListStudentAnneeAndIdClasse(
             @PathVariable long idAnnee,
             @PathVariable long idClasse){
-        return student_service.getListByIdAnneeAndIdClase(idAnnee, idClasse);
+        return student_service.getListByIdAnneeAndIdClasse(idAnnee, idClasse);
     }
     //-----------------------------
     @GetMapping("/desaprouve-doc/{idDoc}")

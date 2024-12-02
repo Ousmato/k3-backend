@@ -8,18 +8,19 @@ import java.util.List;
 
 @Data
 public class ModuleDTO {
-//    private long id;
+    private long id;
     private String nomModule;
     private int coefficient;
-    private UeDTO idUe;
+    private double noteModule;
+    private UE idUe;
 
 
     public static ModuleDTO toModuleDTO(Modules module) {
         ModuleDTO dto = new ModuleDTO();
-//        dto.setId(module.getId());
+        dto.setId(module.getId());
         dto.setNomModule(module.getNomModule());
-//        dto.setCoefficient(module.getCoefficient());
-        dto.setIdUe(UeDTO.toUeDTO(module.getIdUe()));
+        dto.setCoefficient(module.getCoefficient());
+        dto.setIdUe(module.getIdUe());
         return dto;
     }
 }

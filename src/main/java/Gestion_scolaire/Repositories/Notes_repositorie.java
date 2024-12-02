@@ -23,7 +23,7 @@ public interface Notes_repositorie extends JpaRepository<Notes, Long> {
 //    @Query(value = "SELECT SUM(n.classeNote) FROM Notes n WHERE n.idStudents.idEtudiant = :idStudent", nativeQuery = true)
 //    int findTotalClassByIdStudent(@Param("idStudent") long idStudent);
 
-    List<Notes> getNotesByIdModuleId(long idModule);
+    Notes getNotesByIdModuleIdAndIdInscriptionIdAndIdSemestreId(long idModule, long idInscrit, long idSemestre);
 
     @Query("SELECT COUNT(n) > 0 FROM Notes n WHERE n.idModule.idUe.id = :idUe")
     boolean existsNotesByUeId(@Param("idUe") long idUe);
@@ -35,13 +35,14 @@ public interface Notes_repositorie extends JpaRepository<Notes, Long> {
     List<Notes> findByIdSemestreId(long idSemeatre);
     List<Notes> getByIdSemestreIdAndIdInscriptionId(long idSemestre, long idStudent);
 
+
 //    Notes findByIdSemestreIdAndIdModuleIdAndIdInscriptionId(long idSemestre,long idModule, long idStudent);
 
     Notes findByIdSemestreIdAndIdModuleIdAndIdInscriptionId(long idSemestre, long idStudent, long idModule);
-//    List<Notes> getByIdSemestreIdAndIdStudentsIdClasseId(long idSemestre, long idClass);
 
-//    Notes findByIdSemestreIdAndIdModuleId(long idSemestre, long idModule)
+    @Query("SELECT n from Notes n WHERE n.idSemestre.id =:idSemestre and n.idInscription.idClasse.id =:idClass")
+    List<Notes> getByIdSemestreIdAndIdClasseId(@Param("idSemestre") long idSemestre, @Param("idClass") long idClass);
+
     List<Notes> getByIdSemestreIdAndIdModuleId(long idSemestre, long idModule);
 
-//    Page<Notes> getByIdSemestreIdAndIdStudentsIdClasseId(long idSemestre, long idStudent, Pageable pageable);
 }

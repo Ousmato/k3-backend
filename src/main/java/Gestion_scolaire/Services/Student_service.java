@@ -18,10 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class Student_service {
@@ -227,8 +224,6 @@ public class Student_service {
             return Page.empty(pageable);
         }
 
-//        List<Studens> students = pages.stream().map(Inscription::getIdEtudiant).toList();
-
         return pages;
     }
 
@@ -271,7 +266,6 @@ public class Student_service {
         if (list.isEmpty()) {
             return Page.empty(pageable);
         }
-//        List<Studens> students = list.stream().map(Inscription::getIdEtudiant).toList();
 
         return list;
     }
@@ -319,7 +313,7 @@ public class Student_service {
         if (newClass == null) {
             throw new NoteFundException("La classe est introuvable");
         }
-        List<Inscription> inscriptionListExist = getListByIdAnneeAndIdClase(newClass.getIdAnneeScolaire().getId(), idClasse);
+        List<Inscription> inscriptionListExist = getListByIdAnneeAndIdClasse(newClass.getIdAnneeScolaire().getId(), idClasse);
         if (!inscriptionListExist.isEmpty()) {
 //            System.out.println("il est rentre dans dif de null");
 //            boolean hasEquals = false;
@@ -332,7 +326,6 @@ public class Student_service {
                     return DTO_response_string.fromMessage("L'inscription existante a été désactivée pour cet étudiant.", 200);
 
                 }
-//                break;
             }
 
         }
@@ -351,7 +344,7 @@ public class Student_service {
             throw new NoteFundException("L'administrateur est introuvable");
 
         }
-//        System.out.println("-------------------------inscrit------------" + inscrit);
+        System.out.println("-------------------------inscrit------------" + inscrit);
 
         // Trouver l'année scolaire
         AnneeScolaire newYear = annee_repositorie.findById(newClass.getIdAnneeScolaire().getId());
@@ -382,12 +375,12 @@ public class Student_service {
        StudentsClasse classSaved = classe_repositorie.save(newClass);
         Inscription newInscription = new Inscription();
         newInscription.setIdEtudiant(studentExist.getIdEtudiant());
-//        newInscription.setDate(LocalDate.now());
+        newInscription.setDate(LocalDate.now());
         newInscription.setDate(classSaved.getIdAnneeScolaire().getDebutAnnee());
         newInscription.setIdClasse(classSaved);
 
         newInscription.setIdAdmin(adminExist);
-//        inscription_repositorie.save(newInscription);
+        inscription_repositorie.save(newInscription);
         return DTO_response_string.fromMessage("Inscription effectuée avec succès", 200);
     }
 
@@ -404,16 +397,99 @@ public class Student_service {
     }
 
     //    -------------------------------------------------
-    public List<Inscription> getListByIdAnneeAndIdClase(long idAnnee, long idClasse) {
+    public List<Inscription> getListByIdAnneeAndIdClasse(long idAnnee, long idClasse) {
+        // Récupérer les inscriptions actuelles pour la classe et l'année spécifiées
         List<Inscription> list = inscription_repositorie.findByIdClasseIdAnneeScolaireIdAndIdClasseId(idAnnee, idClasse);
-        if (list.isEmpty()) {
-            return new ArrayList<>();
-        }
-//        List<Studens> studensList = new ArrayList<>(list.stream().map(Inscription::getIdEtudiant).toList());
-        list.sort(Comparator.comparing(inscription -> inscription.getIdEtudiant().getNom()));
-        return list;
 
+        List<Studens> studensList = list.stream().map(Inscription::getIdEtudiant).toList();
+
+        List<Inscription> inscriptionList = new ArrayList<>();
+
+        // Récupérer la classe actuelle
+        StudentsClasse nowClass = classe_repositorie.findById(idClasse);
+        System.out.println("-------------list---------------" +list.size());
+
+        // Calculer l'année suivante pour la réinscription
+        int nextYear = nowClass.getIdAnneeScolaire().getFinAnnee().getYear() + 1;
+        // Vérifier le niveau d'étude de la classe actuelle
+        String currentNiveau = nowClass.getIdFiliere().getIdNiveau().getNom();
+
+        System.out.println("------------- " + nextYear +"---------------" +currentNiveau);
+        // Si la classe est en LICENCE 1 (L1)
+        if ("LICENCE 1".equals(currentNiveau)) {
+            // Récupérer les étudiants inscrits en LICENCE 2 (L2) pour l'année suivante
+            List<Inscription> inscriptionsL2 = inscription_repositorie.getListInscritByNiveauNameAndIdAnnee(
+                    "LICENCE 2",
+                    nextYear,
+                    nowClass.getIdFiliere().getIdFiliere().getNomFiliere()
+            );
+
+
+//            System.out.println("-------------students l2---------------" +studensListL2.size());
+
+            // Vérifier si la liste d'étudiants L2 n'est pas vide et ne contient pas déjà les étudiants L1
+            if (!inscriptionsL2.isEmpty()) {
+                List<Studens> studensListL2 = inscriptionsL2.stream()
+                        .map(Inscription::getIdEtudiant).toList();
+                List<String> listMatriculesL2 = studensListL2.stream().map(Studens::getMatricule).toList();
+
+                System.out.println("-------------inscription l2---------------" +inscriptionsL2.size());
+
+
+
+                // Exclure les étudiants L1 déjà inscrits en L2 pour l'année suivante en fonction de leur matricule
+                List<Inscription> studentsNotReinscribed = new ArrayList<>(list);
+                studentsNotReinscribed.removeIf(inscription ->
+                        listMatriculesL2.contains(inscription.getIdEtudiant().getMatricule()));
+                System.out.println("-------------studentsNotReinscribed---------------" +studentsNotReinscribed.size());
+
+                System.out.println("-------------list a return---------------" +list.size());
+
+//                for (Studens student : studentsNotReinscribed) {
+////                  inscriptionList.stream().map(Inscription::setIdEtudiant(student))
+//                }
+                return studentsNotReinscribed;
+            }else {
+                return list;
+            }
+        }
+        // Si la classe est en LICENCE 2 (L2)
+        else if ("LICENCE 2".equals(currentNiveau)) {
+            // Récupérer les étudiants inscrits en LICENCE 3 (L3) pour l'année suivante
+            System.out.println("----------------------------" + nowClass.getIdFiliere().getIdFiliere().getNomFiliere());
+
+            List<Inscription> inscriptionsL3 = inscription_repositorie.getListInscritByNiveauNameAndIdAnnee(
+                    nowClass.getIdFiliere().getIdNiveau().getNom(),
+                    nextYear,
+                    nowClass.getIdFiliere().getIdFiliere().getNomFiliere()
+            );
+            System.out.println("-------------inscription l3---------------" +inscriptionsL3);
+
+            List<Studens> studensListL3 = inscriptionsL3.stream().map(Inscription::getIdEtudiant).toList();
+
+            // Vérifier si la liste d'étudiants L3 n'est pas vide et ne contient pas déjà les étudiants L2
+            if (!inscriptionsL3.isEmpty()) {
+                // Exclure les étudiants L2 déjà inscrits en L3 pour l'année suivante
+                List<Studens> studentsNotReinscribed = new ArrayList<>(studensList);
+                studentsNotReinscribed.removeAll(studensListL3);  // Supprimer ceux qui sont déjà en L3
+
+                for (Studens student : studentsNotReinscribed) {
+                    // Trouver l'inscription de l'étudiant dans la liste d'inscriptions initiale
+                    for (Inscription inscription : inscriptionsL3) {
+                        // Si l'étudiant correspond à l'inscrit, ajouter l'inscription à la liste
+                        if (inscription.getIdEtudiant().equals(student)) {
+                            inscriptionList.add(inscription);
+                        }
+                    }
+                }
+                return inscriptionList;
+            }
+        }
+
+        // Si aucun étudiant n'est trouvé, renvoyer une liste vide ou null
+        return new ArrayList<>();
     }
+
 
     @Transactional
     public Object addStudentsImport(List<Inscription> inscriptionList){
@@ -480,7 +556,6 @@ public class Student_service {
         if (studensList.isEmpty()) {
             return Page.empty(pageable);
         }
-//        List<Studens> students = studensList.stream().map(Inscription::getIdEtudiant).toList();
         return studensList;
     }
 

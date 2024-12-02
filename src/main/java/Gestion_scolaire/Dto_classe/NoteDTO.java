@@ -15,4 +15,5 @@ public class NoteDTO {
     private int coefficientUe;
     private int session;
     private double noteUeCoefficient;
+    private double moyenne;
 }

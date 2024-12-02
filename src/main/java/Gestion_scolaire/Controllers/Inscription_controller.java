@@ -32,7 +32,7 @@ public class Inscription_controller {
         return student_service.get_by_classId(idAnnee,idClasse);
     }
 
-    //    -----------------------get All Students By Group
+    //get All Students By Group
     @GetMapping("/list-subscribe-by-group-id/{idGroup}")
     @Operation(summary = "Recuperer la liste des etudians inscrits par id du groupe")
     public List<Inscription> getAllStudentByGroup(@PathVariable long idGroup){
@@ -46,7 +46,7 @@ public class Inscription_controller {
     }
 
     @GetMapping("/annuler-depot/{idInscription}")
-    @Operation(summary = "Annuler le depot de documment d'un inscrit")
+    @Operation(summary = "Annuler le depot de document d'un inscrit")
     public Object annulerDepot(@PathVariable long idInscription){
         return doc_service.annulerDepot(idInscription);
     }
