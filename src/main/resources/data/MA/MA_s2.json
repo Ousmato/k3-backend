@@ -1,0 +1,146 @@
+[
+  {
+    "UE": "Metrologie",
+    "Code": "MET1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Metrologie",
+        "Credits": 2,
+        "Objectif": "Utiliser correctement les instruments de mesure"
+      }
+    ]
+  },
+  {
+    "UE": "CLIMATOLOGIE",
+    "Code": "CLI1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "CLIMATOLOGIE",
+        "Credits": 2,
+        "Objectif": "Exploiter les informations météorologiques"
+      }
+    ]
+  },
+  {
+    "UE": "PROJET TUTORE",
+    "Code": "PRT1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Projet tutore",
+        "Credits": 4,
+        "Objectif": "Initiation à la conception, la gestion et l'évaluation de projets"
+      }
+    ]
+  },
+  {
+    "UE": "INFORMATIQUE",
+    "Code": "INF1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Informatique",
+        "Credits": 1,
+        "Objectif": "Utiliser les notions et les outils informatiques adaptés"
+      }
+    ]
+  },
+  {
+    "UE": "SCIENCES AGRONOMIQUES",
+    "Code": "AGR1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Pédologie",
+        "Credits": 2,
+        "Objectif": "Maîtriser les notions de base sur les sols de culture et l'effet de l'utilisation des machines"
+      }
+    ]
+  },
+  {
+    "UE": "DESSIN TECHNIQUE",
+    "Code": "DT1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Dessin technique",
+        "Credits": 2,
+        "Objectif": "Maîtriser les principes de base du dessin technique"
+      }
+    ]
+  },
+  {
+    "UE": "SCIENCES AGRONOMIQUES",
+    "Code": "AGR1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Technique culturale",
+        "Credits": 2,
+        "Objectif": "Identifier et utiliser les notions liées à l'exploitation des machines agricoles"
+      }
+    ]
+  },
+  {
+    "UE": "PHYSIQUE",
+    "Code": "PHY1202",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Électrotechnique",
+        "Credits": 2,
+        "Objectif": "Lire et interpréter les schémas électriques des équipements agricoles à partir des fiches techniques en respectant les consignes"
+      }
+    ]
+  },
+  {
+    "UE": "MATHÉMATIQUES",
+    "Code": "MTH1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Statistiques/probabilités",
+        "Credits": 2,
+        "Objectif": "Appliquer les notions de statistique et de probabilités dans la collecte et le traitement des données lors des enquêtes"
+      }
+    ]
+  },
+  {
+    "UE": "MOTEURS",
+    "Code": "MOT1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Typologie des moteurs",
+        "Credits": 6,
+        "Objectif": "Identifier les différents types de moteurs"
+      }
+    ]
+  },
+  {
+    "UE": "CHIMIE",
+    "Code": "CHM1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Chimie minérale",
+        "Credits": 4,
+        "Objectif": "Utiliser les notions de chimie minérale"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "UE Libre",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  }
+]

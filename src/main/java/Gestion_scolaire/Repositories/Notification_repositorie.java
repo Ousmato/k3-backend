@@ -1,6 +1,6 @@
 package Gestion_scolaire.Repositories;
 
-import Gestion_scolaire.Models.Documents;
+import Gestion_scolaire.students.entity.Documents;
 import Gestion_scolaire.Models.Notifications;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

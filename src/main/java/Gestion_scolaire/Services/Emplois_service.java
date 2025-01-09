@@ -26,8 +26,7 @@ public class Emplois_service {
 
     @Autowired
     private Journee_repositorie journee_repositorie;
-
-
+    
     public Object add(Emplois emplois) {
         Set<ConstraintViolation<Emplois>> violation = validator.validate(emplois);
         if (!violation.isEmpty()) {
@@ -40,20 +39,20 @@ public class Emplois_service {
 //        // Vérification des dates par rapport au semestre
         LocalDate dateDebut = emplois.getDateDebut();
         LocalDate dateFin = emplois.getDateFin();
-        LocalDate dateDebutSemestre = emplois.getIdSemestre().getDateDebut();
-        LocalDate dateFinSemestre = emplois.getIdSemestre().getDatFin();
+//        LocalDate dateDebutSemestre = emplois.getIdSemestre().getDateDebut();
+//        LocalDate dateFinSemestre = emplois.getIdSemestre().getDatFin();
 //
 //        System.out.println("dateDebutSemestre: " + dateDebutSemestre);
 //        System.out.println("dateFinSemestre: " + dateFinSemestre);
 //
 //        System.out.println("dateDebut: " + dateDebut);
 //        System.out.println("dateFin: " + dateFin);
-//        if(dateDebut.isBefore(LocalDate.now())){
-//            throw new NoteFundException("invalide la date du début ne peut pas etre inferieur a aujourd'hui");
+////        if(dateDebut.isBefore(LocalDate.now())){
+////            throw new NoteFundException("invalide la date du début ne peut pas etre inferieur a aujourd'hui");
+////        }
+//        if (dateDebut.isBefore(dateDebutSemestre) || dateFin.isAfter(dateFinSemestre)) {
+//            throw new NoteFundException("Les dates de l'emploi doivent être comprises entre les dates du semestre.");
 //        }
-        if (dateDebut.isBefore(dateDebutSemestre) || dateFin.isAfter(dateFinSemestre)) {
-            throw new NoteFundException("Les dates de l'emploi doivent être comprises entre les dates du semestre.");
-        }
 
         // Vérification de l'existence d'un emploi pour la classe
         if (!emplois_de_la_classe.isEmpty()) {
@@ -68,7 +67,7 @@ public class Emplois_service {
 
         // Si toutes les vérifications sont passées, enregistrez l'emploi
         emplois_repositorie.save(emplois);
-        return DTO_response_string.fromMessage("Ajout effectué avec succès", 200);
+        return DTO_response_string.fromMessage("Ajout effectué avec succès");
     }
 
     //    -----------------------------------------mehode pour modifier-------------------------
@@ -85,12 +84,12 @@ public class Emplois_service {
             }
             LocalDate dateDebut = emplois.getDateDebut();
             LocalDate dateFin = emplois.getDateFin();
-            LocalDate dateDebutSemestre = emplois.getIdSemestre().getDateDebut();
-            LocalDate dateFinSemestre = emplois.getIdSemestre().getDatFin();
-
-            if (dateDebut.isBefore(dateDebutSemestre) || dateFin.isAfter(dateFinSemestre)) {
-                throw new NoteFundException("Les dates de l'emploi doivent être comprises entre les dates du semestre.");
-            }
+//            LocalDate dateDebutSemestre = emplois.getIdSemestre().getDateDebut();
+//            LocalDate dateFinSemestre = emplois.getIdSemestre().getDatFin();
+//
+//            if (dateDebut.isBefore(dateDebutSemestre) || dateFin.isAfter(dateFinSemestre)) {
+//                throw new NoteFundException("Les dates de l'emploi doivent être comprises entre les dates du semestre.");
+//            }
 
 
             // Vérification finale sur les dates de début et de fin
@@ -104,7 +103,7 @@ public class Emplois_service {
             emploisExist.setIdModule(emplois.getIdModule());
 
             emplois_repositorie.save(emploisExist);
-            return DTO_response_string.fromMessage("Modification effectué avec succès", 200);
+            return DTO_response_string.fromMessage("Modification effectué avec succès");
         }
         throw new NoteFundException("emplois n'existe pas");
     }
@@ -163,32 +162,22 @@ public class Emplois_service {
         return false;
     }
 //--------------------------------get all emplois
-    public List<Emplois> listEmploisActifs(){
-        List<Emplois>  list = emplois_repositorie.findAllEmploisActif(LocalDate.now());
+    public List<Emplois> listEmploisActifs(long idClasse){
+        List<Emplois>  list = emplois_repositorie.findEmploisInActif(idClasse);
+
+        System.out.println("---------------" +list);
         if (list.isEmpty()){
             return  new ArrayList<>();
         }
         return list;
     }
 //    ------------------------------get emplois active with seances
-//    public List<EmploisDTO> listEmploisActifs_with_seances(){
-//        List<Emplois>  list = emplois_repositorie.findAllEmploisActif(LocalDate.now());
-//
-//        if (list.isEmpty()){
-//            return  new ArrayList<>();
-//        }
-//        List<EmploisDTO> dtoList = new ArrayList<>();
-//
-//        for (Emplois emploi : list){
-//            List<Seances> seancesList = seance_repositorie.findByIdEmploisId(emploi.getId());
-//
-//
-//            EmploisDTO emploisDTO = EmploisDTO.toEmploisDTO(emploi);
-//            emploisDTO.setIdSemestre(emploi.getIdSemestre());
-//            emploisDTO.setSeances(seancesList);
-//            dtoList.add(emploisDTO);
-//
-//        }
-//        return dtoList;
-//    }
+
+    public List<Emplois> listEmploisActifOfAllClasses(){
+        List<Emplois> emplois = emplois_repositorie.findAllEmploisActif(LocalDate.now());
+        if (emplois.isEmpty()){
+            return  new ArrayList<>();
+        }
+        return emplois;
+    }
 }

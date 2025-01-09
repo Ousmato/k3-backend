@@ -1,14 +1,10 @@
 package Gestion_scolaire.configuration.SecurityConfigs;
 
-import Gestion_scolaire.Models.Admin;
+import Gestion_scolaire.Administrators.entity.Admin;
 import Gestion_scolaire.Models.RefreshToken;
-import Gestion_scolaire.Services.Admin_service;
-import Gestion_scolaire.configuration.GestionException.ApiErrorResponse;
-import Gestion_scolaire.configuration.NoteFundException;
-import io.jsonwebtoken.Claims;
+import Gestion_scolaire.Administrators.services.Admin_service;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,11 +20,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.security.SignatureException;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 
 @Component
 @Slf4j
@@ -41,8 +35,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private JwtService jwtService;
 
-    private String email;
-    private HttpServletResponse response;
 
 
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

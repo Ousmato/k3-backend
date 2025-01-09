@@ -1,0 +1,134 @@
+[
+  {
+    "UE": "Réparation de la direction et du train avant des tracteurs",
+    "Code": "RDT1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Réparation de la direction et du train avant des tracteurs",
+        "Credits": 3,
+        "Objectif": "Maîtriser les techniques de réparation de la direction et du train avant des tracteurs"
+      }
+    ]
+  },
+  {
+    "UE": "Matériels de récolte et de post récolte",
+    "Code": "MRP1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Matériel de récolte et de post récolte",
+        "Credits": 4,
+        "Objectif": "Reconnaître et exploiter les matériels de récolte et post récolte"
+      }
+    ]
+  },
+  {
+    "UE": "Réparation du système de distribution",
+    "Code": "RSD1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Réparation du système de distribution",
+        "Credits": 3,
+        "Objectif": "Réaliser les opérations d'entretien, diagnostiquer les différentes défaillances et les réparations"
+      }
+    ]
+  },
+  {
+    "UE": "Projet Professionnel Personnalisé",
+    "Code": "PPP1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Projet professionnel personnalisé",
+        "Credits": 3,
+        "Objectif": "Initier et personnaliser de façon professionnelle un projet"
+      }
+    ]
+  },
+  {
+    "UE": "Moteurs Thermiques",
+    "Code": "MOT1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Etude approfondie",
+        "Credits": 6,
+        "Objectif": "Maîtriser le fonctionnement des moteurs thermiques"
+      }
+    ]
+  },
+  {
+    "UE": "Sécurité et Hygiène du Travail",
+    "Code": "SHT1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Sécurité et hygiène du travail",
+        "Credits": 1,
+        "Objectif": "Maîtriser et appliquer le système de sécurisation et d'hygiène dans le travail"
+      }
+    ]
+  },
+  {
+    "UE": "Gestion Intégrée des Ressources en Eau",
+    "Code": "GIRE1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Gestion intégrée des ressources en eau",
+        "Credits": 3,
+        "Objectif": "Maîtriser les notions de base de la GIRE"
+      }
+    ]
+  },
+  {
+    "UE": "Cartographie et Télédétection",
+    "Code": "CAT1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Cartographie et télédétection",
+        "Credits": 4,
+        "Objectif": "Maîtriser les notions de base de cartographie et télédétection"
+      }
+    ]
+  },
+  {
+    "UE": "Economie Rurale",
+    "Code": "ECR1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Economie rurale",
+        "Credits": 1,
+        "Objectif": "Acquérir, puis appliquer des notions d'économie rurale dans la création et la gestion des entreprises"
+      }
+    ]
+  },
+  {
+    "UE": "Gestion des Entreprises",
+    "Code": "GEN1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Création et Gestion des entreprises",
+        "Credits": 1,
+        "Objectif": "Créer et gérer des entreprises"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "UE Libre",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  }
+]

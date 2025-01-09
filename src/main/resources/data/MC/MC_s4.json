@@ -1,0 +1,111 @@
+[
+  {
+    "UE": "Marketing",
+    "Code": "MKT2401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Etudes de marché",
+        "Credits": 4,
+        "Objectif": "Connaître les cas pratiques sur les études marketing et l'analyse du marché"
+      },
+      {
+        "ECUE": "Distribution",
+        "Credits": 3,
+        "Objectif": "Maîtriser les outils de la distribution exclusive, intensive, extensive"
+      },
+      {
+        "ECUE": "Marketing International",
+        "Credits": 2,
+        "Objectif": "- Connaître l'organisation import-export - Maîtriser la politique de prix et les incoterms"
+      },
+      {
+        "ECUE": "Merchandising",
+        "Credits": 3,
+        "Objectif": "- Introduction au merchandising - Etudes de cas"
+      }
+    ]
+  },
+  {
+    "UE": "Sciences de Gestion",
+    "Code": "GES2401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Entrepreneuriat",
+        "Credits": 3,
+        "Objectif": "Connaître les notions fondamentales de l'entrepreneuriat et du business plan"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC2401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "TECE",
+        "Credits": 2,
+        "Objectif": "Comprendre la communication des organisations, rédiger une correspondance et un cahier des charges, réaliser les visuels"
+      },
+      {
+        "ECUE": "Communication Médias et Hors Médias",
+        "Credits": 2,
+        "Objectif": "- Connaître et identifier les médias - Savoir tirer profit des médias - Connaître et identifier les communications hors médias - Savoir mettre à profit les événements, les relations publiques"
+      }
+    ]
+  },
+  {
+    "UE": "D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC2401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Anglais des affaires",
+        "Credits": 2,
+        "Objectif": "Former des cadres capables de: - s'exprimer correctement en Anglais en respectant les normes linguistiques, - rédiger correctement des lettres commerciales, administratives et sociales, - résumer, traduire et composer un document en Anglais"
+      }
+    ]
+  },
+  {
+    "UE": "Mathématiques",
+    "Code": "MTH2401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Mathématiques Financières",
+        "Credits": 3,
+        "Objectif": "Faire la différence entre intérêt simple et intérêt composé; connaître les notions de taux proportionnel, taux équivalent; comprendre le calcul des annuités, le remboursement des emprunts"
+      },
+      {
+        "ECUE": "Statistiques et probabilités appliquées",
+        "Credits": 3,
+        "Objectif": "Approfondir et appliquer les notions de statistiques et de probabilités."
+      }
+    ]
+  },
+  {
+    "UE": "Informatique",
+    "Code": "INF2401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Informatique et NTIC",
+        "Credits": 2,
+        "Objectif": "Utiliser les outils informatiques pour la statistique et les mathématiques financières."
+      }
+    ]
+  },
+  {
+    "UE": "UNITE LIBRE",
+    "Code": "LIB1101",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Ue Libre",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  }
+]

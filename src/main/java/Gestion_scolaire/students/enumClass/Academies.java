@@ -1,0 +1,30 @@
+package Gestion_scolaire.students.enumClass;
+
+public enum Academies {
+    KAYES,
+    KENIEBA,
+    KITA,
+    NIORO,
+    KOULIKORO,
+    KATI,
+    KALABANCORO,
+    NARA,
+    DIOILA,
+    SIKASSO,
+    BOUGOUNI,
+    KOUTIALA,
+    SEGOU,
+    SAN,
+    MOPTI,
+    TENENKOU,
+    DOUENTZA,
+    BANDIAGARA,
+    TOMBOUCTOU,
+    GOURMA_RHAROUS,
+    GAO,
+    KIDAL,
+    MENAKA,
+    TAOUDENIT,
+    BAMAKO_RIVE_GAUCHE,
+    BAMAKO_RIVE_DROITE
+}

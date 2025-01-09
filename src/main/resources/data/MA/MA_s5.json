@@ -1,0 +1,110 @@
+[
+  {
+    "UE": "Réparation du Système d'Alimentation Essence et Diesel",
+    "Code": "RSA1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Réparation du Système d'Alimentation",
+        "Credits": 4,
+        "Objectif": "Diagnostiquer et réparer les différents défaillances d'une machine"
+      }
+    ]
+  },
+  {
+    "UE": "Rédaction Administrative",
+    "Code": "REA1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Rédaction administrative",
+        "Credits": 1,
+        "Objectif": "Savoir rédiger les documents administratifs"
+      }
+    ]
+  },
+  {
+    "UE": "Agroalimentaires",
+    "Code": "AGA1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Appareils de traitement, conditionnement des produits Agricoles",
+        "Credits": 3,
+        "Objectif": "Identifier et exploiter les appareils de traitement, conditionnement des produits agricoles"
+      }
+    ]
+  },
+  {
+    "UE": "Moyens d'Exhaure, Pompes et Stations Elevatoires",
+    "Code": "MPE1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Moyens d'exhaure, pompes et stations élevatoires",
+        "Credits": 2,
+        "Objectif": "Maîtriser les moyens d'exhaure, régler et entretenir les pompes et stations élevatoires"
+      }
+    ]
+  },
+  {
+    "UE": "Matériels de Post Récoltes et de Transformation",
+    "Code": "MPR1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Matériels de post récoltes et de transformation",
+        "Credits": 4,
+        "Objectif": "Reconnaître et exploiter les matériels de récolte, post récolte et de transformation"
+      }
+    ]
+  },
+  {
+    "UE": "Appareils Manuels de Traitement Phyto et Zoo Sanitaire",
+    "Code": "AGT1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Appareils manuels de traitement phyto et zoo sanitaire",
+        "Credits": 5,
+        "Objectif": "Maîtriser les techniques d'utilisation des appareils manuels de traitement phyto et zoo sanitaire"
+      }
+    ]
+  },
+  {
+    "UE": "Agroéquipements",
+    "Code": "AGE1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Entretien du matériel et équipements agricoles",
+        "Credits": 6,
+        "Objectif": "Réaliser les opérations d'entretien, diagnostiquer les différentes défaillances et les réparations"
+      }
+    ]
+  },
+  {
+    "UE": "Chimie",
+    "Code": "CHM1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Atomistique",
+        "Credits": 2,
+        "Objectif": "Décrire les principaux types de liaison chimique, comprendre la structure et les propriétés de base des atomes"
+      }
+    ]
+  },
+  {
+    "UE": "Projet Tutoré",
+    "Code": "PRT1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Projet tutore",
+        "Credits": 3,
+        "Objectif": "Projet tutore"
+      }
+    ]
+  }
+]

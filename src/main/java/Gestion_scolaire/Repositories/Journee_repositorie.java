@@ -17,6 +17,8 @@ public interface Journee_repositorie extends JpaRepository<Journee, Long> {
 
     boolean existsByIdEmploisId(long idEmplois);
 
+    Journee getJourneesByDateAndHeureFinIsAfterAndIdEmploisId(LocalDate date, LocalTime heureFin, long idEmplois);
+
     Journee getById(long idJournee);
 
     List<Journee> getAllByDate(LocalDate date);

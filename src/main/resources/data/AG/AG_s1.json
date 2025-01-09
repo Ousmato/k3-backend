@@ -1,0 +1,118 @@
+[
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Discipline à option",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  },
+  {
+    "UE": "INFORMATIQUE",
+    "Code": "INF1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Bureautique",
+        "Credits": 3,
+        "Objectif": "Savoir utiliser la bureautique de base; Utiliser les outils internet pour la recherche documentaire"
+      }
+    ]
+  },
+  {
+    "UE": "ECONOMIE ET ENTREPRISE",
+    "Code": "ENT1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Economie et entreprise",
+        "Credits": 3,
+        "Objectif": "Définir les grands principes de la gestion et de comprendre la structure d'une organisation."
+      },
+      {
+        "ECUE": "Comptabilité",
+        "Credits": 3,
+        "Objectif": "Acquérir une formation élémentaire en comptabilité pour les filières de gestion"
+      }
+    ]
+  },
+  {
+    "UE": "DROIT",
+    "Code": "DRT1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Législation agricole",
+        "Credits": 2,
+        "Objectif": "Permettre aux étudiants d'acquérir des connaissances de bases et les initier à l'art d'appréhender le droit adapté à leurs différentes mentions"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Anglais technique",
+        "Credits": 3,
+        "Objectif": "Lire, écrire et comprendre des textes relatifs au machinisme agricole. S'exprimer convenablement"
+      },
+      {
+        "ECUE": "TECE",
+        "Credits": 3,
+        "Objectif": "Savoir rédiger une note de synthèse, un résumé, un compte rendu"
+      }
+    ]
+  },
+  {
+    "UE": "MATHÉMATIQUES",
+    "Code": "MTH1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Mathématiques de base et statistique",
+        "Credits": 3,
+        "Objectif": "Pouvoir utiliser le calcul mathématique et les notions élémentaires de statistiques"
+      },
+      {
+        "ECUE": "Mathématiques pour scientifique",
+        "Credits": 3,
+        "Objectif": "Préparer les enseignements de mathématiques des filières scientifiques"
+      }
+    ]
+  },
+  {
+    "UE": "GESTION DE PROJET",
+    "Code": "GPR1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Gestion de projet",
+        "Credits": 4,
+        "Objectif": "Aborder les premières notions de gestion de projet"
+      }
+    ]
+  },
+  {
+    "UE": "GESTION DES RESSOURCES HUMAINES",
+    "Code": "GRH1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Psychologie sociale",
+        "Credits": 2,
+        "Objectif": "Acquérir des notions de base de gestion des ressources humaines"
+      },
+      {
+        "ECUE": "Relation humaine",
+        "Credits": 3,
+        "Objectif": "Acquérir des notions de base de gestion des ressources humaines"
+      }
+    ]
+  }
+]

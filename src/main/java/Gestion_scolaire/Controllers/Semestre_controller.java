@@ -24,36 +24,37 @@ public class Semestre_controller {
        return semestre_service.getAll();
     }
 //    ---------------------------------get current semestre-------------------------
-    @GetMapping("/current")
-    public Semestres getCurrent(){
-        return semestre_service.currentSemestre();
-    }
+//    @GetMapping("/current")
+//    public Semestres getCurrent(){
+//        return semestre_service.currentSemestre();
+//    }
 //    -----------------------------------------update semestre
-    @PutMapping("/update")
-    public Object update(@RequestBody Semestres semestre){
-       return semestre_service.update(semestre);
-    }
+//    @PutMapping("/update/{idClasse}")
+//    @Operation(summary = "Modifier une semestre par l'id de la classe")
+//    public Object update(@RequestBody Semestres semestre, @PathVariable long idClasse){
+//       return semestre_service.update(semestre, idClasse);
+//    }
 
     @GetMapping("/semestre-by-classe-id/{idClasse}")
-    public Semestres get_semesre(@PathVariable int idClasse){
+    public Semestres get_semesre(@PathVariable long idClasse){
         return semestre_service.semestre_classe_id(idClasse);
     }
 
-    @GetMapping("/current-semestre-of-year")
-    @Operation(summary = "Recuperer la liste des tous les semestre en cours")
-    public List<Semestres> getCurrentSemestreOfYear(){
-        return semestre_service.currenctSemestres();
-    }
+//    @GetMapping("/current-semestre-of-year")
+//    @Operation(summary = "Recuperer la liste des tous les semestre en cours")
+//    public List<Semestres> getCurrentSemestreOfYear(){
+//        return semestre_service.currenctSemestres();
+//    }
 
-    @GetMapping("/all-semestre-by-idNiv-fil/{idNivFiliere}")
-    @Operation(summary = "Recuperer la liste des tous les semestre en cours par id du mention nivfil")
-    public List<Semestres> getCurrentSemestreByIdNivFil(@PathVariable int idNivFiliere){
-        return semestre_service.getCurrenctSemestresByIdNivFil(idNivFiliere);
+    @GetMapping("/all-semestre-by-idClasse/{idClasse}")
+    @Operation(summary = "Recuperer la liste des tous les semestre en cours par id du mention")
+    public List<Semestres> getCurrentSemestreByIdNivFil(@PathVariable int idClasse){
+        return semestre_service.getCurrenctSemestresByIdNivFil(idClasse);
     }
 
 //    ----------------------------------add semestre
-    @PostMapping("/add-semestre")
-    public Object addSemestre(@RequestBody Semestres semestre){
-        return  semestre_service.add_semestre(semestre);
-    }
+//    @PostMapping("/add-semestre")
+//    public Object addSemestre(@RequestBody Semestres semestre){
+//        return  semestre_service.add_semestre(semestre);
+//    }
 }

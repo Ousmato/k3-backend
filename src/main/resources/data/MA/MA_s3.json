@@ -1,0 +1,149 @@
+[
+  {
+    "UE": "Hydraulique",
+    "Code": "HYD1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Hydraulique Système d'irrigation",
+        "Credits": 1,
+        "Objectif": "Concevoir et exploiter un système d'irrigation par pompage"
+      }
+    ]
+  },
+  {
+    "UE": "Réparation des systèmes de relevage hydraulique des engins agricoles",
+    "Code": "RSH1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Réparation des systèmes de relevage hydraulique des engins agricoles",
+        "Credits": 3,
+        "Objectif": "Réparer les systèmes de relevage hydraulique des engins agricoles"
+      }
+    ]
+  },
+  {
+    "UE": "Réparation entretien des éléments de système de charge et d'allumage",
+    "Code": "REC1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Réparation entretien des éléments de système de charge et d'allumage",
+        "Credits": 3,
+        "Objectif": "Réparer et entretenir les éléments du système de charge et d'allumage"
+      }
+    ]
+  },
+  {
+    "UE": "Etudes des Métaux et Traitement Thermique",
+    "Code": "EMT1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Etudes des métaux et traitement thermique",
+        "Credits": 1,
+        "Objectif": "Maîtriser la résistance des métaux"
+      }
+    ]
+  },
+  {
+    "UE": "Vulgarisation Agricole",
+    "Code": "VUA1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Vulgarisation des équipements agricoles",
+        "Credits": 1,
+        "Objectif": "Innover, bien renseigner les utilisateurs sur les équipements agricoles"
+      }
+    ]
+  },
+  {
+    "UE": "Résistance des Matériaux",
+    "Code": "RDM1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Résistance des matériaux",
+        "Credits": 1,
+        "Objectif": "Acquérir une solide base pour la conception et le dimensionnement des structures simples en traction, compression, cisaillement, torsion par les méthodes classiques"
+      }
+    ]
+  },
+  {
+    "UE": "Physique",
+    "Code": "PHY1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Analyse des circuits hydraulique et industriels",
+        "Credits": 1,
+        "Objectif": "Appliquer des notions d'hydraulique industrielle à l'aide de maquettes en respectant les règles d'hygiène et de sécurité et les consignes"
+      },
+      {
+        "ECUE": "Mécanique des fluides et pompes",
+        "Credits": 2,
+        "Objectif": "Acquérir les connaissances de base en Mécanique des fluides et Pompe"
+      },
+      {
+        "ECUE": "Mécanique rationnelle",
+        "Credits": 1,
+        "Objectif": "Acquérir les connaissances de base de la Statique et l'application des équations d'équilibre pour le calcul des corps solides indéformables"
+      }
+    ]
+  },
+  {
+    "UE": "Agroéquipements",
+    "Code": "AGE1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Petits matériels à traction animale",
+        "Credits": 2,
+        "Objectif": "Identifier et utiliser les notions liées à l'exploitation des machines agricoles"
+      },
+      {
+        "ECUE": "Tracteurs et équipements d'accompagnement",
+        "Credits": 4,
+        "Objectif": "Identifier et utiliser les notions liées à l'exploitation des machines agricoles"
+      }
+    ]
+  },
+  {
+    "UE": "Moteurs Thermiques",
+    "Code": "MOT1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Etude approfondie des moteurs thermiques",
+        "Credits": 5,
+        "Objectif": "Maîtriser le fonctionnement des moteurs thermiques"
+      }
+    ]
+  },
+  {
+    "UE": "Topographie Appliquée",
+    "Code": "TOP1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Topographie",
+        "Credits": 2,
+        "Objectif": "Maîtriser les connaissances de base en topographie"
+      }
+    ]
+  },
+  {
+    "UE": "Projet Tutore",
+    "Code": "PRT1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Projet tutore",
+        "Credits": 3,
+        "Objectif": "Projet tutore"
+      }
+    ]
+  }
+]

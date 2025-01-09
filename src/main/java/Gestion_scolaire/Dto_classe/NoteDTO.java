@@ -1,6 +1,5 @@
 package Gestion_scolaire.Dto_classe;
 
-import Gestion_scolaire.Models.Modules;
 import lombok.Data;
 
 import java.util.List;
@@ -15,4 +14,5 @@ public class NoteDTO {
     private int coefficientUe;
     private int session;
     private double noteUeCoefficient;
+    private double moyenne;
 }

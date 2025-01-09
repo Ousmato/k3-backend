@@ -1,0 +1,92 @@
+[
+  {
+    "UE": "AGROBUSINESS",
+    "Code": "AGR1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Gestion d'un atelier de transformation",
+        "Credits": 2,
+        "Objectif": "Savoir organiser et gérer un atelier de transformation alimentaire"
+      },
+      {
+        "ECUE": "Evolution des produits",
+        "Credits": 2,
+        "Objectif": "Pouvoir participer aux orientations de la production : choix des produits, clientèle"
+      },
+      {
+        "ECUE": "Génie Alimentaire",
+        "Credits": 2,
+        "Objectif": "Connaître les principales techniques et méthodes entourant la fabrication de produits alimentaires"
+      },
+      {
+        "ECUE": "Génie Industriel",
+        "Credits": 3,
+        "Objectif": "Être responsable d'une chaîne de fabrication"
+      },
+      {
+        "ECUE": "Marketing",
+        "Credits": 2,
+        "Objectif": "Pouvoir participer aux orientations de la production : marketing"
+      }
+    ]
+  },
+  {
+    "UE": "QUALITE",
+    "Code": "QUA1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Sécurité-environnement",
+        "Credits": 3,
+        "Objectif": "Pouvoir participer activement à la démarche qualité et à la protection de l'environnement dans une entreprise agroalimentaire"
+      },
+      {
+        "ECUE": "Statistiques et démarche expérimentale",
+        "Credits": 3,
+        "Objectif": "Connaître les outils méthodologiques et statistiques adaptés au contrôle qualité"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Anglais",
+        "Credits": 3,
+        "Objectif": "Expression écrite et orale en anglais sur des contenus simples"
+      },
+      {
+        "ECUE": "Français",
+        "Credits": 3,
+        "Objectif": "Savoir rédiger une note de synthèse, un résumé, un compte rendu"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Discipline à option",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  },
+  {
+    "UE": "PROJET TUTORE",
+    "Code": "PRT1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Projet tutoré",
+        "Credits": 6,
+        "Objectif": "Mettre en application les connaissances théoriques dans un cas concret, réel ou simulé"
+      }
+    ]
+  }
+]

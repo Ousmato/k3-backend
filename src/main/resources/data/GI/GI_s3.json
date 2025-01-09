@@ -1,0 +1,127 @@
+[
+  {
+    "UE": "PROJET TUTORE",
+    "Code": "PRT1201",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Projet tutore",
+        "Credits": 6,
+        "Objectif": "Approfondir un point d'une des UE en le mettant en application dans un cadre de projet pratique"
+      }
+    ]
+  },
+  {
+    "UE": "RECHERCHE OPERATIONNEL",
+    "Code": "ANN1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Recherche operationnelle",
+        "Credits": 3,
+        "Objectif": "Avoir des notions de base en recherche opérationnelle"
+      }
+    ]
+  },
+  {
+    "UE": "ANALYSE NUMERIQUE",
+    "Code": "ANN1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Analyse Numérique",
+        "Credits": 3,
+        "Objectif": "Avoir des notions de base en analyse numérique et simulation"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Discipline à option",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  },
+  {
+    "UE": "BASES DE DONNEES",
+    "Code": "BAD1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Introduction aux systèmes d'informations",
+        "Credits": 2,
+        "Objectif": "Être capable de concevoir des systèmes de base de données simples, faire des requêtes avec SQL, utiliser un SGBD"
+      }
+    ]
+  },
+  {
+    "UE": "INTRODUCTION AUX SYSTEMES D'INFORMATION",
+    "Code": "ISI1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Introduction aux systèmes d'informations",
+        "Credits": 2,
+        "Objectif": "Être capable de définir un système d'information, analyser les besoins des utilisateurs, modéliser le système"
+      }
+    ]
+  },
+  {
+    "UE": "INTRODUCTION AUX RESEAUX INFORMATIQUE",
+    "Code": "IRI1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Introduction aux réseaux informatiques",
+        "Credits": 2,
+        "Objectif": "Permettre aux étudiants de comprendre les notions de base sur les réseaux informatiques"
+      }
+    ]
+  },
+  {
+    "UE": "PROGRAMMATION LOGIQUE",
+    "Code": "PRL1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Programmation logique",
+        "Credits": 2,
+        "Objectif": "Maîtriser la programmation récursive et la notion de base de règles et de faits"
+      }
+    ]
+  },
+  {
+    "UE": "PROGRAMMATION ORIENTE OBJET",
+    "Code": "POO1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Programmation orientée objet",
+        "Credits": 3,
+        "Objectif": "Maîtriser les éléments suivants : concept de classe, concepts d'objet et d'encapsulation, concepts d'héritage et de polymorphisme"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Anglais",
+        "Credits": 3,
+        "Objectif": "Suite de la formation étalée sur 5 semestres"
+      },
+      {
+        "ECUE": "Français",
+        "Credits": 3,
+        "Objectif": "Suite de la formation étalée sur 5 semestres"
+      }
+    ]
+  }
+]

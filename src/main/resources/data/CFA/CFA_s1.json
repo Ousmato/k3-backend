@@ -1,0 +1,118 @@
+[
+  {
+    "UE": "GESTION DES RESSOURCES HUMAINES",
+    "Code": "GRH1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Psychologie sociale",
+        "Credits": 2,
+        "Objectif": "Acquerir des notions de base de gestion des ressources humaines"
+      },
+      {
+        "ECUE": "Relation humaine",
+        "Credits": 3,
+        "Objectif": "Acquerir des notions de base de gestion des ressources humaines"
+      }
+    ]
+  },
+  {
+    "UE": "ECONOMIE ET ENTREPRISE",
+    "Code": "ENT1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Comptabilité",
+        "Credits": 3,
+        "Objectif": "Acquérir une formation élémentaire en comptabilité pour les filières de gestion"
+      }
+    ]
+  },
+  {
+    "UE": "ECONOMIE ET ENTREPRISE",
+    "Code": "ENT1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Economie et entreprise",
+        "Credits": 3,
+        "Objectif": "Définir les grands principes de la gestion et de comprendre la structure d'une organisation."
+      }
+    ]
+  },
+  {
+    "UE": "ANGLAIS",
+    "Code": "ANG1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Anglais",
+        "Credits": 3,
+        "Objectif": "Savoir lire les textes courants en anglais, écrire de courts textes"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Technique d'expression et communication",
+        "Credits": 2,
+        "Objectif": "Savoir rédiger une note de synthèse, un résumé, un compte rendu"
+      }
+    ]
+  },
+  {
+    "UE": "DROIT",
+    "Code": "DRT1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Introduction au droit",
+        "Credits": 3,
+        "Objectif": "Permettre aux étudiants d'acquérir des connaissances de bases et les initier à l'art d'appréhender le droit adapté à leurs différentes mentions"
+      
+      }
+    ]
+  },
+  {
+    "UE": "GESTION DE PROJET",
+    "Code": "GPR1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Gestion de projet",
+        "Credits": 4,
+        "Objectif": "Aborder les premières notions de gestion de projet"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Discipline à option",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+        
+      }
+    ]
+  },
+  {
+    "UE": "INFORMATIQUE",
+    "Code": "INF1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Bureautique",
+        "Credits": 3,
+        "Objectif": "Savoir utiliser la bureautique de base; Utiliser les outils internet pour la recherche documentaire"
+        
+      }
+    ]
+  }
+]

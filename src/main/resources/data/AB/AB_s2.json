@@ -1,0 +1,115 @@
+[
+  {
+    "UE": "CLIMAT ET SOL",
+    "Code": "CLS1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Climat et sol",
+        "Credits": 3,
+        "Objectif": "Acquérir les notions de base sur le rôle du climat et des sols"
+      }
+    ]
+  },
+  {
+    "UE": "BIOLOGIE ET PHYSIOLOGIE DU VÉGÉTAL",
+    "Code": "BPV1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Biologie et physiologie du végétal",
+        "Credits": 3,
+        "Objectif": "Comprendre les éléments de base de la vie des végétaux"
+      }
+    ]
+  },
+  {
+    "UE": "ZOOTECHNIE GÉNÉRALE",
+    "Code": "ZOG1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Zootechnie générale",
+        "Credits": 3,
+        "Objectif": "Connaître les données de base sur les animaux"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Anglais",
+        "Credits": 3,
+        "Objectif": "Expression écrite et orale en anglais sur des contenus simples"
+      },
+      {
+        "ECUE": "Français",
+        "Credits": 2,
+        "Objectif": "Savoir rédiger une note de synthèse, un résumé, un compte rendu"
+      }
+    ]
+  },
+  {
+    "UE": "INFORMATIQUE",
+    "Code": "INF1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Bureautique",
+        "Credits": 3,
+        "Objectif": "Savoir utiliser la bureautique de base; Utiliser les outils internet pour la recherche documentaire"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Discipline à option",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  },
+  {
+    "UE": "MATHÉMATIQUES",
+    "Code": "MTH1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Probabilités",
+        "Credits": 3,
+        "Objectif": "Pouvoir utiliser les mathématiques pour analyser les phénomènes aléatoires"
+      }
+    ]
+  },
+  {
+    "UE": "PHYSIQUE",
+    "Code": "PHY1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Physique",
+        "Credits": 3,
+        "Objectif": "Connaître les lois de l'électrostatique et de l'électrocinétique, et comprendre le fonctionnement d'un circuit électrique"
+      }
+    ]
+  },
+  {
+    "UE": "PROJET TUTORE",
+    "Code": "PRT1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Projet professionnel en liaison avec une problématique de la",
+        "Credits": 6,
+        "Objectif": "Mettre en application les connaissances théoriques dans un cas concret, réel ou simulé"
+      }
+    ]
+  }
+]

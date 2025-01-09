@@ -2,7 +2,9 @@ package Gestion_scolaire.Dto_classe;
 
 import Gestion_scolaire.EnumClasse.Seance_type;
 import Gestion_scolaire.Models.Journee;
-import Gestion_scolaire.Models.Participant;
+import Gestion_scolaire.Teachers.dtos.TeacherDTO;
+import Gestion_scolaire.students.entity.Participant;
+import Gestion_scolaire.students.entity.StudentGroupe;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -19,6 +21,7 @@ public class Journee_DTO {
     //    private ModuleDTO idModule;
     private EmploisDTO idEmplois;
     private SallesDTO idSalle;
+    private List<StudentGroupe> groupes;
     private Participant idParticipant;
     private TeacherDTO idTeacher;
     private Seance_type seanceType;

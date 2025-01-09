@@ -1,0 +1,108 @@
+[
+  {
+    "UE": "PROJET TUTORE",
+    "Code": "PRT1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "projet tutore",
+        "Credits": 6,
+        "Objectif": "Mettre en application les connaissances théoriques dans un cas concret, réel ou simulé"
+      }
+    ]
+  },
+  {
+    "UE": "Organisation des Méthodes Administratives",
+    "Code": "OMA1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Organisation des méthodes administratives",
+        "Credits": 3,
+        "Objectif": "mettre en application les connaissances théoriques dans un cas concret, réel ou simulé"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Discipline à option",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  },
+  {
+    "UE": "INFORMATIQUE",
+    "Code": "INF1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Bureautique",
+        "Credits": 2,
+        "Objectif": "Savoir utiliser la bureautique de base; Utiliser les outils internet pour la recherche documentaire"
+      }
+    ]
+  },
+  {
+    "UE": "ECONOMIE GENERALE",
+    "Code": "ECG1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Economie Générale",
+        "Credits": 3,
+        "Objectif": "introduire l'économie générale"
+      }
+    ]
+  },
+  {
+    "UE": "ECONOMIE ET ENTREPRISE",
+    "Code": "ENT1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Economie et Organisation d'Entreprise",
+        "Credits": 3,
+        "Objectif": "EOE"
+      },
+      {
+        "ECUE": "Marketing",
+        "Credits": 3,
+        "Objectif": "formation de base en marketing"
+      }
+    ]
+  },
+  {
+    "UE": "DROIT",
+    "Code": "DRT1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Droit Administratif",
+        "Credits": 2,
+        "Objectif": "asseoir un ensemble de connaissances basiques sur les notions de droit administratif général"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Anglais technique",
+        "Credits": 3,
+        "Objectif": "Lire, écrire et comprendre des textes relatifs au machinisme agricole. S'exprimer convenablement"
+      },
+      {
+        "ECUE": "TECE",
+        "Credits": 3,
+        "Objectif": "Savoir rédiger une note de synthèse, un résumé, un compte rendu"
+      }
+    ]
+  }
+]

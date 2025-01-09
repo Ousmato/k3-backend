@@ -1,0 +1,115 @@
+[
+  {
+    "UE": "PROJET TUTORE",
+    "Code": "PRT1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Projet tutore",
+        "Credits": 6,
+        "Objectif": "Mettre en application les connaissances théoriques dans un cas concret, réel ou simulé"
+      }
+    ]
+  },
+  {
+    "UE": "ANALYSE",
+    "Code": "ANA1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Analyse",
+        "Credits": 3,
+        "Objectif": "Avoir des notions de base en analyse"
+      }
+    ]
+  },
+  {
+    "UE": "ALGEBRE",
+    "Code": "ALG1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Algèbre",
+        "Credits": 3,
+        "Objectif": "Compléter les bases d'algèbre"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Discipline à option",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  },
+  {
+    "UE": "INITIATION AUX SYSTÈMES D'EXPLOITATIONS",
+    "Code": "ISE1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Initiation aux systèmes d'exploitations",
+        "Credits": 3,
+        "Objectif": "Maîtriser les éléments suivants : environnement, commandes générales, programmation, installation d'un système d'exploitation Unix/Linux"
+      }
+    ]
+  },
+  {
+    "UE": "MAINTENANCE INFORMATIQUE",
+    "Code": "MIN1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Maintenance informatique",
+        "Credits": 3,
+        "Objectif": "Permettre aux étudiants de faire une prise en main du matériel informatique. Être capable d'installer/désinstaller des programmes systèmes ou des composants. Être capable d'identifier les pannes et éventuellement les corriger"
+      }
+    ]
+  },
+  {
+    "UE": "ARCHITECTURE DES ORDINATEURS",
+    "Code": "ARO1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Architecture des ordinateurs",
+        "Credits": 3,
+        "Objectif": "Le cours vise à montrer aux étudiants la structure physique et logique d'un ordinateur."
+      }
+    ]
+  },
+  {
+    "UE": "ALGORITHMIQUE ET PROGRAMMATION",
+    "Code": "ALP1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Algorithmique et programmation",
+        "Credits": 3,
+        "Objectif": "Maîtriser les bases de l'algorithmique, lire et écrire des algorithmes dans un pseudo langage, traduire un algorithme dans un langage informatique de haut niveau"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Anglais",
+        "Credits": 3,
+        "Objectif": "Expression écrite et orale en anglais sur des contenus simples"
+      },
+      {
+        "ECUE": "Français",
+        "Credits": 2,
+        "Objectif": "Savoir s'exprimer et rédiger des documents courants"
+      }
+    ]
+  }
+]

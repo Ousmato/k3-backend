@@ -1,7 +1,7 @@
 package Gestion_scolaire.Dto_classe;
 
 import Gestion_scolaire.Models.Jury;
-import Gestion_scolaire.Models.Teachers;
+import Gestion_scolaire.Teachers.entity.Teachers;
 import lombok.Data;
 
 @Data

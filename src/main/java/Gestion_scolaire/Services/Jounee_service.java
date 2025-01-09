@@ -2,12 +2,15 @@ package Gestion_scolaire.Services;
 
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Dto_classe.Journee_DTO;
-import Gestion_scolaire.Dto_classe.TeacherConfigJournDTO;
+import Gestion_scolaire.Teachers.dtos.TeacherConfigJournDTO;
 import Gestion_scolaire.EnumClasse.Seance_type;
 import Gestion_scolaire.Models.*;
 import Gestion_scolaire.Repositories.Emplois_repositorie;
 import Gestion_scolaire.Repositories.Journee_repositorie;
+import Gestion_scolaire.students.repositories.StudentGroup_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
+import Gestion_scolaire.students.entity.Participant;
+import Gestion_scolaire.students.entity.StudentGroupe;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -31,6 +34,9 @@ public class Jounee_service {
 
     @Autowired
     private Validator validator;
+
+    @Autowired
+    private StudentGroup_repositorie studentGroup_repositorie;
 
     @Autowired
     private Emplois_repositorie emplois_repositorie;
@@ -93,7 +99,7 @@ public class Jounee_service {
         }
 
         if (hasJour) {
-            return DTO_response_string.fromMessage("Ajout effectué avec succès", 200);
+            return DTO_response_string.fromMessage("Ajout effectué avec succès");
         } else {
             throw new NoteFundException("Une configuration existante a été trouvée");
         }
@@ -129,7 +135,9 @@ public class Jounee_service {
 
             // Convertir les séances en DTO et ajouter les pauses
             return seancesList.stream().map(seance -> {
+                List<StudentGroupe> groupes = studentGroup_repositorie.getByIdEmploiId(seance.getIdEmplois().getId());
                 Journee_DTO dto = Journee_DTO.toJourneeDTO(seance);
+                dto.setGroupes(groupes);
                 LocalTime heureDebut = seance.getHeureDebut();
                 LocalTime heureFin = seance.getHeureFin();
 
@@ -157,20 +165,22 @@ public class Jounee_service {
             }
             common_service.validateSeance(j);
 
-            List<Journee> list = journee_repositorie.findByIdEmploisId(j.getIdEmplois().getId());
-            if (!list.isEmpty()) {
-                for (Journee journee : list) {
-                    // Vérification si c'est un cours et non un examen ou une session
-                    if (!journee.getSeanceType().equals(Seance_type.examen) &&
-                            !journee.getSeanceType().equals(Seance_type.session)) {
+            Journee jExist = journee_repositorie.getJourneesByDateAndHeureFinIsAfterAndIdEmploisId(j.getDate(),j.getHeureFin(),j.getIdEmplois().getId());
+            if (jExist != null) {
+                throw new NoteFundException("Un examen ne peut pas être planifié pendant un cours.");
 
-                        // Si l'examen est au même moment qu'un cours (chevauchement d'heures)
-                        if (!(j.getHeureFin().isBefore(journee.getHeureDebut()) ||
-                                j.getHeureDebut().isAfter(journee.getHeureFin()))) {
-                            throw new NoteFundException("Un examen ne peut pas être planifié pendant un cours.");
-                        }
-                    }
-                }
+//                for (Journee journee : list) {
+//                    // Vérification si c'est un cours et non un examen ou une session
+//                    if (!journee.getSeanceType().equals(Seance_type.examen) &&
+//                            !journee.getSeanceType().equals(Seance_type.session)) {
+//
+//                        // Si l'examen est au même moment qu'un cours (chevauchement d'heures)
+//                        if (!(j.getHeureFin().isBefore(journee.getHeureDebut()) ||
+//                                j.getHeureDebut().isAfter(journee.getHeureFin()))) {
+//                            throw new NoteFundException("Un examen ne peut pas être planifié pendant un cours.");
+//                        }
+//                    }
+//                }
             }
             Journee teacherCofig = journee_repositorie.findByIdTeacherIdEnseignantAndSeanceTypeAndDate(
                     j.getIdTeacher().getIdEnseignant(),j.getSeanceType(), j.getDate());
@@ -189,7 +199,7 @@ public class Jounee_service {
         }
 
         if (hasJour) {
-            return DTO_response_string.fromMessage("Ajout effectué avec succès", 200);
+            return DTO_response_string.fromMessage("Ajout effectué avec succès");
         } else {
             throw new NoteFundException("Une configuration existante a été trouvée");
         }
@@ -215,41 +225,46 @@ public class Jounee_service {
 
             // Convertir les séances en DTO et ajouter les pauses
             journeeList.forEach(seance -> {
+                if(!seance.getSeanceType().equals(Seance_type.examen)) {
+                    TeacherConfigJournDTO dto = new TeacherConfigJournDTO();
+                    dto.setId(seance.getIdTeacher().getIdEnseignant());
+                    dto.setNom(seance.getIdTeacher().getNom());
+                    dto.setPrenom(seance.getIdTeacher().getPrenom());
+                    dto.setSalle(seance.getIdSalle().getNom());
 
-                TeacherConfigJournDTO dto = new TeacherConfigJournDTO();
-                dto.setId(seance.getIdTeacher().getIdEnseignant());
-                dto.setNom(seance.getIdTeacher().getNom());
-                dto.setPrenom(seance.getIdTeacher().getPrenom());
-                dto.setSalle(seance.getIdSalle().getNom());
+                    Participant participant = seance.getIdParticipant();
+                    if (participant == null) {
+                        dto.setGroupe(null);
+                    } else {
+                        dto.setGroupe(participant.getIdStudentGroup().getNom());
+                    }
 
-                Participant participant = seance.getIdParticipant();
-                if (participant == null) {
-                    dto.setGroupe(null);
-                } else {
-                    dto.setGroupe(participant.getIdStudentGroup().getNom());
+
+                    // Utiliser un Set pour éviter les doublons dans les types de séance
+                    Set<Seance_type> seanceTypesSet = new HashSet<>();
+
+                    // Ajouter le type de séance de la journée courante au Set
+                    seanceTypesSet.add(seance.getSeanceType());
+
+                    // Récupérer toutes les séances liées à cet enseignant pour éviter les doublons
+                    List<Journee> list = journee_repositorie.findByIdEmploisIdAndIdTeacherIdEnseignant(idEmplois, seance.getIdTeacher().getIdEnseignant());
+                    for (Journee j : list) {
+
+                        seanceTypesSet.add(j.getSeanceType());
+
+                    }
+
+                    // Ajouter les types de séances uniques au DTO
+                    dto.setSeanceType(new ArrayList<>(seanceTypesSet));
+
+                    // Ajouter le DTO au Set (évitera automatiquement les doublons)
+                    journeeConfigJournDTOSet.add(dto);
                 }
-
-                // Utiliser un Set pour éviter les doublons dans les types de séance
-                Set<Seance_type> seanceTypesSet = new HashSet<>();
-
-                // Ajouter le type de séance de la journée courante au Set
-                seanceTypesSet.add(seance.getSeanceType());
-
-                // Récupérer toutes les séances liées à cet enseignant pour éviter les doublons
-                List<Journee> list = journee_repositorie.findByIdEmploisIdAndIdTeacherIdEnseignant(idEmplois, seance.getIdTeacher().getIdEnseignant());
-                for (Journee j : list) {
-                    seanceTypesSet.add(j.getSeanceType());
-                }
-
-                // Ajouter les types de séances uniques au DTO
-                dto.setSeanceType(new ArrayList<>(seanceTypesSet));
-
-                // Ajouter le DTO au Set (évitera automatiquement les doublons)
-                journeeConfigJournDTOSet.add(dto);
             });
 
             // Retourner la liste des enseignants uniques après conversion du Set en List
             return new ArrayList<>(journeeConfigJournDTOSet);
+
         }
 
 

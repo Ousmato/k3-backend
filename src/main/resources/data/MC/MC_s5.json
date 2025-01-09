@@ -1,0 +1,109 @@
+[
+  {
+    "UE": "d'Expression et de communication",
+    "Code": "TEC3501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Conduite de réunion et présentation",
+        "Credits": 2,
+        "Objectif": "- Connaître ce qu'est un groupe de travail - Connaître les différents types de réunion - Préparer une réunion, y participer, l'animer"
+      }
+    ]
+  },
+  {
+    "UE": "Techniques d'Expression et de communication",
+    "Code": "TEC35101",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Anglais des affaires",
+        "Credits": 2,
+        "Objectif": "Former des cadres capables de: - s'exprimer correctement en Anglais en respectant les normes linguistiques, - rédiger correctement des lettres commerciales, administratives et sociales, - résumer, traduire et composer un document en Anglais"
+      }
+    ]
+  },
+  {
+    "UE": "Informatique",
+    "Code": "INF3501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Logiciels de bases de données",
+        "Credits": 2,
+        "Objectif": "Être capable de créer des tables, mettre en relation les tables et faire des requêtes avec Microsoft Access"
+      },
+      {
+        "ECUE": "Logiciels de gestion commerciale",
+        "Credits": 3,
+        "Objectif": "Être capable d'établir des devis, factures et de suivre des achats et ventes"
+      },
+      {
+        "ECUE": "Infographie",
+        "Credits": 3,
+        "Objectif": "Se familiariser avec les outils de traitement d'images."
+      }
+    ]
+  },
+  {
+    "UE": "Droit",
+    "Code": "DRT3501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Droit du travail",
+        "Credits": 2,
+        "Objectif": "1-Objectif global: Permettre aux étudiants de maîtriser l'environnement économique et juridique de l'entreprise. 2-Objectifs spécifiques: - Connaître le processus de création d'une entreprise - Être capable de faire une étude de marché"
+      },
+      {
+        "ECUE": "Droit de la publicité et de la concurrence",
+        "Credits": 2,
+        "Objectif": "Objectif général: Permettre aux étudiants de connaître les règles applicables au domaine de la publicité et de la concurrence dans un contexte d'économie de marché. 2-Objectifs spécifiques: - Acquérir des connaissances sur la notion de publicité"
+      }
+    ]
+  },
+  {
+    "UE": "Marketing",
+    "Code": "MKT3501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "E-Marketing",
+        "Credits": 2,
+        "Objectif": "Maîtriser les technologies de l'information et de la communication"
+      },
+      {
+        "ECUE": "Gestion de la force de vente",
+        "Credits": 2,
+        "Objectif": "Élaborer les forces et les faiblesses de la force de vente"
+      },
+      {
+        "ECUE": "Publicité",
+        "Credits": 3,
+        "Objectif": "- Connaître les actions publicitaires, les communications commerciales et marketing direct"
+      },
+      {
+        "ECUE": "Promotion des ventes",
+        "Credits": 2,
+        "Objectif": "Connaître les techniques de promotion des ventes et du marketing direct"
+      }
+    ]
+  },
+  {
+    "UE": "Management",
+    "Code": "MGT3501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Management commercial",
+        "Credits": 2,
+        "Objectif": "Savoir amener son équipe au maximum de ses possibilités"
+      },
+      {
+        "ECUE": "MaCréa - Gestion de projet - Business plan",
+        "Credits": 3,
+        "Objectif": "Maîtriser les stratégies pour la création d'une entreprise"
+      }
+    ]
+  }
+]

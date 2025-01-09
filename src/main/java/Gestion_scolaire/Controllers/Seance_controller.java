@@ -4,6 +4,7 @@ import Gestion_scolaire.Dto_classe.*;
 import Gestion_scolaire.Models.Journee;
 import Gestion_scolaire.Services.Common_service;
 import Gestion_scolaire.Services.Jounee_service;
+import Gestion_scolaire.Teachers.dtos.TeacherConfigJournDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;

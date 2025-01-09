@@ -1,18 +1,14 @@
 package Gestion_scolaire.configuration.SecurityConfigs;
 
-import Gestion_scolaire.Models.Admin;
-import Gestion_scolaire.Models.RefreshToken;
-import Gestion_scolaire.Services.Admin_service;
+import Gestion_scolaire.Administrators.services.Admin_service;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.time.LocalTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;

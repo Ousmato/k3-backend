@@ -2,6 +2,7 @@ package Gestion_scolaire.configuration.GestionException;
 
 import Gestion_scolaire.configuration.NoteFundException;
 import io.jsonwebtoken.JwtException;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -12,6 +13,7 @@ import org.springframework.web.context.request.WebRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestControllerAdvice
@@ -45,7 +47,7 @@ public class GlobalExceptionHandler {
         );
     }
 
-//    -----------------------------------------------------------------------------
+    //    -----------------------------------------------------------------------------
     @ExceptionHandler(Exception.class)
     public ApiErrorResponse handleGenericException(Exception ex, WebRequest request) {
         return new ApiErrorResponse(
@@ -67,4 +69,6 @@ public class GlobalExceptionHandler {
 
         );
     }
+
+
 }

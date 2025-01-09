@@ -16,6 +16,9 @@ public interface AnneeScolaire_repositorie extends JpaRepository<AnneeScolaire, 
 
     AnneeScolaire findById(long id);
 
+    @Query("select a from AnneeScolaire a where :currentDate BETWEEN a.debutAnnee and a.finAnnee")
+    AnneeScolaire findCurrentYear(@Param("currentDate") LocalDate currentDate);
+
     @Query("SELECT a FROM AnneeScolaire a WHERE (:debutAnnee < a.finAnnee AND :finAnnee > a.debutAnnee)")
     List<AnneeScolaire> findOverlappingYears(@Param("debutAnnee") LocalDate debutAnnee, @Param("finAnnee") LocalDate finAnnee);
 

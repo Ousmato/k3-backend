@@ -1,0 +1,115 @@
+[
+  {
+    "UE": "ASSAINISSEMENT",
+    "Code": "ASS1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Bassin hydrographique",
+        "Credits": 6,
+        "Objectif": "Pouvoir participer à des études et réalisations dans le domaine de l'assainissement"
+      }
+    ]
+  },
+  {
+    "UE": "BASSIN HYDROGRAPHIQUE",
+    "Code": "BHY1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Bassin hydrographique",
+        "Credits": 6,
+        "Objectif": "Pouvoir participer à des études et réalisations à l'échelle d'un bassin hydrographique"
+      }
+    ]
+  },
+  {
+    "UE": "ELECTRICITE RENOUVELABLE",
+    "Code": "ELR1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Electricité renouvelable",
+        "Credits": 6,
+        "Objectif": "Pouvoir participer à l'étude et à la réalisation d'installations énergétiques renouvelables"
+      }
+    ]
+  },
+  {
+    "UE": "CHALEUR RENOUVELABLE",
+    "Code": "CRE1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Chaleur Renouvelable",
+        "Credits": 6,
+        "Objectif": "Pouvoir participer à l'étude et à la réalisation d'équipements thermiques"
+      }
+    ]
+  },
+  {
+    "UE": "STAGE ET RECHERCHE D'EMPLOI",
+    "Code": "SRE1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Stage et recherche d'emploi",
+        "Credits": 3,
+        "Objectif": "Préparer le stage et connaître des techniques utiles pour la recherche d'emploi"
+      }
+    ]
+  },
+  {
+    "UE": "PROJET TUTORE",
+    "Code": "PRT1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Projet tutore",
+        "Credits": 5,
+        "Objectif": "Mettre en application les connaissances théoriques dans un cas concret, réel ou simulé"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "UE Libre",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  },
+  {
+    "UE": "DEVELOPPEMENT DURABLE",
+    "Code": "DED1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Développement durable",
+        "Credits": 4,
+        "Objectif": "Apporter des connaissances et réflexions sur le développement durable et les enjeux planétaires"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Français",
+        "Credits": 2,
+        "Objectif": "Savoir rédiger une note de synthèse, un résumé, un compte rendu"
+      },
+      {
+        "ECUE": "Anglais",
+        "Credits": 3,
+        "Objectif": "Expression écrite et orale en anglais sur des contenus simples"
+      }
+    ]
+  }
+]

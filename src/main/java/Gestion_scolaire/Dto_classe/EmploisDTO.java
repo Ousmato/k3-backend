@@ -1,11 +1,12 @@
 package Gestion_scolaire.Dto_classe;
 
+import Gestion_scolaire.Classes.dtos.ClasseDTO;
+import Gestion_scolaire.Classes.dtos.ModuleDTO;
 import Gestion_scolaire.Models.Emplois;
 import Gestion_scolaire.Models.Semestres;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Data
 public class EmploisDTO {

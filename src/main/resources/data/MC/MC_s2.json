@@ -1,0 +1,132 @@
+[
+  {
+    "UE": "Droit",
+    "Code": "DRT1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Droit des contrats et de la consommation",
+        "Credits": 2,
+        "Objectif": "Savoir protéger le consommateur et l'acheteur lors de l'exécution des contrats"
+      }
+    ]
+  },
+  {
+    "UE": "Comptabilité",
+    "Code": "CPT1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Comptabilité de gestion",
+        "Credits": 2,
+        "Objectif": "Répondre aux besoins des décideurs en déterminant des coûts et des résultats par produits ou services"
+      }
+    ]
+  },
+  {
+    "UE": "Marketing",
+    "Code": "MKT1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Marketing opérationnel",
+        "Credits": 2,
+        "Objectif": "Maîtriser la politique : - du produit - du prix - de la communication - de la distribution - de la promotion - de la position"
+      },
+      {
+        "ECUE": "Outils marketing",
+        "Credits": 3,
+        "Objectif": "Maîtriser les outils de marketing"
+      },
+      {
+        "ECUE": "Marketing de service",
+        "Credits": 3,
+        "Objectif": "Attirer une communauté autour de votre produit - Augmenter le chiffre d'affaires - Augmenter la notoriété de la marque ou d'un service - Fidéliser des segments de clientèle"
+      }
+    ]
+  },
+  {
+    "UE": "Informatique",
+    "Code": "INF1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Logiciels de gestion",
+        "Credits": 2,
+        "Objectif": "- Modéliser et simuler une situation de gestion"
+      }
+    ]
+  },
+  {
+    "UE": "Sociologie",
+    "Code": "SOC1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Interculturalité sociale",
+        "Credits": 2,
+        "Objectif": "Connaître les cultures institutionnelles d'entreprise, de service, et bureaucratique, économique et juridique"
+      }
+    ]
+  },
+  {
+    "UE": "Techniques d'Expression et de communication",
+    "Code": "TEC1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Anglais des Affaires",
+        "Credits": 2,
+        "Objectif": "Former des cadres capables de: - s'exprimer correctement en Anglais en respectant les normes linguistiques, - rédiger correctement des lettres commerciales, administratives et sociales, - résumer, traduire et composer un document en Anglais, - participer aux discussions"
+      }
+    ]
+  },
+  {
+    "UE": "Mathématiques",
+    "Code": "MHT1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Statistiques et probabilités",
+        "Credits": 2,
+        "Objectif": "Maîtriser les outils statistiques et probabilistes : Test de KHI-DEUX, l'ajustement linéaire, les séries chronologiques, expérience et l'écart type d'une variable aléatoire discrète"
+      }
+    ]
+  },
+  {
+    "UE": "Informatique",
+    "Code": "INF1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Informatique et NTIC",
+        "Credits": 2,
+        "Objectif": "Utiliser les outils bureautiques pour le traitement de texte, de calcul et de présentation. Se familiariser avec les sites de e-commerce."
+      }
+    ]
+  },
+  {
+    "UE": "Projet tutoré",
+    "Code": "PRT1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Projet tutoré",
+        "Credits": 6,
+        "Objectif": "Projet tutoré"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Unité libre",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  }
+]

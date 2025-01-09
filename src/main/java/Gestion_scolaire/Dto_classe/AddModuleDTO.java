@@ -1,7 +1,7 @@
 package Gestion_scolaire.Dto_classe;
 
-import Gestion_scolaire.Models.Modules;
-import Gestion_scolaire.Models.UE;
+import Gestion_scolaire.Classes.entity.Modules;
+import Gestion_scolaire.Classes.entity.UE;
 import lombok.Data;
 
 import java.util.List;

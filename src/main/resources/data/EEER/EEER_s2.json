@@ -1,0 +1,163 @@
+[
+  {
+    "UE": "INGENIERIE ENERGETIQUE",
+    "Code": "INE1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Ingénierie Energétique",
+        "Credits": 2,
+        "Objectif": "Développer la culture énergétique et environnementale sous ses aspects historiques, géophysiques, et aussi relatifs à l'évaluation de la ressource EnR"
+      }
+    ]
+  },
+  {
+    "UE": "FONDAMENTAUX EN ENERGIE",
+    "Code": "FEN1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Fondamentaux en Energie",
+        "Credits": 2,
+        "Objectif": "Acquérir les compétences de base en thermodynamique, thermique, mécanique des fluides, matériaux"
+      }
+    ]
+  },
+  {
+    "UE": "ELECTRICITE",
+    "Code": "ELE1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Electricité",
+        "Credits": 2,
+        "Objectif": "Acquérir les notions de base en électricité"
+      }
+    ]
+  },
+  {
+    "UE": "CHIMIE DES SOLUTIONS ACQUEUSES",
+    "Code": "CSA1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Chimie des solutions acqueuses",
+        "Credits": 2,
+        "Objectif": "Acquérir les techniques d'analyse chimique et de dosage"
+      }
+    ]
+  },
+  {
+    "UE": "HYDROGEOLOGIE",
+    "Code": "HGE1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Hydrogéologie",
+        "Credits": 2,
+        "Objectif": "Pouvoir quantifier et qualifier les ressources en eau souterraines"
+      }
+    ]
+  },
+  {
+    "UE": "HYDROLOGIE",
+    "Code": "HYD1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Hydrologie",
+        "Credits": 2,
+        "Objectif": "Pouvoir quantifier et qualifier les ressources en eau de surface"
+      }
+    ]
+  },
+  {
+    "UE": "HYDRAULIQUE GENERALE",
+    "Code": "HYG1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Hydraulique générale",
+        "Credits": 2,
+        "Objectif": "Pouvoir déterminer les pressions et les forces de pression sur une surface"
+      }
+    ]
+  },
+  {
+    "UE": "MECANIQUE ET ENERGIE",
+    "Code": "MEN1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Mécanique et énergie",
+        "Credits": 2,
+        "Objectif": "Compléter la formation en physique de base"
+      }
+    ]
+  },
+  {
+    "UE": "MATHÉMATIQUES",
+    "Code": "MTH1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Mathématiques",
+        "Credits": 2,
+        "Objectif": "Connaître les mathématiques utiles en sciences physiques"
+      }
+    ]
+  },
+  {
+    "UE": "GEOMATIQUE ET TOPOGRAPHIE",
+    "Code": "GTO1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Géomatique et topographie",
+        "Credits": 2,
+        "Objectif": "Pouvoir utiliser un logiciel de SIG et participer à des études topographiques"
+      }
+    ]
+  },
+  {
+    "UE": "PROJET TUTORE",
+    "Code": "PRT1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Projet tutore",
+        "Credits": 5,
+        "Objectif": "Mettre en application les connaissances théoriques dans un cas concret, réel ou simulé"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Discipline à option",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Français",
+        "Credits": 2,
+        "Objectif": "Savoir rédiger une note de synthèse, un résumé, un compte rendu"
+      },
+      {
+        "ECUE": "Anglais",
+        "Credits": 2,
+        "Objectif": "Expression écrite et orale en anglais sur des contenus simples"
+      }
+    ]
+  }
+]

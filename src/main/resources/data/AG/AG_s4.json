@@ -1,0 +1,87 @@
+[
+  {
+    "UE": "STAGE TECHNICIEN",
+    "Code": "STA1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Mission",
+        "Credits": 4,
+        "Objectif": "Réaliser une mission dans un environnement professionnel"
+      },
+      {
+        "ECUE": "Soutenance",
+        "Credits": 4,
+        "Objectif": "Savoir exposer un compte rendu d'activité"
+      },
+      {
+        "ECUE": "Rapport",
+        "Credits": 4,
+        "Objectif": "Savoir rédiger un rapport professionnel"
+      }
+    ]
+  },
+  {
+    "UE": "PROJET TUTORE",
+    "Code": "PRT1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Projet tutoré",
+        "Credits": 6,
+        "Objectif": "Mettre en application les connaissances théoriques dans un cas concret, réel ou simulé"
+      }
+    ]
+  },
+  {
+    "UE": "UNITE LIBRE",
+    "Code": "LIB1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Discipline à option",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  },
+  {
+    "UE": "ECONOMIE ET ENTREPRISE",
+    "Code": "ENT1201",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Communication",
+        "Credits": 2,
+        "Objectif": "Approfondir divers aspects de l'entreprise"
+      },
+      {
+        "ECUE": "Organisation Administrative",
+        "Credits": 2,
+        "Objectif": "Approfondir divers aspects de l'entreprise"
+      },
+      {
+        "ECUE": "GRH",
+        "Credits": 2,
+        "Objectif": "Pouvoir assister le responsable dans les actions de recrutement et de suivi du personnel"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Anglais technique",
+        "Credits": 3,
+        "Objectif": "Lire, écrire et comprendre des textes relatifs au machinisme agricole. S'exprimer convenablement"
+      },
+      {
+        "ECUE": "TECE",
+        "Credits": 2,
+        "Objectif": "Poursuite de la formation en français et techniques d'expression"
+      }
+    ]
+  }
+]

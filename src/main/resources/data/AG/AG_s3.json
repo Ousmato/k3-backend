@@ -1,0 +1,125 @@
+[
+  {
+    "UE": "PROJET TUTORE",
+    "Code": "PRT1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Project tutore",
+        "Credits": 6,
+        "Objectif": "Mettre en application les connaissances théoriques dans un cas concret, réel ou simulé"
+      }
+    ]
+  },
+  {
+    "UE": "DROIT DU TRAVAIL",
+    "Code": "DRT1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Droit du travail",
+        "Credits": 2,
+        "Objectif": "Connaitre les règles et l'organisation d'un service dans une entreprise ou une administration"
+      }
+    ]
+  },
+  {
+    "UE": "Organisation des Méthodes Administratives",
+    "Code": "OMA1201",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Organisation des méthodes administratives",
+        "Credits": 3,
+        "Objectif": "Connaître les règles et l'organisation d'un service dans une entreprise ou une administration, connaissances théoriques dans un cas concret, réel ou simulé"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Discipline à option",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  },
+  {
+    "UE": "INFORMATIQUE",
+    "Code": "INF1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Bureautique",
+        "Credits": 3,
+        "Objectif": "Compléter la formation en bureautique"
+      }
+    ]
+  },
+  {
+    "UE": "Méthode d'aide à la décision",
+    "Code": "MAD1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Comptabilité Analytique",
+        "Credits": 1,
+        "Objectif": "Pouvoir participer aux études statistiques"
+      },
+      {
+        "ECUE": "Statistiques",
+        "Credits": 2,
+        "Objectif": "Pouvoir participer aux études statistiques"
+      }
+    ]
+  },
+  {
+    "UE": "GESTION DES RESSOURCES HUMAINES",
+    "Code": "GRH1101",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Relation humaine",
+        "Credits": 2,
+        "Objectif": "Approfondir les différents aspects de la gestion des ressources humaines"
+      }
+    ]
+  },
+  {
+    "UE": "ECONOMIE ET ENTREPRISE",
+    "Code": "ENT1201",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Organisation",
+        "Credits": 2,
+        "Objectif": "Connaître les différents aspects de la gestion d'une entreprise"
+      },
+      {
+        "ECUE": "Marketing",
+        "Credits": 2,
+        "Objectif": "Maitriser les différentes techniques d'innovation dans la gestion d'une entreprise"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC1201",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Anglais technique",
+        "Credits": 3,
+        "Objectif": "Lire, écrire et comprendre des textes relatifs au machinisme agricole. S'exprimer convenablement"
+      },
+      {
+        "ECUE": "TECE",
+        "Credits": 3,
+        "Objectif": "Savoir rédiger une note de synthèse, un résumé, un compte rendu"
+      }
+    ]
+  }
+]

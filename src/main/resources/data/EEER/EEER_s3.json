@@ -1,0 +1,125 @@
+[
+  {
+    "UE": "ENERGIE THERMIQUE",
+    "Code": "ETH1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Regulation",
+        "Credits": 3,
+        "Objectif": "Compléter la formation en électronique et automatique"
+      },
+      {
+        "ECUE": "Thermique",
+        "Credits": 3,
+        "Objectif": "Compléter la formation en thermique"
+      }
+    ]
+  },
+  {
+    "UE": "ENERGIE SOLAIRE ET PHOTO VOLTAIQUE",
+    "Code": "ESP1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Energie solaire",
+        "Credits": 4,
+        "Objectif": "Pouvoir participer à l'étude et à la mise en place d'un équipement photovoltaïque ou thermique"
+      },
+      {
+        "ECUE": "Généralités",
+        "Credits": 2,
+        "Objectif": "Présenter à un large public la problématique des énergies renouvelables"
+      }
+    ]
+  },
+  {
+    "UE": "GESTION DE L'EAU",
+    "Code": "GEE1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Gestion de l'eau",
+        "Credits": 2,
+        "Objectif": "Connaître les principes de gestion de l'eau dans différentes situations"
+      }
+    ]
+  },
+  {
+    "UE": "CHIMIE ANALYTIQUE",
+    "Code": "CHA1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Chimie Analytique",
+        "Credits": 2,
+        "Objectif": "Dosage des éléments chimiques pertinents dans l'eau et le sol"
+      }
+    ]
+  },
+  {
+    "UE": "AMENAGEMENTS ET OUVRAGES HYDROTECHNIQUES",
+    "Code": "AOH1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Aménagements et ouvrages hydrotechniques",
+        "Credits": 2,
+        "Objectif": "Contribuer à la production d'expertise dans les aménagements hydrauliques"
+      }
+    ]
+  },
+  {
+    "UE": "CONCEPTION ASSISTEE PAR ORDINATEUR",
+    "Code": "CAO1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Conception assistée par ordinateur",
+        "Credits": 2,
+        "Objectif": "Savoir utiliser un logiciel de CAO pour des projets simples"
+      }
+    ]
+  },
+  {
+    "UE": "PROJET TUTORE",
+    "Code": "PRT1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Projet tutore",
+        "Credits": 5,
+        "Objectif": "Mettre en application les connaissances théoriques dans un cas concret, réel ou simulé"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "UE Libre",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Français",
+        "Credits": 2,
+        "Objectif": "Savoir rédiger une note de synthèse, un résumé, un compte rendu"
+      },
+      {
+        "ECUE": "Anglais",
+        "Credits": 2,
+        "Objectif": "Expression écrite et orale en anglais sur des contenus simples"
+      }
+    ]
+  }
+]

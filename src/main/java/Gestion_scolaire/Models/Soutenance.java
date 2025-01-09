@@ -1,7 +1,8 @@
 package Gestion_scolaire.Models;
 
+import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.students.entity.StudentDoc;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 

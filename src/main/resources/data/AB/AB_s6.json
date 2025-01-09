@@ -1,0 +1,14 @@
+[
+  {
+    "UE": "Projet de Fin d'Etudes",
+    "Code": "PFE1601",
+    "Semestre": "S6",
+    "Modules": [
+      {
+        "ECUE": "Projet de Fin d'Etudes",
+        "Credits": 30,
+        "Objectif": "Trouver un lieu de stage, mener des recherches, rédiger un mémoire puis le soutenir"
+      }
+    ]
+  }
+]

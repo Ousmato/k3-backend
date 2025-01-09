@@ -19,16 +19,16 @@ public class Semestres {
     @NotBlank(message = "Le champ ne doit pas être nul ou vide.\n")
     private String nomSemetre;
 
+//
+//    @NotNull(message = "Le champ ne doit pas être nul ou vide.\n")
+//    private LocalDate dateDebut;
+//
+//
+//    @NotNull(message = "Le champ ne doit pas être nul ou vide.\n")
+//    private LocalDate datFin;
 
-    @NotNull(message = "Le champ ne doit pas être nul ou vide.\n")
-    private LocalDate dateDebut;
-
-
-    @NotNull(message = "Le champ ne doit pas être nul ou vide.\n")
-    private LocalDate datFin;
-
-    @NotNull
-    @ManyToOne
-    private AnneeScolaire idAnneeScolaire;
+//    @NotNull
+//    @ManyToOne
+//    private AnneeScolaire idAnneeScolaire;
 
 }

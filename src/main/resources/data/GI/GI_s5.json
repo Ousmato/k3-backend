@@ -1,0 +1,233 @@
+[
+  {
+    "UE": "CREATION DE SITE WEB",
+    "Code": "CSW1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Initiation à la création de site web",
+        "Credits": 4,
+        "Objectif": "Savoir concevoir des maquettes de site web, mettre en œuvre les théories de l'IHM, créer des pages web, déployer le site"
+      },
+      {
+        "ECUE": "Conception avancée de site web",
+        "Credits": 2,
+        "Objectif": "Approfondir la conception de site web"
+      }
+    ]
+  },
+  {
+    "UE": "BASES DE DONNEES",
+    "Code": "BAD1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Bases de données avancées",
+        "Credits": 4,
+        "Objectif": "Savoir configurer et administrer un système de base de données, savoir expliquer la gestion des transactions"
+      }
+    ]
+  },
+  {
+    "UE": "ADMINISTRATION S DE RESEAUX INFORMATIQUE",
+    "Code": "ARI1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Administrations de réseaux informatiques",
+        "Credits": 4,
+        "Objectif": "Être capable de mettre en place un réseau informatique et configurer et administrer un réseau informatique"
+      }
+    ]
+  },
+  {
+    "UE": "ALGORITHMIQUE ET COMPLEXITE",
+    "Code": "ALC1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Initiation à la création de site web",
+        "Credits": 3,
+        "Objectif": "Être capable d'analyser la complexité d'un algorithme"
+      }
+    ]
+  },
+  {
+    "UE": "SYSTÈME D'INFORMATION ET BASES DE DONNEES",
+    "Code": "SBD1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "SI et Base de données",
+        "Credits": 2,
+        "Objectif": "Maîtriser systèmes d'information et bases de données"
+      }
+    ]
+  },
+  {
+    "UE": "GENIE LOGICIEL",
+    "Code": "GLO1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Génie Logiciel",
+        "Credits": 2,
+        "Objectif": "Approfondir le génie logiciel"
+      }
+    ]
+  },
+  {
+    "UE": "PROGRAMMATION ORIENTE OBJET",
+    "Code": "POO1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Java avancée",
+        "Credits": 3,
+        "Objectif": "Maîtriser la programmation générique, les flux et les fichiers, la programmation répartie (sockets, RMI)"
+      }
+    ]
+  },
+  {
+    "UE": "ARCHITECTURE MATERIELLE ET LOGICIELLE",
+    "Code": "AML1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Architecture Matérielle et logicielle",
+        "Credits": 3,
+        "Objectif": "Approfondir les connaissances en architecture matérielle et logicielle"
+      }
+    ]
+  },
+  {
+    "UE": "ADMINISTRATION DE SYSTEMES D'EXPLOITATION",
+    "Code": "ASE1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Administration de systèmes d'exploitation",
+        "Credits": 3,
+        "Objectif": "Administration de systèmes d'exploitation"
+      }
+    ]
+  },
+  {
+    "UE": "ELECTRONIQUE",
+    "Code": "ELC1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Administration de systèmes d'exploitation",
+        "Credits": 3,
+        "Objectif": "Avoir des notions d'électronique"
+      }
+    ]
+  },
+  {
+    "UE": "MAINTENANCE INFORMATIQUE",
+    "Code": "MIN1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Maintenance des ordinateurs",
+        "Credits": 3,
+        "Objectif": "Pouvoir assurer la maintenance des ordinateurs, être capable d'installer/désinstaller des programmes systèmes ou des composants, être capable d'identifier les pannes et éventuellement les corriger"
+      }
+    ]
+  },
+  {
+    "UE": "PROGRAMMATION",
+    "Code": "POG1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Programmation en C",
+        "Credits": 2,
+        "Objectif": "Complément au choix (1 ECUE sur 2)"
+      },
+      {
+        "ECUE": "Programmation en C++",
+        "Credits": 2,
+        "Objectif": "Complément de formation"
+      }
+    ]
+  },
+  {
+    "UE": "STAGE ET RECHERCHE D'EMPLOI",
+    "Code": "SRE1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Recherche d'emploi",
+        "Credits": 3,
+        "Objectif": "Préparer le stage et connaître des techniques utiles pour la recherche d'emploi"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Français",
+        "Credits": 1,
+        "Objectif": "Avec cette dernière UE, l'étudiant doit valider le niveau B1 de FLE"
+      },
+      {
+        "ECUE": "Anglais",
+        "Credits": 1,
+        "Objectif": "L'étudiant sait lire des textes généraux ou techniques en anglais et s'exprimer sur des sujets simples"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Discipline à option",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  },
+  {
+    "UE": "TRAITEMENT DU SIGNAL",
+    "Code": "TRS1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Traitement du signal",
+        "Credits": 2,
+        "Objectif": "Complément au choix (1 ECUE sur 2)"
+      }
+    ]
+  },
+  {
+    "UE": "SYSTÈMES D'EXPLOITATION",
+    "Code": "SYE1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Système d'exploitation",
+        "Credits": 2,
+        "Objectif": "Expliquer les principes de fonctionnement d'un système d'exploitation"
+      }
+    ]
+  },
+  {
+    "UE": "PROJET TUTORE",
+    "Code": "PRT1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Projet tutore",
+        "Credits": 4,
+        "Objectif": "Mettre en application les connaissances théoriques dans un cas concret, réel ou simulé"
+      }
+    ]
+  }
+]

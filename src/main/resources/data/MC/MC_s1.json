@@ -1,0 +1,127 @@
+[
+  {
+    "UE": "Technique d'Expression et de Communication",
+    "Code": "TEC1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Technique d'expression et de communication",
+        "Credits": 4,
+        "Objectif": "- Savoir rédiger - Savoir mettre en page un document - Savoir rédiger un résumé et une synthèse - Savoir rédiger les compte-rendus et des rapports - Savoir prendre la parole en public : l'exposé"
+      },
+      {
+        "ECUE": "Anglais des affaires",
+        "Credits": 4,
+        "Objectif": "Former des cadres capables de: - s'exprimer correctement en Anglais en respectant les normes linguistiques, - rédiger correctement des lettres commerciales, administratives et sociales, - résumer, traduire et composer un document en Anglais"
+      }
+    ]
+  },
+  {
+    "UE": "Economie",
+    "Code": "ECO1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Economie Politique",
+        "Credits": 3,
+        "Objectif": "Savoir les principaux agrégats économiques - Connaître le comportement micro du consommateur et du producteur"
+      }
+    ]
+  },
+  {
+    "UE": "Sciences de gestion",
+    "Code": "GES1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Organisation des entreprises",
+        "Credits": 3,
+        "Objectif": "Connaître les principales fonctions et activités de l'entreprise"
+      }
+    ]
+  },
+  {
+    "UE": "Droit",
+    "Code": "DRT1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Introduction au droit",
+        "Credits": 2,
+        "Objectif": "1- Objectif global : Le cours d'Introduction au Droit doit permettre aux apprenants d'acquérir des notions fondamentales et générales sur le Droit. 2- Objectifs spécifiques : A l'issue de ce cours, les apprenants doivent être capables de : définir les concepts juridiques."
+      }
+    ]
+  },
+  {
+    "UE": "Mathématiques",
+    "Code": "MTH1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Mathématique générale",
+        "Credits": 3,
+        "Objectif": "L'étudiant doit être capable de: - Faire le calcul dans R. Donner aux étudiants les outils mathématiques nécessaires à la bonne compréhension des enseignements dans les disciplines des statistiques."
+      }
+    ]
+  },
+  {
+    "UE": "Marketing",
+    "Code": "MKT1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Marketing et études",
+        "Credits": 3,
+        "Objectif": "Savoir faire une préparation d'une étude de marché"
+      }
+    ]
+  },
+  {
+    "UE": "Mathématiques",
+    "Code": "MTH1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Statistiques",
+        "Credits": 3,
+        "Objectif": "Savoir calculer les pourcentages et les taux de variation - Maîtriser l'étude de fonction"
+      }
+    ]
+  },
+  {
+    "UE": "Comptabilité",
+    "Code": "CPT1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Introduction à la Comptabilité",
+        "Credits": 2,
+        "Objectif": "L'étudiant doit être capable d'élaborer et de faire la lecture des documents de synthèse"
+      }
+    ]
+  },
+  {
+    "UE": "Psychologie",
+    "Code": "PSY1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Psychologie sociale de la communication",
+        "Credits": 2,
+        "Objectif": "Comprendre et savoir utiliser les situations qui produisent des changements d'attitude"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Unité libre",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  }
+]

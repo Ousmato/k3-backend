@@ -1,6 +1,8 @@
 package Gestion_scolaire.Services;
 
+import Gestion_scolaire.Classes.services.JsonDataService;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
+import Gestion_scolaire.Dto_classe.SallesDTO;
 import Gestion_scolaire.Models.Salles;
 import Gestion_scolaire.Repositories.Salles_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
@@ -20,6 +22,9 @@ public class Salles_service {
 
     @Autowired
     private Common_service common_service;
+
+    @Autowired
+    private JsonDataService jsonDataService;
     
 //    -------------------------liste des salles
     public List<Salles> getAllSalles_non_occuper() {
@@ -43,9 +48,24 @@ public class Salles_service {
             
         }
         sallesRepositorie.save(salles);
-        return DTO_response_string.fromMessage("Ajout effectué avec succès", 200);
+        return DTO_response_string.fromMessage("Ajout effectué avec succès");
     }
 //    ----------------------------------------get all salles
+
+    public List<Salles> addSallesAutomatique(){
+        List<Salles> sallesList = getAllSalles();
+        if (sallesList.isEmpty()) {
+            for (SallesDTO dtoJson : jsonDataService.readSalles()){
+                Salles salles = new Salles();
+                salles.setNom(dtoJson.getNom());
+                salles.setNombrePlace(dtoJson.getNombrePlaces());
+                sallesRepositorie.save(salles);
+            }
+            return getAllSalles();
+
+        }
+        return sallesList;
+    }
     public List<Salles> getAllSalles() {
         List<Salles> sallesList = sallesRepositorie.findAll();
 

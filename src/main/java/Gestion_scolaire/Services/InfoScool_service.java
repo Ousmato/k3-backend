@@ -1,9 +1,12 @@
 package Gestion_scolaire.Services;
 
+import Gestion_scolaire.Administrators.repositories.AdminRepositorie;
+import Gestion_scolaire.Classes.repositories.Classe_repositorie;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Models.*;
 import Gestion_scolaire.Repositories.*;
 import Gestion_scolaire.configuration.NoteFundException;
+import Gestion_scolaire.students.entity.StudentsClasse;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -86,7 +89,7 @@ public class InfoScool_service {
 
             // Enregistrer l'entité mise à jour dans le repository
              infoSchool_repositorie.save(infExist);
-             return DTO_response_string.fromMessage("Mise à effectuée avec succès",200);
+             return DTO_response_string.fromMessage("Mise à effectuée avec succès");
         }
 
         // Si l'entité n'existe pas, lever une exception
@@ -117,8 +120,12 @@ public class InfoScool_service {
 
         // Vérification que la période est inférieure ou égale à 1 an
         Period period = Period.between(anneeScolaire.getDebutAnnee(), anneeScolaire.getFinAnnee());
-        if (period.getYears() > 1 || (period.getYears() == 1 && (period.getMonths() > 0 || period.getDays() > 0))) {
-            throw new NoteFundException("L'année scolaire doit être inférieure ou égale à 1 an.");
+        if (period.getYears() < 1 || (period.getYears() == 1 && period.getMonths() == 0 && period.getDays() == 0)) {
+            throw new NoteFundException("L'année scolaire doit être d'au moins 1 an.");
+        }
+
+        if (period.getYears() > 1 || period.getMonths() > 6 || period.getMonths() == 6 && period.getDays() > 0) {
+            throw new NoteFundException("L'année scolaire ne peut pas dépasser 1 an et 6 mois.");
         }
 
         // Sauvegarder l'année scolaire si toutes les validations passent
@@ -154,7 +161,7 @@ public class InfoScool_service {
                 annee.setFinAnnee(anneeScolaire.getFinAnnee());
                 annee.setDebutAnnee(anneeScolaire.getDebutAnnee());
                 anneeScolaire_repositorie.save(annee);
-                return DTO_response_string.fromMessage("Mise à jours effectué avec succès",200);
+                return DTO_response_string.fromMessage("Mise à jours effectué avec succès");
             }else {
                 throw new NoteFundException("L'année scolaire doit être inférieure ou égale à 1 an.");
             }
@@ -178,7 +185,7 @@ public class InfoScool_service {
                 throw new NoteFundException("Impossible de supprimer la promotion  " +annee.getFinAnnee().getYear() + "  des classes sont associé ");
             }
             anneeScolaire_repositorie.delete(annee);
-            return DTO_response_string.fromMessage("Suppression effectué avec succès",200);
+            return DTO_response_string.fromMessage("Suppression effectué avec succès");
         }
         throw new NoteFundException("L'année scolaire n'existe pas");
     }

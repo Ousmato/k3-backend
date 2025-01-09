@@ -1,0 +1,96 @@
+[
+  {
+    "UE": "PROJET TUTORE",
+    "Code": "PRT1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Projet tutore",
+        "Credits": 6,
+        "Objectif": "Mettre en application les connaissances théoriques dans un cas concret, réel ou simulé"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Ue Libre",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  },
+  {
+    "UE": "COMPTABILITE ANALYTIQUE",
+    "Code": "ANA1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Comptabilité analytique",
+        "Credits": 4,
+        "Objectif": "Enregistrer les opérations relatives à la constitution, à l'affectation du résultat, modification du capital; être capable de : distinguer les avantages et les inconvénients de chaque méthode des coûts partiels, comprendre le comportement des charges fixes"
+      }
+    ]
+  },
+  {
+    "UE": "ECONOMIE ET ENTREPRISE",
+    "Code": "ENT1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Contrôle interne et Audit",
+        "Credits": 3,
+        "Objectif": "Maîtriser le contrôle interne et ses objectifs, connaître la démarche méthodologique générale de l'audit"
+      },
+      {
+        "ECUE": "Comptabilité générale",
+        "Credits": 3,
+        "Objectif": "Maîtriser les opérations de fin d'exercice jusqu'à l'établissement des états"
+      }
+    ]
+  },
+  {
+    "UE": "COMPTABILITE DES SOCIETES",
+    "Code": "COS1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Comptabilité des sociétés",
+        "Credits": 4,
+        "Objectif": "Enregistrer les opérations relatives à la constitution, à l'affectation du résultat, modification du capital; dissolution et fusion, comprendre les règles relatives aux choix d'un type de société."
+      }
+    ]
+  },
+  {
+    "UE": "DROIT",
+    "Code": "DRT1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Droit des sociétés",
+        "Credits": 3,
+        "Objectif": "Connaître les bases du droit des sociétés"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC1301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Français",
+        "Credits": 3,
+        "Objectif": "Suite de la formation étalée sur 5 semestres"
+      },
+      {
+        "ECUE": "Anglais",
+        "Credits": 4,
+        "Objectif": "Suite de la formation étalée sur 5 semestres"
+      }
+    ]
+  }
+]

@@ -1,0 +1,96 @@
+[
+  {
+    "UE": "MISSION",
+    "Code": "MIS1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Mission",
+        "Credits": 4,
+        "Objectif": "Réaliser une mission dans un environnement professionnel"
+      }
+    ]
+  },
+  {
+    "UE": "SOUTENANCE",
+    "Code": "SOU1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Soutenance",
+        "Credits": 4,
+        "Objectif": "Savoir exposer un compte rendu d'activité"
+      }
+    ]
+  },
+  {
+    "UE": "RAPPORT",
+    "Code": "RAP1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Rapport",
+        "Credits": 4,
+        "Objectif": "Savoir rédiger un rapport professionnel"
+      }
+    ]
+  },
+  {
+    "UE": "PROJET TUTORE",
+    "Code": "PRT1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Projet tutore",
+        "Credits": 6,
+        "Objectif": "Mettre en application les connaissances théoriques dans un cas concret, réel ou simulé"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Ue Libre",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  },
+  {
+    "UE": "ECONOMIE ET ENTREPRISE",
+    "Code": "ENT1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Audit Approfondi",
+        "Credits": 3,
+        "Objectif": "Approfondir les différents types d'audit : audit interne, audit opérationnel, audit comptable financier, connaître la notion de commissariat aux comptes"
+      },
+      {
+        "ECUE": "Comptabilité approfondie",
+        "Credits": 3,
+        "Objectif": "L'étudiant doit être capable de comptabiliser des opérations spécifiques et traiter les difficultés comptables"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Français",
+        "Credits": 3,
+        "Objectif": "Poursuite de la formation en français et techniques d'expression"
+      },
+      {
+        "ECUE": "Anglais",
+        "Credits": 4,
+        "Objectif": "Poursuite de la formation en français et techniques d'expression"
+      }
+    ]
+  }
+]

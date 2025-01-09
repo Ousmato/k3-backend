@@ -1,7 +1,6 @@
 package Gestion_scolaire.Repositories;
 
-import Gestion_scolaire.Models.ClasseModule;
-import Gestion_scolaire.Models.StudentsClasse;
+import Gestion_scolaire.Classes.entity.ClasseModule;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -19,8 +18,8 @@ public interface ClasseModule_repositorie extends JpaRepository<ClasseModule, Lo
     @Query("SELECT cm FROM ClasseModule cm   WHERE cm.idNiveauFiliere.id = :id")
     ClasseModule findStudentsClasseWithUEsById(@Param("id") long id);
 
-    @Query("SELECT c  FROM ClasseModule c WHERE YEAR (c.idSemestre.datFin ) = :year")
-    List<ClasseModule> getCurrentClasseModule(@Param("year") int year);
+//    @Query("SELECT c  FROM ClasseModule c WHERE YEAR (c.idNiveauFiliere ) = :year")
+//    List<ClasseModule> getCurrentClasseModule(@Param("year") int year);
 
     @Modifying
     @Transactional

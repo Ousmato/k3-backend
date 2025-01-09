@@ -1,0 +1,180 @@
+[
+  {
+    "UE": "MATHÉMATIQUES",
+    "Code": "MTH1102",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Statistiques et probabilités",
+        "Credits": 2,
+        "Objectif": "Appliquer les notions de statistique et de probabilités dans la collecte et le traitement des données lors des enquêtes"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Discipline à option",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  },
+  {
+    "UE": "CHIMIE",
+    "Code": "CHM1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Chimie Organique",
+        "Credits": 2,
+        "Objectif": "Utiliser les notions de chimie organique"
+      }
+    ]
+  },
+  {
+    "UE": "MATHÉMATIQUES",
+    "Code": "MTH1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Analyse",
+        "Credits": 2,
+        "Objectif": "Appliquer les notions analytiques"
+      },
+      {
+        "ECUE": "Géométrie",
+        "Credits": 2,
+        "Objectif": "Appliquer les notions géométriques"
+      }
+    ]
+  },
+  {
+    "UE": "PHYSIQUE",
+    "Code": "PHY1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Thermodynamique de base",
+        "Credits": 2,
+        "Objectif": "Appliquer les notions d'énergie solaire et photovoltaïque à l'aide de maquette en respectant les méthodes de travail et les consignes"
+      }
+    ]
+  },
+  {
+    "UE": "SOCIOLOGIE",
+    "Code": "SOC1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Sociologie rurale",
+        "Credits": 1,
+        "Objectif": "Mener des enquêtes"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "TECE",
+        "Credits": 2,
+        "Objectif": "Savoir s'exprimer et rédiger les documents courants"
+      }
+    ]
+  },
+  {
+    "UE": "DROIT",
+    "Code": "DRT1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Législation agricole",
+        "Credits": 1,
+        "Objectif": "Connaître et appliquer la législation agricole"
+      }
+    ]
+  },
+  {
+    "UE": "ANGLAIS",
+    "Code": "ANG1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Anglais technique",
+        "Credits": 2,
+        "Objectif": "Lire, écrire et comprendre des textes relatifs au machinisme agricole. S'exprimer convenablement"
+      }
+    ]
+  },
+  {
+    "UE": "Agro-équipement",
+    "Code": "AGE1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Sensibilisation au métier",
+        "Credits": 2,
+        "Objectif": "Identifier tout le contour du machinisme agricole"
+      },
+      {
+        "ECUE": "Sensibilisation à la Formation",
+        "Credits": 1,
+        "Objectif": "Identifier et utiliser tous les outils liés à l'exploitation des machines agricoles"
+      }
+    ]
+  },
+  {
+    "UE": "Outillage et Machinerie",
+    "Code": "OUM1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Outillage et Machinerie",
+        "Credits": 1,
+        "Objectif": "Identifier tous les outils liés à l'exploitation des machines agricoles"
+      }
+    ]
+  },
+  {
+    "UE": "Dessin Technique",
+    "Code": "DET1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Dessin Technique",
+        "Credits": 1,
+        "Objectif": "Maîtriser les principes de base du dessin technique"
+      }
+    ]
+  },
+  {
+    "UE": "Conduite des engins Agricoles",
+    "Code": "CEA1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Conduite des engins Agricoles",
+        "Credits": 6,
+        "Objectif": "Maîtriser les codes de conduite et pouvoir conduire les engins agricoles"
+      }
+    ]
+  },
+  {
+    "UE": "SCIENCES AGRONOMIQUES",
+    "Code": "AGR1101",
+    "Semestre": "S1",
+    "Modules": [
+      {
+        "ECUE": "Agronomie générale",
+        "Credits": 2,
+        "Objectif": "Identifier et utiliser les notions liées à l'exploitation des machines agricoles"
+      }
+    ]
+  }
+]

@@ -1,0 +1,113 @@
+[
+  {
+    "UE": "VALORISATION DES DECHETS",
+    "Code": "VAD1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Valorisation des déchets",
+        "Credits": 2,
+        "Objectif": "Pouvoir participer à l'étude et à la mise en place d'une unité de valorisation énergétique des déchets"
+      }
+    ]
+  },
+  {
+    "UE": "ENERGIE THERMIQUE SOLAIRE",
+    "Code": "ETS1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Energie thermique solaire",
+        "Credits": 3,
+        "Objectif": "Pouvoir participer à l'étude et à la réalisation de systèmes thermosolaires"
+      }
+    ]
+  },
+  {
+    "UE": "POLLUTION DE L'EAU",
+    "Code": "POE1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Pollution de l'eau",
+        "Credits": 2,
+        "Objectif": "Être capable de diagnostiquer les sources de pollution de l'eau"
+      }
+    ]
+  },
+  {
+    "UE": "ASSAINISSEMENT",
+    "Code": "ASS1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Assainissement",
+        "Credits": 1,
+        "Objectif": "Savoir gérer les eaux d'évacuation et les effluents industriels ou artisanaux"
+      }
+    ]
+  },
+  {
+    "UE": "STAGE TECHNICIEN",
+    "Code": "STA1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Mission",
+        "Credits": 4,
+        "Objectif": "Réaliser une mission dans un environnement professionnel"
+      },
+      {
+        "ECUE": "Soutenance",
+        "Credits": 4,
+        "Objectif": "Savoir exposer un compte rendu d'activité"
+      },
+      {
+        "ECUE": "Rapport",
+        "Credits": 4,
+        "Objectif": "Savoir rédiger un rapport professionnel"
+      }
+    ]
+  },
+  {
+    "UE": "PROJET TUTORE",
+    "Code": "PRT1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Projet tutore",
+        "Credits": 5,
+        "Objectif": "Mettre en application les connaissances théoriques dans un cas concret, réel ou simulé"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "UE Libre",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Français",
+        "Credits": 2,
+        "Objectif": "Savoir rédiger une note de synthèse, un résumé, un compte rendu"
+      },
+      {
+        "ECUE": "Anglais",
+        "Credits": 2,
+        "Objectif": "Expression écrite et orale en anglais sur des contenus simples"
+      }
+    ]
+  }
+]

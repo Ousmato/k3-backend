@@ -38,7 +38,7 @@ public class Salles_controller {
     //    ----------------get list of all salle
     @GetMapping("/list-all-salle")
     public List<Salles> list_all_Salle() {
-        return salles_service.getAllSalles();
+        return salles_service.addSallesAutomatique();
     }
 
     //--------------------------------

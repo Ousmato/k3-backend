@@ -1,0 +1,103 @@
+[
+  {
+    "UE": "MISSION",
+    "Code": "MIS1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Mission",
+        "Credits": 4,
+        "Objectif": "Réaliser une mission dans un environnement professionnel"
+      }
+    ]
+  },
+  {
+    "UE": "SOUTENANCE",
+    "Code": "SOU1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Soutenance",
+        "Credits": 4,
+        "Objectif": "Savoir exposer un compte rendu d'activité"
+      }
+    ]
+  },
+  {
+    "UE": "RAPPORT",
+    "Code": "RAP1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Rapport",
+        "Credits": 4,
+        "Objectif": "Savoir rédiger un rapport professionnel"
+      }
+    ]
+  },
+  {
+    "UE": "PROJET TUTORE",
+    "Code": "PRT1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Projet tutore",
+        "Credits": 6,
+        "Objectif": "Mettre en application les connaissances théoriques dans un cas concret, réel ou simulé"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Discipline à option",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  },
+  {
+    "UE": "MODELISATION",
+    "Code": "MOD1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Modélisation",
+        "Credits": 3,
+        "Objectif": "Avoir des connaissances sur la modélisation mathématique dans les domaines les plus variés"
+      }
+    ]
+  },
+  {
+    "UE": "Innovation",
+    "Code": "INO1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Innovation",
+        "Credits": 3,
+        "Objectif": "Informer et faire réfléchir sur les innovations liées à l'informatique et plus largement les TIC"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Anglais",
+        "Credits": 3,
+        "Objectif": "Poursuite de la formation en expression anglaise"
+      },
+      {
+        "ECUE": "Français",
+        "Credits": 2,
+        "Objectif": "Poursuite de la formation en français et techniques d'expression"
+      }
+    ]
+  }
+]

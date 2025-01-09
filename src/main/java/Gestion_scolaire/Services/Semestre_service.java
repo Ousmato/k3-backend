@@ -1,24 +1,15 @@
 package Gestion_scolaire.Services;
 
-import Gestion_scolaire.Dto_classe.DTO_response_string;
+import Gestion_scolaire.Classes.repositories.Classe_repositorie;
 import Gestion_scolaire.Models.*;
-import Gestion_scolaire.Repositories.ClasseModule_repositorie;
-import Gestion_scolaire.Repositories.Emplois_repositorie;
-import Gestion_scolaire.Repositories.Semestre_repositorie;
+import Gestion_scolaire.Repositories.*;
 import Gestion_scolaire.configuration.NoteFundException;
-import jakarta.annotation.PostConstruct;
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class Semestre_service {
@@ -32,34 +23,28 @@ public class Semestre_service {
     private Validator validator;
 
     @Autowired
-    private ClasseModule_repositorie classeModule_repositorie;
+    private Classe_repositorie classe_repositorie;
+
+    @Autowired
+    private Ue_repositorie ue_repositorie;
 
 
-    public Object add_semestre(Semestres semestre) throws NoteFundException {
-        Set<ConstraintViolation<Semestres>> violations = validator.validate(semestre);
-        if (!violations.isEmpty()) {
-            throw new ConstraintViolationException(violations);
-        }
-        // Vérifie si un semestre avec le même nom et la même date de fin existe déjà
-        Semestres s = semestre_repositorie.findByNomSemetreAndIdAnneeScolaireId(semestre.getNomSemetre(), semestre.getIdAnneeScolaire().getId());
-        if (s != null) {
-            throw new NoteFundException("Impossible, le semestre existe déjà pour cette année ");
-        }
-        Period period = Period.between(semestre.getDateDebut(), semestre.getDatFin());
-        if (period.toTotalMonths() < 4 || period.toTotalMonths() > 6 ) {
-            throw new NoteFundException("La période pour une semestre ne dois pas etre supérieur a 6 mois ou inférieur a 4mois ");
-
-        }
-        LocalDate anneeDebutDate = semestre.getIdAnneeScolaire().getDebutAnnee();
-        LocalDate anneeFinDate = semestre.getIdAnneeScolaire().getFinAnnee();
-        if ((semestre.getDatFin().isAfter(anneeDebutDate.minusDays(1)) && semestre.getDateDebut().isBefore(anneeFinDate.plusDays(1)))) {
-            // Sauvegarde le nouveau semestre
+    public void add_semestre() throws NoteFundException {
+        String[] nomsSemestres = {
+                "S1", "S2",
+                "S3", "S4",
+                "S5", "S6"
+        };
+        for (String nomsSemestre : nomsSemestres) {
+            Semestres semestre = new Semestres();
+            semestre.setNomSemetre(nomsSemestre);
             semestre_repositorie.save(semestre);
 
-            return DTO_response_string.fromMessage("Ajout effectué avec succès", 200);
         }
-        throw new NoteFundException("Le semestre dois etre dans l'intervalle de la promotion " + anneeFinDate.getYear());
+    }
 
+    public Semestres getSemestreByNom(String nom){
+        return semestre_repositorie.findByNomSemetre(nom);
     }
 
 
@@ -71,71 +56,31 @@ public class Semestre_service {
         }
         return semestresList;
     }
-//    -----------------------------------------get current semestre-----------------------
-    public Semestres currentSemestre(){
-        return semestre_repositorie.getCurrentSemestre(LocalDate.now());
-    }
-//    ---------------------------------------method update semestre
-    public Object update(Semestres semestre){
-        Semestres smExist = semestre_repositorie.findById(semestre.getId());
-//        Semestres currentSemestre = semestre_repositorie.getCurrentSemestre(LocalDate.now());
-        List<Emplois> emploisExist = emplois_repositorie.getByIdSemestreId(semestre.getId());
-        if (!emploisExist.isEmpty()){
-            throw new NoteFundException("Impossible de modifier, Il existe deja des emplois pour ce semestre");
-        }
-
-        if (semestre.getDatFin().isBefore(semestre.getDateDebut())){
-            throw new NoteFundException("La date debut ne pas etre inferieur a la date de fin");
-        }
-
-        Period period = Period.between(semestre.getDateDebut(), semestre.getDatFin());
-        if (period.toTotalMonths() < 4 || period.toTotalMonths() > 6 ) {
-            throw new NoteFundException("La période pour une semestre ne dois pas etre supérieur a 6 mois ou inférieur a 4mois ");
-
-        }
-
-        LocalDate anneeDebutDate = semestre.getIdAnneeScolaire().getDebutAnnee();
-        LocalDate anneeFinDate = semestre.getIdAnneeScolaire().getFinAnnee();
-        if ((semestre.getDatFin().isAfter(anneeDebutDate.minusDays(1)) && semestre.getDateDebut().isBefore(anneeFinDate.plusDays(1)))) {
-
-            smExist.setNomSemetre(semestre.getNomSemetre());
-            smExist.setDateDebut(semestre.getDateDebut());
-            smExist.setDatFin(semestre.getDatFin());
-            semestre_repositorie.save(smExist);
-
-            return DTO_response_string.fromMessage("Mise à jour effectuée avec succès", 200);
-        }
-        throw new NoteFundException("Le semestre dois etre dans l'intervalle de la promotion " + anneeFinDate.getYear());
-        
-    }
 
     //-----------get semestre by idClasse
-    public Semestres semestre_classe_id(int id){
+    public Semestres semestre_classe_id(long id){
         Emplois em = emplois_repositorie.findByIdClasseId(id);
         if (em == null){
             return null;
         }
         return em.getIdSemestre();
     }
-    //------------------get current year
-
-    public List<Semestres> currenctSemestres(){
-        return semestre_repositorie.getCurrentSemestreOfYer(LocalDate.now().getYear());
-    }
-
 //    --------------------------------
-    public List<Semestres> getCurrenctSemestresByIdNivFil(long icNivFil){
-        List<ClasseModule> classeModuleList = classeModule_repositorie.findAllByIdNiveauFiliereId(icNivFil);
-        List<Semestres> semestresList = new ArrayList<>();
-        if (classeModuleList.isEmpty()){
-            return new ArrayList<>();
-        }
-        for (ClasseModule classeModule : classeModuleList){
-            semestresList.add(classeModule.getIdSemestre());
-        }
-        return semestresList;
+    public List<Semestres> getCurrenctSemestresByIdNivFil(long idClasse){
+       List<Semestres> semestresList = semestre_repositorie.getByIdClasse(idClasse);
+       if (semestresList.isEmpty()){
+           return new ArrayList<>();
+       }
+       return semestresList;
     }
 
+    public Semestres getSemestre(long id) {
+        Semestres semestre = semestre_repositorie.findById(id);
+        if (semestre == null) {
+            throw new RuntimeException("le semestre n'existe pas");
+        }
+        return semestre;
+    }
     //--------------------------------
  
 }

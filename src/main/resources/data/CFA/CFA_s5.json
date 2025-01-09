@@ -1,0 +1,139 @@
+[
+  {
+    "UE": "CONTROLE DE GESTION",
+    "Code": "COG1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Contrôle de gestion audit",
+        "Credits": 6,
+        "Objectif": "Être capable de situer le rôle du contrôle de gestion dans l'entreprise, faire des prévisions, élaborer les différents budgets et les contrôler, faire le contrôle de gestion de la masse salariale, des projets, connaître le contrôle de gestion stratégique"
+      }
+    ]
+  },
+  {
+    "UE": "BANQUE ASSURANCE",
+    "Code": "BAS1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Assurance",
+        "Credits": 3,
+        "Objectif": "Connaître les spécificités du domaine des assurances"
+      }
+    ]
+  },
+  {
+    "UE": "BANQUE",
+    "Code": "BNQ1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Banque",
+        "Credits": 3,
+        "Objectif": "Connaître les spécificités du secteur de la banque"
+      }
+    ]
+  },
+  {
+    "UE": "GESTION FINANCIERE",
+    "Code": "GFI1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Gestion financière",
+        "Credits": 6,
+        "Objectif": "Être capable d'analyser financièrement les comptes d'une entreprise, connaître les outils de gestion financière à court et long terme"
+      }
+    ]
+  },
+  {
+    "UE": "COMPTABILITE APPROFONDIE",
+    "Code": "CAP1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Comptabilité Approfondie",
+        "Credits": 6,
+        "Objectif": "Savoir effectuer les activités de comptabilité approfondie de manière autonome"
+      }
+    ]
+  },
+  {
+    "UE": "STAGE ET RECHERCHE D'EMPLOI",
+    "Code": "SRE1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Stage et recherche d'emploi",
+        "Credits": 6,
+        "Objectif": "Préparer le stage et connaître des techniques utiles pour la recherche d'emploi"
+      }
+    ]
+  },
+  {
+    "UE": "PROJET TUTORE",
+    "Code": "PRT1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Projet tutore",
+        "Credits": 6,
+        "Objectif": "Mettre en application les connaissances théoriques dans un cas concret, réel ou simulé"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Ue Libre",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Français",
+        "Credits": 2,
+        "Objectif": "Avec cette dernière UE, l'étudiant doit valider le niveau B1 de FLE"
+      },
+      {
+        "ECUE": "Anglais",
+        "Credits": 2,
+        "Objectif": "L'étudiant sait lire des textes généraux ou techniques en anglais et s'exprimer sur des sujets simples"
+      }
+    ]
+  },
+  {
+    "UE": "INFORMATIQUE",
+    "Code": "INF1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Logiciel de comptabilité",
+        "Credits": 3,
+        "Objectif": "Maîtriser la tenue d'une comptabilité sur un progiciel de gestion"
+      }
+    ]
+  },
+  {
+    "UE": "ECONOMIE ET ENTREPRISE",
+    "Code": "ENT1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Fiscalité",
+        "Credits": 4,
+        "Objectif": "Savoir gérer les questions de fiscalité dans une entreprise"
+      }
+    ]
+  }
+]

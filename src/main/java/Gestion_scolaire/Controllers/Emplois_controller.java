@@ -1,15 +1,12 @@
 package Gestion_scolaire.Controllers;
 
-import Gestion_scolaire.Dto_classe.EmploisDTO;
 import Gestion_scolaire.Models.Emplois;
 import Gestion_scolaire.Services.Emplois_service;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -72,14 +69,14 @@ public class Emplois_controller {
             return emplois_service.isValid(idEmplois);
     }
 //    --------------------------------get all emplois actif
-    @GetMapping("/all-actifs-emplois")
-    public List<Emplois> emploisActif(){
-            return emplois_service.listEmploisActifs();
+    @GetMapping("/all-actifs-emplois/{idClasse}")
+    public List<Emplois> emploisActif(@PathVariable long idClasse){
+            return emplois_service.listEmploisActifs(idClasse);
     }
 
 //    ------------------------------------------all-actifs-emplois-with-seances
-//    @GetMapping("/all-actifs-emplois-with-seances")
-//    public List<EmploisDTO> emploisActifWithSeances(){
-//        return emplois_service.listEmploisActifs_with_seances();
-//    }
+    @GetMapping("/all-actifs-emplois")
+    public List<Emplois> allEmploisActif(){
+        return emplois_service.listEmploisActifOfAllClasses();
+    }
 }

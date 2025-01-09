@@ -1,6 +1,8 @@
 package Gestion_scolaire.Models;
 
 import Gestion_scolaire.EnumClasse.Seance_type;
+import Gestion_scolaire.Teachers.entity.Teachers;
+import Gestion_scolaire.students.entity.Participant;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

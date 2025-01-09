@@ -1,5 +1,6 @@
 package Gestion_scolaire.Models;
 
+import Gestion_scolaire.Administrators.entity.Admin;
 import jakarta.persistence.*;
 import lombok.Data;
 

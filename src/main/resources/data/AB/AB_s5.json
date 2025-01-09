@@ -1,0 +1,115 @@
+[
+  {
+    "UE": "PRODUCTIONS ANIMALES",
+    "Code": "PRA1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Productions animales",
+        "Credits": 4,
+        "Objectif": "Acquérir des techniques de productions animales en vue de leur utilisation industrielle et apporter des conseils aux producteurs"
+      }
+    ]
+  },
+  {
+    "UE": "PRODUCTIONS VEGETALES",
+    "Code": "PRV1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Productions végétales",
+        "Credits": 4,
+        "Objectif": "Pouvoir expertiser les productions végétales en vue de leur utilisation industrielle, et apporter des conseils aux producteurs"
+      }
+    ]
+  },
+  {
+    "UE": "MARKETING AGRICOLE",
+    "Code": "MAA1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Marketing Agricole",
+        "Credits": 4,
+        "Objectif": "Pouvoir élaborer et mettre en œuvre une stratégie d'accompagnement des produits de son entreprise sur le marché agricole."
+      }
+    ]
+  },
+  {
+    "UE": "TRANSFORMATION DES PRODUITS AGROALIMENTAIRES",
+    "Code": "TPA1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Transformation des produits",
+        "Credits": 6,
+        "Objectif": "Pouvoir assumer la responsabilité d'une ligne de production alimentaire"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Anglais",
+        "Credits": 3,
+        "Objectif": "Expression écrite et orale en anglais sur des contenus simples"
+      },
+      {
+        "ECUE": "Français",
+        "Credits": 2,
+        "Objectif": "Savoir rédiger une note de synthèse, un résumé, un compte rendu"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Discipline à option",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  },
+  {
+    "UE": "PROJET TUTORE",
+    "Code": "PRT1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Projet tutoré",
+        "Credits": 6,
+        "Objectif": "Projet tutoré"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUES DE CONSERVATION",
+    "Code": "TCO1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Techniques de conservation",
+        "Credits": 6,
+        "Objectif": "Pouvoir assumer la responsabilité d'une ligne de production alimentaire"
+      }
+    ]
+  },
+  {
+    "UE": "STAGE ET RECHERCHE D'EMPLOI",
+    "Code": "SRE1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Stage et recherche d'emploi",
+        "Credits": 6,
+        "Objectif": "Préparer le stage et connaître des techniques utiles pour la recherche d'emploi"
+      }
+    ]
+  }
+]

@@ -1,0 +1,82 @@
+[
+  {
+    "UE": "AGROBUSINESS",
+    "Code": "AGR1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Mondialisation de l'agrobusiness",
+        "Credits": 3,
+        "Objectif": "Comprendre les enjeux et dynamiques des marchés agro-alimentaires, stratégies et enjeux de la mondialisation agricole"
+      },
+      {
+        "ECUE": "Agrocommerce international",
+        "Credits": 3,
+        "Objectif": "Acquérir les techniques et méthodes permettant de collaborer à des projets internationaux"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Anglais",
+        "Credits": 3,
+        "Objectif": "Expression écrite et orale en anglais sur des contenus simples"
+      },
+      {
+        "ECUE": "Français",
+        "Credits": 3,
+        "Objectif": "Savoir rédiger une note de synthèse, un résumé, un compte rendu"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Discipline à option",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  },
+  {
+    "UE": "PROJET TUTORE",
+    "Code": "PRT1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Projet tutoré",
+        "Credits": 6,
+        "Objectif": "Mettre en application les connaissances théoriques dans un cas concret, réel ou simulé"
+      }
+    ]
+  },
+  {
+    "UE": "STAGE TECHNICIEN",
+    "Code": "STA1401",
+    "Semestre": "S4",
+    "Modules": [
+      {
+        "ECUE": "Rapport",
+        "Credits": 4,
+        "Objectif": "Savoir rédiger un rapport professionnel"
+      },
+      {
+        "ECUE": "Soutenance",
+        "Credits": 4,
+        "Objectif": "Savoir exposer un compte rendu d'activité"
+      },
+      {
+        "ECUE": "Mission",
+        "Credits": 4,
+        "Objectif": "Réaliser une mission dans un environnement professionnel"
+      }
+    ]
+  }
+]

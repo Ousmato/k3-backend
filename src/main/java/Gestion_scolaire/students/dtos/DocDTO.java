@@ -1,0 +1,36 @@
+package Gestion_scolaire.students.dtos;
+
+import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.students.entity.Documents;
+import Gestion_scolaire.students.entity.Inscription;
+import Gestion_scolaire.students.entity.StudentDoc;
+import lombok.Data;
+
+import java.util.List;
+
+@Data
+public class DocDTO {
+    private Documents idDocument;
+    private long id;
+    private Admin idAdmin;
+    private String telephone;
+    private List<Inscription> idInscription;
+    private String nom;
+    private String prenom;
+    private String niveau;
+    private String filiere;
+
+
+    public static DocDTO toDocDTO(StudentDoc doc) {
+        DocDTO docDTO = new DocDTO();
+        docDTO.setFiliere(doc.getIdInscription().getIdClasse().getIdFiliere().getIdFiliere().getNomFiliere());
+        docDTO.setIdDocument(doc.getIdDocument());
+        docDTO.setIdAdmin(doc.getIdAdmin());
+        docDTO.setId(doc.getId());
+        docDTO.setNom(doc.getIdInscription().getIdEtudiant().getNom());
+        docDTO.setPrenom(doc.getIdInscription().getIdEtudiant().getPrenom());
+        docDTO.setTelephone(doc.getIdInscription().getIdEtudiant().getTelephone());
+        docDTO.setNiveau(doc.getIdInscription().getIdClasse().getIdFiliere().getIdNiveau().getNom());
+        return docDTO;
+    }
+}

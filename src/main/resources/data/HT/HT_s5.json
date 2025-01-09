@@ -1,0 +1,175 @@
+[
+  {
+    "UE": "TECHNIQUES HÔTELIERES",
+    "Code": "TEH1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Technique Hôtelière",
+        "Credits": 3,
+        "Objectif": "Maîtriser les aspects techniques du fonctionnement d'un hôtel"
+      }
+    ]
+  },
+  {
+    "UE": "HEBERGEMENT",
+    "Code": "HEB1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Hébergement",
+        "Credits": 3,
+        "Objectif": "Savoir gérer un équipement hôtelier"
+      }
+    ]
+  },
+  {
+    "UE": "QUALITE DES SERVICES HOTELIERS",
+    "Code": "QSH1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Qualité des services hôteliers",
+        "Credits": 3,
+        "Objectif": "Savoir comment améliorer la compétitivité de l'établissement par la qualité de ses services"
+      }
+    ]
+  },
+  {
+    "UE": "TOURISME ET DEVELOPPEMENT DURABLE",
+    "Code": "TDD1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Tourisme et Développement durable",
+        "Credits": 3,
+        "Objectif": "Flux du tourisme mondial, répartition géographique des tendances, retombées économiques selon les régions"
+      }
+    ]
+  },
+  {
+    "UE": "GEOGRAPHIE DU TOURISME",
+    "Code": "GET1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Géographie du tourisme",
+        "Credits": 3,
+        "Objectif": "Situer les sites et principaux flux touristiques mondiaux"
+      }
+    ]
+  },
+  {
+    "UE": "CONCEPTION ET COMMERCIALISATION DES PRODUITS",
+    "Code": "CCP1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Conception et Commercialisation des Produits",
+        "Credits": 3,
+        "Objectif": "Être capable de concevoir et commercialiser des produits touristiques"
+      }
+    ]
+  },
+  {
+    "UE": "STAGE ET RECHERCHE D'EMPLOI",
+    "Code": "SRE1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Recherche d'emploi",
+        "Credits": 3,
+        "Objectif": "Préparer le stage et connaître des techniques utiles pour la recherche d'emploi"
+      }
+    ]
+  },
+  {
+    "UE": "GESTION DES RISQUES",
+    "Code": "GER1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Gestion des risques",
+        "Credits": 3,
+        "Objectif": "Savoir prévenir et gérer les risques liés aux activités touristiques"
+      }
+    ]
+  },
+  {
+    "UE": "CULTURE ET PATRIMOINE DU MALI",
+    "Code": "CPM1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Culture et patrimoine du Mali",
+        "Credits": 2,
+        "Objectif": "Savoir mettre en valeur le patrimoine et les potentialités culturelles du Mali"
+      }
+    ]
+  },
+  {
+    "UE": "GESTION FINANCIERE",
+    "Code": "GFI1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Gestion financière",
+        "Credits": 2,
+        "Objectif": "Connaître les outils de la gestion financière à court et long terme"
+      }
+    ]
+  },
+  {
+    "UE": "PROJET TUTORE",
+    "Code": "PRT1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Projet tutore",
+        "Credits": 5,
+        "Objectif": "Mettre en application les connaissances théoriques dans un cas concret, réel ou simulé"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "UE Libre",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  },
+  {
+    "UE": "DEVELOPPEMENT DURABLE",
+    "Code": "DED1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Développement durable",
+        "Credits": 4,
+        "Objectif": "Apporter des connaissances et réflexions sur le développement durable et les enjeux planétaires"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Français",
+        "Credits": 2,
+        "Objectif": "Savoir rédiger une note de synthèse, un résumé, un compte rendu"
+      },
+      {
+        "ECUE": "Anglais",
+        "Credits": 3,
+        "Objectif": "L'étudiant sait lire des textes généraux ou techniques en anglais et s'exprimer sur des sujets simples"
+      }
+    ]
+  }
+]

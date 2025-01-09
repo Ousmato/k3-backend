@@ -1,6 +1,8 @@
 package Gestion_scolaire.configuration.SecurityConfigs;
 
-import Gestion_scolaire.Models.Admin;
+import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.SharedService.Shared_service;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,6 +15,7 @@ public class AdminInfoDetails implements UserDetails {
 
     private final Admin admin;
 
+
     public AdminInfoDetails(Admin admin) {
         this.admin = admin;
     }
@@ -21,11 +24,35 @@ public class AdminInfoDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
 
-        // Si Admin_role est une String, par exemple "ROLE_USER"
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + admin.getRole().toString().toUpperCase()));
-        return authorities;
+        // Vérifiez que `admin` et son rôle ne sont pas nulls
+        if (admin != null && admin.getIdRole() != null) {
+            String roleName = admin.getIdRole().getNom();
 
+            if (!"Admin".equalsIgnoreCase(roleName)) {
+                // Créer une abréviation basée sur les mots du nom du rôle
+                String[] words = roleName.split(" ");
+                StringBuilder abbreviation = new StringBuilder();
+
+                for (String word : words) {
+                    if (word.length() > 3) {
+                        abbreviation.append(word.charAt(0)); // Ajouter la première lettre
+                    }
+                }
+
+                // Construire le nom du rôle abrégé
+                String abbreviatedRoleName = abbreviation.toString().toUpperCase();
+
+                // Ajouter le rôle avec le préfixe "ROLE_"
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + abbreviatedRoleName));
+            }
+
+            // Ajouter un rôle "ROLE_Admin" par défaut
+            authorities.add(new SimpleGrantedAuthority("ROLE_Admin"));
+        }
+
+        return authorities;
     }
+
 
     @Override
     public String getPassword() {
@@ -56,4 +83,6 @@ public class AdminInfoDetails implements UserDetails {
     public boolean isEnabled() {
         return admin.isActive();
     }
+
+
 }

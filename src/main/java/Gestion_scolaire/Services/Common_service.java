@@ -3,13 +3,13 @@ package Gestion_scolaire.Services;
 import Gestion_scolaire.EnumClasse.Seance_type;
 import Gestion_scolaire.Models.*;
 import Gestion_scolaire.Repositories.*;
+import Gestion_scolaire.Teachers.repositories.Paie_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,11 +1,13 @@
 package Gestion_scolaire.Models;
 
+import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Classes.entity.Modules;
+import Gestion_scolaire.students.entity.StudentsClasse;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Data
 @Entity

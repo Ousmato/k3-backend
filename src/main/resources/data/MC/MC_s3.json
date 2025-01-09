@@ -1,0 +1,101 @@
+[
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC2301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Technique de communication",
+        "Credits": 3,
+        "Objectif": "Acquérir les concepts de base de la communication - S'exprimer clairement et avec aisance à l'écrit et à l'oral dans un environnement professionnel - Identifier les écrits professionnels, des supports et des outils de la communication (écrite et orale)"
+      },
+      {
+        "ECUE": "Anglais des affaires",
+        "Credits": 3,
+        "Objectif": "Former des cadres capables de: - s'exprimer correctement en Anglais en respectant les normes linguistiques, - rédiger correctement des lettres commerciales, administratives et sociales, - résumer, traduire et composer un document en Anglais, - participer aux discussions"
+      }
+    ]
+  },
+  {
+    "UE": "Sciences Economiques",
+    "Code": "ECO2301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Economie d'entreprise",
+        "Credits": 2,
+        "Objectif": "Connaître la croissance, les fluctuations économiques, la monnaie et le change, la globalisation financière, le marché de travail, l'inflation et le chômage"
+      }
+    ]
+  },
+  {
+    "UE": "Marketing",
+    "Code": "MKT2301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Négociation Commerciale",
+        "Credits": 3,
+        "Objectif": "- Connaître le processus de la négociation commerciale - Maîtriser les techniques de la négociation commerciale"
+      },
+      {
+        "ECUE": "Marketing opérationnel",
+        "Credits": 4,
+        "Objectif": "Cas pratiques sur les 4P (Produit, Prix, Place, Promotion)"
+      },
+      {
+        "ECUE": "Marketing International",
+        "Credits": 3,
+        "Objectif": "- Connaître les diagnostics internes et externes, l'analyse des marchés, la politique de produit, la prospection"
+      }
+    ]
+  },
+  {
+    "UE": "Droit",
+    "Code": "DRT2301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Droit des affaires",
+        "Credits": 3,
+        "Objectif": "1- Objectif général : Maîtriser le droit relatif aux activités des entreprises (civiles ou commerciales). 2- Objectifs spécifiques : Identifier juridiquement les formes d'entreprises, connaître les critères de la commercialité des actes, connaître les"
+      }
+    ]
+  },
+  {
+    "UE": "Comptabilité",
+    "Code": "CPT2301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Comptabilité Analytique",
+        "Credits": 3,
+        "Objectif": "Maîtriser la comptabilité analytique"
+      }
+    ]
+  },
+  {
+    "UE": "Mathématiques",
+    "Code": "MTH2301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Mathématiques",
+        "Credits": 3,
+        "Objectif": "Donner aux étudiants les outils nécessaires à la bonne compréhension des enseignements dans les disciplines financières"
+      }
+    ]
+  },
+  {
+    "UE": "Projet Tutoré",
+    "Code": "PRT2301",
+    "Semestre": "S3",
+    "Modules": [
+      {
+        "ECUE": "Projet tutoré",
+        "Credits": 3,
+        "Objectif": "Projet tutoré"
+      }
+    ]
+  }
+]

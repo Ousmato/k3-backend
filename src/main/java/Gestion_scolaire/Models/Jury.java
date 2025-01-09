@@ -1,10 +1,9 @@
 package Gestion_scolaire.Models;
 
-import Gestion_scolaire.EnumClasse.Jury_role;
+import Gestion_scolaire.Teachers.entity.Teachers;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data

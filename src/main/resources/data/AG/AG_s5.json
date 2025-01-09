@@ -1,0 +1,187 @@
+[
+  {
+    "UE": "ASSISTANT JURIDIQUE",
+    "Code": "ASJ1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Avocat",
+        "Credits": 3,
+        "Objectif": "Être capable d'occuper le poste d'assistant(e) d'un avocat"
+      },
+      {
+        "ECUE": "Huissier",
+        "Credits": 3,
+        "Objectif": "Être capable d'occuper le poste d'assistant(e) d'un huissier"
+      },
+      {
+        "ECUE": "Notaire",
+        "Credits": 3,
+        "Objectif": "Être capable d'occuper le poste d'assistant(e) d'un notaire"
+      },
+      {
+        "ECUE": "Français spécialisé Santé",
+        "Credits": 3,
+        "Objectif": "Connaître le vocabulaire des professions de santé"
+      },
+      {
+        "ECUE": "Déontologie médicale",
+        "Credits": 3,
+        "Objectif": "Connaître les principes de la déontologie médicale"
+      },
+      {
+        "ECUE": "Communication Santé",
+        "Credits": 3,
+        "Objectif": "Pouvoir participer à des actions de communication dans le domaine de la santé"
+      }
+    ]
+  },
+  {
+    "UE": "ASSISTANT DES COLLECTIVITES TERRITORIALES",
+    "Code": "ACT1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Communication collectivités",
+        "Credits": 3,
+        "Objectif": "Pouvoir participer à des actions de communication dans une collectivité territoriale"
+      },
+      {
+        "ECUE": "Organisation et gestion des collectivités",
+        "Credits": 3,
+        "Objectif": "Connaitre l'organisation et la gestion d'une collectivité territoriale"
+      },
+      {
+        "ECUE": "Droit des collectivités",
+        "Credits": 3,
+        "Objectif": "Connaitre les bases du droit des collectivités"
+      }
+    ]
+  },
+  {
+    "UE": "ASSISTANT ENSEIGNEMENT SUPERIEUR",
+    "Code": "AES1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Communication enseignement supérieur",
+        "Credits": 2,
+        "Objectif": "Pouvoir préparer et suivre une action de communication de moyenne ampleur"
+      },
+      {
+        "ECUE": "Scolarité enseignement supérieur",
+        "Credits": 2,
+        "Objectif": "Savoir organiser et gérer un service de scolarité dans l'enseignement supérieur"
+      },
+      {
+        "ECUE": "Organisation et gestion d'enseignement supérieur",
+        "Credits": 3,
+        "Objectif": "Connaitre le fonctionnement d'un établissement d'enseignement supérieur"
+      },
+      {
+        "ECUE": "Droit enseignement supérieur",
+        "Credits": 2,
+        "Objectif": "Connaitre les règles de fonctionnement de l'enseignement supérieur"
+      }
+    ]
+  },
+  {
+    "UE": "ASSISTANT GENERALISTE",
+    "Code": "ASG1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Droit Administratif",
+        "Credits": 4,
+        "Objectif": "Avoir approfondi le droit administratif"
+      },
+      {
+        "ECUE": "GRH",
+        "Credits": 5,
+        "Objectif": "Pouvoir assister le responsable dans les actions de suivi et formation du personnel"
+      }
+    ]
+  },
+  {
+    "UE": "INFORMATIQUE",
+    "Code": "INF1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Bureautique",
+        "Credits": 3,
+        "Objectif": "Maitriser les aspects bureautiques de la gestion administrative"
+      }
+    ]
+  },
+  {
+    "UE": "STAGE ET RECHERCHE D'EMPLOI",
+    "Code": "SRE1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Recherche d'emploi",
+        "Credits": 3,
+        "Objectif": "Préparer le stage et connaître des techniques utiles pour la recherche d'emploi"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Anglais",
+        "Credits": 3,
+        "Objectif": "L'étudiant sait lire des textes généraux ou techniques en anglais et s'exprimer sur des sujets simples"
+      },
+      {
+        "ECUE": "Français",
+        "Credits": 2,
+        "Objectif": "Acquérir des connaissances lui permettant d'analyser et de rédiger les différents documents administratifs"
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Discipline à option",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  },
+  {
+    "UE": "PROJET TUTORE",
+    "Code": "PRT1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Projet tutoré",
+        "Credits": 5,
+        "Objectif": "Mettre en application les connaissances théoriques dans un cas concret, réel ou simulé"
+      }
+    ]
+  },
+  {
+    "UE": "GESTION ADMINISTRATIVE",
+    "Code": "GAD1501",
+    "Semestre": "S5",
+    "Modules": [
+      {
+        "ECUE": "Paie et protection sociale",
+        "Credits": 2,
+        "Objectif": "Maitriser les aspects sociaux de la gestion administrative"
+      },
+      {
+        "ECUE": "Psychologie sociale",
+        "Credits": 2,
+        "Objectif": "Maitriser les aspects sociaux de la gestion administrative"
+      }
+    ]
+  }
+]

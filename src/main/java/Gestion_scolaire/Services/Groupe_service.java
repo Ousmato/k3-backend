@@ -2,9 +2,13 @@ package Gestion_scolaire.Services;
 
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Models.*;
-import Gestion_scolaire.Repositories.Participant_repositorie;
-import Gestion_scolaire.Repositories.StudentGroup_repositorie;
+import Gestion_scolaire.Repositories.Emplois_repositorie;
+import Gestion_scolaire.students.repositories.Participant_repositorie;
+import Gestion_scolaire.students.repositories.StudentGroup_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
+import Gestion_scolaire.students.entity.Inscription;
+import Gestion_scolaire.students.entity.Participant;
+import Gestion_scolaire.students.entity.StudentGroupe;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
@@ -23,21 +27,33 @@ public class Groupe_service {
     private StudentGroup_repositorie group_repositorie;
 
     @Autowired
+    private Emplois_repositorie emplois_repositorie;
+
+    @Autowired
     private Validator validator;
     @Autowired
     private Participant_repositorie participant_repositorie;
     @Autowired
     private StudentGroup_repositorie studentGroup_repositorie;
 
-    public Object add_group(StudentGroupe studentGroupe){
-        Set<ConstraintViolation<StudentGroupe>> violations = validator.validate(studentGroupe);
-        if(!violations.isEmpty()){
-            throw new ConstraintViolationException(violations);
+    public Object add_group(long idEmploi, String name){
+        Emplois emploiExist = emplois_repositorie.findById(idEmploi);
+        if(emploiExist == null){
+            throw new NoteFundException("Emploi non trouvable");
         }
-        StudentGroupe groupeExist = group_repositorie.findByIdEmploiIdAndNom(studentGroupe.getIdEmploi().getId(), studentGroupe.getNom());
+
+        StudentGroupe groupeExist = group_repositorie.findByIdEmploiIdAndNom(idEmploi, name);
         if(groupeExist == null){
-            group_repositorie.save(studentGroupe);
-            return DTO_response_string.fromMessage("Ajout effectué avec succès", 200);
+            StudentGroupe groupe = new StudentGroupe();
+            groupe.setNom(name);
+            groupe.setIdEmploi(emploiExist);
+
+            Set<ConstraintViolation<StudentGroupe>> violations = validator.validate(groupe);
+            if(!violations.isEmpty()){
+                throw new ConstraintViolationException(violations);
+            }
+            group_repositorie.save(groupe);
+            return DTO_response_string.fromMessage("Ajout effectué avec succès");
 
         }
         throw new NoteFundException("Le groupe exist déjà");
@@ -58,6 +74,7 @@ public class Groupe_service {
 //-------------------------------------------------------------------
 //    add participant
     public Object add_participant(List<Participant> listParticipant) {
+        System.out.println("----------------------liste participant------------------" + listParticipant);
         boolean addedAtLeastOne = false;
         if(listParticipant.isEmpty()){
             throw new NoteFundException("Veuillez choisir au moins un étudiant");
@@ -101,7 +118,7 @@ public class Groupe_service {
         }
 
         if (addedAtLeastOne) {
-            return DTO_response_string.fromMessage("Ajout effectué avec succès", 200);
+            return DTO_response_string.fromMessage("Ajout effectué avec succès");
         } else {
             throw new NoteFundException("Toutes les participations existent déjà");
         }

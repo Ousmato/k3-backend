@@ -1,0 +1,74 @@
+[
+  {
+    "name" : "Eaux Environnement et Energies Renouvelable",
+    "sous" :[
+      {
+        "sname": "Eaux et Environnement"
+      },
+      {
+        "sname": "Energies Renouvelable"
+      }
+
+    ]
+  },
+  {
+    "name" : "Comptabilité Finance et Audit",
+    "sous" :[
+      {
+        "sname": "Comptabilité Finance"
+      },
+      {
+        "sname": "Banque Assurance"
+      },
+      {
+        "sname": "Audit"
+      }
+    ]
+  },
+  {
+    "name" : "Assistant de Gestion",
+    "sous" :[
+      {
+        "sname": "Generaliste"
+      },
+      {
+        "sname": "Collectivité Territoriale"
+      }
+
+    ]
+  },
+
+  {
+    "name" : "Genie Informatique",
+    "sous" :[
+      {
+        "sname": "Administration Système et Réseau"
+      },
+      {
+        "sname": "Developpement"
+      }
+
+    ]
+  },
+  {
+    "name" : "Hotellerie et Tourisme",
+    "sous" :[
+      {
+        "sname": "Hotellerie"
+      },
+      {
+        "sname": "Tourisme"
+      }
+
+    ]
+  },
+  {
+    "name" : "Machinisme Agricole"
+  },
+  {
+    "name" : "Agro Business"
+  },
+  {
+    "name" : "Marketing et Communication"
+  }
+]

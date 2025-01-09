@@ -1,0 +1,101 @@
+[
+  {
+    "UE": "PROJET TUTORE",
+    "Code": "PRT1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Projet tutore",
+        "Credits": 6,
+        "Objectif": "Mettre en application les connaissances théoriques dans un cas concret, réel ou simulé"
+      }
+    ]
+  },
+  {
+    "UE": "MATHÉMATIQUES",
+    "Code": "MTH1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Mathématiques financières",
+        "Credits": 3,
+        "Objectif": "Faire la différence entre intérêts simples et intérêts composés; connaître les notions de taux proportionnel, taux équivalent, comprendre le calcul des annuités de remboursement des emprunts. Mathématiques des filières scientifiques"
+      },
+      {
+        "ECUE": "Mathématique",
+        "Credits": 3,
+        "Objectif": "Donner aux étudiants les outils mathématiques nécessaires à la bonne compréhension des enseignements dans les disciplines financières."
+      }
+    ]
+  },
+  {
+    "UE": "Unité libre",
+    "Code": "LIB1101",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Discipline à option",
+        "Credits": 1,
+        "Objectif": "Au choix de l'étudiant dans une liste pré-établie"
+      }
+    ]
+  },
+  {
+    "UE": "ECONOMIE ET ENTREPRISE",
+    "Code": "ENT1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Contrôle de gestion",
+        "Credits": 3,
+        "Objectif": "Acquérir les premières notions de contrôle de gestion"
+      },
+      {
+        "ECUE": "Comptabilité analytique",
+        "Credits": 3,
+        "Objectif": "Connaître les fondements de la comptabilité analytique ou comptabilité de gestion; calculer les coûts par la méthode des coûts complets"
+      }
+    ]
+  },
+  {
+    "UE": "DROIT",
+    "Code": "DRT1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Droit commercial",
+        "Credits": 3,
+        "Objectif": "Avoir des notions fondamentales des droits commercial, acte de commerce, bail à usage commercial, fonds de commerce."
+      },
+      {
+        "ECUE": "Droit des sociétés",
+        "Credits": 3,
+        "Objectif": "Donner aux étudiants une bonne connaissance du droit applicable aux sociétés, spécialement du droit OHADA."
+      }
+    ]
+  },
+  {
+    "UE": "ANGLAIS",
+    "Code": "ANG1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "Anglais",
+        "Credits": 3,
+        "Objectif": "Expression écrite et orale en anglais sur les contenus simples"
+      }
+    ]
+  },
+  {
+    "UE": "TECHNIQUE D'EXPRESSION ET DE COMMUNICATION",
+    "Code": "TEC1201",
+    "Semestre": "S2",
+    "Modules": [
+      {
+        "ECUE": "TECE",
+        "Credits": 2,
+        "Objectif": "Savoir s'exprimer et rédiger des documents courants"
+      }
+    ]
+  }
+]
