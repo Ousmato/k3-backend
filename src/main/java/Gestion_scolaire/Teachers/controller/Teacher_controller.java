@@ -1,8 +1,6 @@
 package Gestion_scolaire.Teachers.controller;
 
-import Gestion_scolaire.Dto_classe.ProfilDTO;
-import Gestion_scolaire.Dto_classe.PaieDTO;
-import Gestion_scolaire.Models.Paie;
+import Gestion_scolaire.Emplois.services.Emplois_service;
 import Gestion_scolaire.Teachers.dtos.TeacherDTO;
 import Gestion_scolaire.Teachers.entity.Teachers;
 import Gestion_scolaire.Teachers.services.Teachers_service;
@@ -22,6 +20,9 @@ public class Teacher_controller {
 
     @Autowired
     private Teachers_service teachers_service;
+
+    @Autowired
+    private Emplois_service emplois_service;
     
 
     @PostMapping("/add")
@@ -35,7 +36,7 @@ public class Teacher_controller {
     @GetMapping("/list")
     public Page<Teachers> getAllTeachers(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "50") int size) {
         return teachers_service.readAll(page, size);
     }
 
@@ -43,12 +44,6 @@ public class Teacher_controller {
     public List<Teachers> get_list_All_Teachers() {
         return teachers_service.readAll_teacher();
     }
-//    -------------------------------------------------------------------------------------
-//    @GetMapping("/list-teacher-by-filiere/{idFiliere}")
-//    @Operation(summary = "Recuperer la liste des enseignants par idUe(spécialité)")
-//    public List<Teachers> get_list_teachers_by_idFiliere(@PathVariable long idFiliere){
-//        return teachers_service.readAll_byProfile(idFiliere);
-//    }
 
     //method get teacher by id
     @GetMapping("/teacher-by-id/{idTeacher}")
@@ -65,7 +60,7 @@ public class Teacher_controller {
     }
 
     //method delete
-    @GetMapping("/delete/{idTeacher}")
+    @PutMapping("/desable-teacher/{idTeacher}")
     public Object delete(@PathVariable long idTeacher){
         return teachers_service.desactive(idTeacher);
     }
@@ -75,79 +70,15 @@ public class Teacher_controller {
     private  Object addPresence(@RequestBody List<Teachers> teachers, @PathVariable long idAdmin){
         return teachers_service.importTeachers(teachers, idAdmin);
     }
-////    ------------------------method pour abscenter un teacher
-//    @PostMapping("/change-observation")
-//    public Object chage_observation(@RequestBody TeachersPresence abscence){
-//        return teachers_service.change_observation(abscence);
-//    }
-//    -------------------------------method get status of teacher
-//    @GetMapping("/status/{idTeacher}")
-//    public List<TeachersPresence> getStatus(@PathVariable long idTeacher){
-//        return teachers_service.getStatus(idTeacher);
-//    }
-//    ----------------------------------method get all teacher presence------------------
-//    @GetMapping("/list-presence")
-//    private  Page<TeachersPresence> listPresence(
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "10") int size
-//    ){
-//       return teachers_service.getListPresence(page, size);
-//    }
 
-//    ----------------------------method get teacher paies----------------------------
-//    @GetMapping("/list-paie")
-//    private  Page<Paie> listPaie(
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "10") int size
-//                                 ){
-//      return teachers_service.read_All_Paie_page(page, size);
-//    }
-    @GetMapping("/list-paie")
-    @Operation(summary = "Recuperer la liste de tout du mois")
-    public List<PaieDTO> getListPaie(){
-        return teachers_service.readAllPaie();
-    }
-
-    //-----------------all paie of month
-    @GetMapping("/all-paie-of-month/{month}")
-    @Operation(summary = "Recuperer la liste de paie par mois")
-    public List<PaieDTO> getAllPaieOfMonth(@PathVariable int month){
-        return teachers_service.getAllPaieByMonth(month);
-    }
 //    ------------------------method add paie----------------------------------
     @GetMapping("/count-teacher-number")
     @Operation(summary = "Recuperer le nombre de d'enseignant")
     public int getCountTeacherNumber(){
         return teachers_service.countNumber();
     }
-//    -----------------------------------------method pour appeller tous les heures payers de teacher
-    @GetMapping("/all-hours-paie-of-teacher/{idTeacher}")
-    public List<Paie> getAllHoursPaie(@PathVariable long idTeacher){
-        return teachers_service.getAll_paie_byIdTeacher(idTeacher);
-    }
-//    ----------------------method update teacher paiement---------------------------
-//    @PutMapping("/update-paie")
-//    private  Paie updatePaie(@RequestBody Paie paie){
-//        return teachers_service.updatePaie(paie);
-//    }
-    //    -----------------------------method get all enseignants qui on des emplois actif--------------------
-//    @GetMapping("/all_teacher_seance_actif")
-//    public List<TeacherSeancesDTO> allTeacherEmploisActif() {
-//       return seance_service.all_teacher();
-//    }
-////    --------------------------------get page of teacher qui on des emplois actif
-//@GetMapping("/get-page-teacher-seance-actif")
-//public Page<TeacherSeancesDTO> getPage_teacher_seance_actif(
-//        @RequestParam(defaultValue = "0") int page,
-//        @RequestParam(defaultValue = "10") int size)
-//{
-//     return seance_service.all_teachers_seance_active(page, size);
-//}
-//------------------------------------------------
-//    @GetMapping("/detaille/{idTeacher}")
-//    public TeacherSeancesDTO getDetail_t_s(@PathVariable long idTeacher) {
-//        return seance_service.getDetail(idTeacher);
-//    }
+
+
     @GetMapping("/all-techer-by-with-profile")
     @Operation(summary = "Recuperer la liste de profile de l'enseignant (filiere associer)")
     public Page<TeacherDTO> getAllFiliereByTeacher(
@@ -168,6 +99,16 @@ public class Teacher_controller {
     @Operation(summary = "Recuperer la liste des teachers filtrer par nom")
     public List<Teachers> getListFilteredTeachers(@RequestBody String nomTeacher){
         return teachers_service.getListFiltered(nomTeacher);
+    }
+
+    @GetMapping("/all-emplois-of-teacher/{idAnnee}/{idTeacher}")
+    @Operation(summary = "Recuperer les emplois d'un enseignant par an")
+    public TeacherDTO getAllEmploisOfTeacherByYear(@PathVariable long idAnnee, @PathVariable long idTeacher) {
+        return emplois_service.allEmploisOfTeacherByIdAnnee(idAnnee, idTeacher);
+    }
+    @GetMapping("/all-emplois-of-teacher-of-current-year/{idTeacher}")
+    public TeacherDTO getAllEmploisOfCurrentYear(@PathVariable long idTeacher){
+        return emplois_service.allEmploiOfTeacherOfCurrentYear(idTeacher);
     }
 
 }

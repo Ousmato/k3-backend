@@ -12,5 +12,6 @@ public class TeacherConfigJournDTO {
     private String prenom;
     private String salle;
     private String groupe;
-    private List<Seance_type> seanceType;
+    private long idGroupe;
+    private String seanceType;
 }

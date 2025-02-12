@@ -10,6 +10,10 @@ public class ModuleDTO {
     private String nomModule;
     private int coefficient;
     private double noteModule;
+    private  Integer volHCM;
+    private Integer volTPE;
+    private Integer volTP;
+    private  Integer volHTD;
     private UE idUe;
 
 

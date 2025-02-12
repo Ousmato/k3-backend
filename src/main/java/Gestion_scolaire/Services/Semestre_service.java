@@ -1,6 +1,8 @@
 package Gestion_scolaire.Services;
 
 import Gestion_scolaire.Classes.repositories.Classe_repositorie;
+import Gestion_scolaire.Emplois.entity.Emplois;
+import Gestion_scolaire.Emplois.repositorie.Emplois_repositorie;
 import Gestion_scolaire.Models.*;
 import Gestion_scolaire.Repositories.*;
 import Gestion_scolaire.configuration.NoteFundException;

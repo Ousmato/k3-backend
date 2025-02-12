@@ -10,6 +10,7 @@ import Gestion_scolaire.configuration.NoteFundException;
 import Gestion_scolaire.configuration.SecurityConfigs.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.transaction.Transactional;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -111,37 +112,11 @@ public class Auth_controller {
         return infoScool_service.delete_annee(idAnnee);
     }
 
-//    @PostMapping("/refresh-token")
-//    @Operation(summary = "Racfrechire le token")
-//    public Object refreshToken(@RequestBody Map<String, String> payload){
-//        String email = payload.get("email");
-//        String rftToken = payload.get("refreshToken");
-//        System.out.println("refresh token" + rftToken);
-//        // Vérifiez que le token de rafraîchissement est présent
-//        if (rftToken == null || rftToken.isEmpty()) {
-//            throw new NoteFundException("Refresh token is missing backend.");
-//        }
-//
-//        // Récupérer les détails de l'utilisateur basés sur le token de rafraîchissement
-//        UserDetails rftoken = adminService.getRefreshToken(email, rftToken);
-//        if (rftoken != null) {
-//            // Valider le token de rafraîchissement
-//            if (!jwtService.validateToken(rftToken, rftoken)) {
-//                throw new NoteFundException("Invalid or expired refresh token backend.");
-//            }
-//        } else {
-//            throw new NoteFundException("Refresh token not found backend.");
-//        }
-//
-//        // Générer un nouveau token JWT
-//        String token = jwtService.generateToken(email);
-//
-//        // Créer une réponse JSON avec le nouveau token
-//        Map<String, String> response = new HashMap<>();
-//        response.put("token", token);
-//        return response;
-//    }
-
+    @GetMapping("/get-all-annee-scolaire-have-emploi-for-teacher/{idTeacher}")
+    @Operation(summary = "Recuperer les annees scolaire dans lequelles l'enseignant a donnees cours par son id")
+    public List<AnneeScolaire> getAllAnneeOfTeacherEmploiByIdTeacher(@PathVariable long idTeacher){
+        return infoScool_service.getAllAnneeOfTeacherEmploiByIdTeacher(idTeacher);
+    }
 
     @Data
     static class LoginRequest {

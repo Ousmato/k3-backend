@@ -20,14 +20,13 @@ import Gestion_scolaire.Repositories.Modules_repositories;
 import Gestion_scolaire.Repositories.Ue_repositorie;
 import Gestion_scolaire.Services.InfoScool_service;
 import Gestion_scolaire.Services.Semestre_service;
-import Gestion_scolaire.SharedService.Shared_service;
+import Gestion_scolaire.Shareds.Shared_methods_service;
 import Gestion_scolaire.configuration.NoteFundException;
 import Gestion_scolaire.students.entity.StudentsClasse;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -45,7 +44,7 @@ public class PromotionAutomaticAdd_service {
     private InfoScool_service infoScool_service;
 
     @Autowired
-    private Shared_service shared_service;
+    private Shared_methods_service shared_methods_service;
 
     @Autowired
     private AdminRepositorie admin_repositorie;
@@ -91,8 +90,7 @@ public class PromotionAutomaticAdd_service {
         // 4. Parcourir les filières
         for (Filiere filiere : filieres) {
             // Abréviation de la filière
-            String filiereAbreviation = shared_service.abrevigateRoleName(filiere.getNomFiliere());
-
+            String filiereAbreviation = shared_methods_service.abrevigateName(filiere.getNomFiliere());
 
             // 5. Parcourir les niveaux
             for (Niveau niveau : niveaux) {
@@ -105,7 +103,7 @@ public class PromotionAutomaticAdd_service {
 
                     // Parcourir les spécialités dans le JSON
                     for (FiliereDTO filiereDTO : filieresJson) {
-                        String filiereAbrevFromJson = shared_service.abrevigateRoleName(filiereDTO.getNomFiliere());
+                        String filiereAbrevFromJson = shared_methods_service.abrevigateName(filiereDTO.getNomFiliere());
 
                         // Vérifier si la filière du JSON correspond à celle traitée
                         if (filiereAbrevFromJson.equalsIgnoreCase(filiereAbreviation)) {

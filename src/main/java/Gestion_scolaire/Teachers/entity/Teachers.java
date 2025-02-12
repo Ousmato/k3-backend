@@ -27,6 +27,11 @@ public class Teachers extends UsersAbstract {
     @Enumerated(EnumType.STRING)
     private Diplomes diplome;
 
+//    @NotNull()
+    private String dateNaissance;
+
+    private String grade;
+
     @NotNull(message = "L'admin est obligatoire")
     @ManyToOne
     private Admin admin;

@@ -1,5 +1,6 @@
 package Gestion_scolaire.Administrators.entity;
 
+import Gestion_scolaire.EnumClasse.TypeFiliere;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -18,9 +19,13 @@ public class Roles {
     @NotBlank(message = "Nom du role est obligatoire")
     private String nom;
 
-    @NotNull(message = "L'admin DG est Obligatoire")
+    @NotNull(message = "Le super admin  est Obligatoire")
     private long idAdminDg;
 
     @NotNull(message = "La date est obligatoire")
     private LocalDate date = LocalDate.now();
+
+//    @NotNull(message = "Le type de filière est obligatoire")
+    @Enumerated(EnumType.STRING)
+    private TypeFiliere typeFiliere;
 }

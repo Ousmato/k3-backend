@@ -1,33 +1,24 @@
 package Gestion_scolaire.students.services;
 
 import Gestion_scolaire.Administrators.entity.Admin;
-import Gestion_scolaire.Administrators.repositories.AdminRepositorie;
-import Gestion_scolaire.Classes.repositories.Classe_repositorie;
 import Gestion_scolaire.Dto_classe.*;
-import Gestion_scolaire.SharedService.Shared_service;
+import Gestion_scolaire.Niveaux_Filieres.entity.SousFilieres;
+import Gestion_scolaire.Shareds.Shared_methods_service;
+import Gestion_scolaire.Shareds.Shared_repositories;
+import Gestion_scolaire.students.dtos.DTO_scolarite;
 import Gestion_scolaire.students.dtos.GetInscriptionDto;
 import Gestion_scolaire.students.dtos.Student_DTO;
-import Gestion_scolaire.students.entity.Paiement;
-import Gestion_scolaire.students.enumClass.InscriptionSeries;
+import Gestion_scolaire.students.entity.*;
 import Gestion_scolaire.students.enumClass.Type_status;
 import Gestion_scolaire.Models.*;
-import Gestion_scolaire.Repositories.*;
-import Gestion_scolaire.Classes.services.Classe_service;
 import Gestion_scolaire.configuration.NoteFundException;
 import Gestion_scolaire.students.dtos.CuntStudentDTO;
-import Gestion_scolaire.students.entity.Inscription;
-import Gestion_scolaire.students.entity.Students;
-import Gestion_scolaire.students.entity.StudentsClasse;
-import Gestion_scolaire.students.repositories.Inscription_repositorie;
-import Gestion_scolaire.students.repositories.Paiement_repositorie;
-import Gestion_scolaire.students.repositories.Students_repositorie;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,28 +31,13 @@ import java.util.*;
 public class Student_service {
 
     @Autowired
-    private Students_repositorie students_repositorie;
-
-    @Autowired
-    private Classe_repositorie classe_repositorie;
-
-    @Autowired
-    private AnneeScolaire_repositorie annee_repositorie;
-
-    @Autowired
-    private Inscription_repositorie inscription_repositorie;
-
-    @Autowired
-    private AdminRepositorie adminRepositorie;
-
-    @Autowired
-    private Paiement_repositorie paiement_repositorie;
+    private Shared_repositories shared_repositories;
 
     @Autowired
     private Validator validator;
 
     @Autowired
-    private Shared_service shared_service;
+    private Shared_methods_service shared_methods_service;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -70,14 +46,11 @@ public class Student_service {
     private Gestion_scolaire.Services.fileManagers fileManagers;
 
     String adminEmail = "ousmatotoure98@gmail.com";
-
-
-
     //    -----------------------------------------------------------------------------------
     @Transactional
     public Object update(Inscription inscrit, MultipartFile file) throws IOException {
         Students students = inscrit.getIdEtudiant();
-        Inscription inscriptionExist = inscription_repositorie.findById(inscrit.getId());
+        Inscription inscriptionExist = shared_repositories.getInscription_repositorie().findById(inscrit.getId());
         if (inscriptionExist == null) {
             throw new NoteFundException("L'inscription n'existe pas");
         }
@@ -85,20 +58,16 @@ public class Student_service {
         if (telephone.length() > 8) {
             throw new NoteFundException("Le numéro de téléphone ne doit pas dépasser 8 chiffres");
         }
-//        LocalDate dateNaissance = LocalDate.now().minusYears(15);
-//        if (dateNaissance.isBefore(students.getDateNaissance())) {
-//            throw new NoteFundException("La date de naissance n'est pas valide. L'étudiant doit avoir au moins 15 ans.");
-//        }
-        if (students.getMatricule().length() != 12) {
-            throw new NoteFundException("Le matricule n'est pas valide");
-        }
 
-        Students studentExist = students_repositorie.findByIdEtudiant(inscriptionExist.getIdEtudiant().getIdEtudiant());
+        inscrit = shared_methods_service.validateInscrit(inscrit);
+//        if (students.getMatricule() != null && students.getMatricule().length() != 12) {
+//            throw new NoteFundException("Le matricule n'est pas valide");
+//        }
+
+        Students studentExist = shared_repositories.getStudents_repositorie().findByIdEtudiant(inscriptionExist.getIdEtudiant().getIdEtudiant());
         if (studentExist == null) {
             throw new NoteFundException("L'étudiant n'existe pas");
         }
-
-//        System.out.println("--------------------je suis ici");
         // Vérification du mot de passe
         if (students.getPassword() != null && !students.getPassword().isEmpty()) {
             studentExist.setPassword(passwordEncoder.encode(students.getPassword()));
@@ -111,32 +80,42 @@ public class Student_service {
             studentExist.setUrlPhoto(urlPhoto);
         }
 
+
         inscriptionExist.setIdAdmin(inscrit.getIdAdmin());
-        inscriptionExist.setIdClasse(inscrit.getIdClasse());
-        inscription_repositorie.save(inscriptionExist);
+//        inscriptionExist.setIdClasse(inscrit.getIdClasse());
+        shared_repositories.getInscription_repositorie().save(inscriptionExist);
 
 //        studentExist.setDate(LocalDate.now());
-        studentExist.setMatricule(students.getMatricule());
-        studentExist.setSexe(students.getSexe());
-        studentExist.setEmail(students.getEmail());
-        studentExist.setTelephone(students.getTelephone());
-        studentExist.setDateNaissance(students.getDateNaissance());
-        studentExist.setLieuNaissance(students.getLieuNaissance());
-        studentExist.setNom(students.getNom());
-        studentExist.setPrenom(students.getPrenom());
+        shared_methods_service.updateIfNotEmpty(students.getMatricule(), studentExist::setMatricule);
+        shared_methods_service.updateIfNotEmpty(students.getSexe(), studentExist::setSexe);
+        shared_methods_service.updateIfNotEmpty(students.getEmail(), studentExist::setEmail);
+        shared_methods_service.updateIfNotEmpty(students.getTelephone(), studentExist::setTelephone);
+        shared_methods_service.updateIfNotEmpty(students.getDateNaissance(), studentExist::setDateNaissance);
+        shared_methods_service.updateIfNotEmpty(students.getLieuNaissance(), studentExist::setLieuNaissance);
+        shared_methods_service.updateIfNotEmpty(students.getNom(), studentExist::setNom);
+        shared_methods_service.updateIfNotEmpty(students.getPrenom(), studentExist::setPrenom);
+        shared_methods_service.updateIfNotEmpty(students.getCercleNaissance(), studentExist::setCercleNaissance);
+        shared_methods_service.updateIfNotEmpty(students.getCommNaissance(), studentExist::setCommNaissance);
+        shared_methods_service.updateIfNotEmpty(students.getLastNameFather(), studentExist::setLastNameFather);
+        shared_methods_service.updateIfNotEmpty(students.getMotherName(), studentExist::setMotherName);
+        shared_methods_service.updateIfNotEmpty(students.getNationalite(), studentExist::setNationalite);
+        shared_methods_service.updateIfNotEmpty(students.getResidenceParent(), studentExist::setResidenceParent);
+        shared_methods_service.updateIfNotEmpty(students.getAcademies(), studentExist::setAcademies);
+        shared_methods_service.updateIfNotEmpty(students.getSeries(), studentExist::setSeries);
+        shared_methods_service.updateIfNotEmpty(students.getQuartier(), studentExist::setQuartier);
+        // shared_methods_service.updateIfNotEmpty(students.get);
 
-
-        students_repositorie.save(studentExist);
-        return DTO_response_string.fromMessage("Modification effectuée avec succé");
+        shared_repositories.getStudents_repositorie().save(studentExist);
+        return DTO_response_string.updateMessage();
 
     }
 
-    //    -----------------------------methode pour desactiver un etudiant-------------------------------------------
+    // methode pour desactiver un etudiant
     public Object desable(long id) {
-        Students studentsExist = students_repositorie.findByIdEtudiant(id);
+        Students studentsExist = shared_repositories.getStudents_repositorie().findByIdEtudiant(id);
         if (studentsExist != null) {
             studentsExist.setActive(!studentsExist.isActive());
-            students_repositorie.save(studentsExist);
+            shared_repositories.getStudents_repositorie().save(studentsExist);
             return DTO_response_string.fromMessage("Changement d'etat effectué avec succé");
         }
         throw new NoteFundException("Student does not exist");
@@ -146,7 +125,7 @@ public class Student_service {
     public Page<GetInscriptionDto> readAll(int page, int pageSize) {
         Sort sort = Sort.by(Sort.Order.asc("idEtudiant.nom"));
         Pageable pageable = PageRequest.of(page, pageSize,sort);
-        AnneeScolaire currentYear = annee_repositorie.findCurrentYear(LocalDate.now());
+        AnneeScolaire currentYear = shared_repositories.getAnneeScolaire_repositorie().findCurrentYear(LocalDate.now());
         Page<GetInscriptionDto> studensPages  = get_by_idAnneeScolaire(page,pageSize, currentYear.getId());
         if (studensPages.isEmpty()) {
             return Page.empty(pageable);
@@ -156,12 +135,12 @@ public class Student_service {
 
     //    ----------------------------find all student
     public List<Students> find_all() {
-        return students_repositorie.findAll();
+        return shared_repositories.getStudents_repositorie().findAll();
     }
 
     //    --------------------------------------------------methode appeler un etudiant par id----------------------
     public Students studenById(long id) {
-        Students studentsExist = students_repositorie.findByIdEtudiant(id);
+        Students studentsExist = shared_repositories.getStudents_repositorie().findByIdEtudiant(id);
         if (studentsExist != null) {
             return studentsExist;
         } else {
@@ -171,10 +150,9 @@ public class Student_service {
 
     //    ---------------------------method les etudiant de la classe par page-----------------------------------
     public Page<GetInscriptionDto > readAllByClassId(int page, int pageSize, long idClass) {
-        System.out.println("-----------icc----------" + pageSize);
 
         Pageable pageable = PageRequest.of(page, pageSize);
-        Page<Inscription> pages = inscription_repositorie.findByIdClasseId(idClass, pageable);
+        Page<Inscription> pages = shared_repositories.getInscription_repositorie().findByIdClasseId(idClass, pageable);
         if (pages.isEmpty()) {
             return Page.empty(pageable);
         }
@@ -187,43 +165,73 @@ public class Student_service {
             if (ip.getIdEtudiant() != null) {
                 dto.setIdEtudiant(Student_DTO.toDTO(ip.getIdEtudiant()));
             }
-
+            List<SousFilieres> filiereSpecialites = shared_repositories.getSousFilieres_repositorie().findByIdClasseId(idClass);
+            dto.getIdClasse().setSpecialites(filiereSpecialites);
             return dto;
         });
     }
 
-    //-----------------------------update scolarite
-    public Object update_scolarite(long idIncription, long idAdmin, double scolarite) {
+    //update scolarite
+    @Transactional
+    public DTO_response_string update_scolarite(DTO_scolarite dto, long idAdmin) {
         LocalDate date = LocalDate.now();
-        Inscription studentInscrit = inscription_repositorie.findById(idIncription);
+        dto.setUpdateDate(date);
 
+        Inscription studentInscrit = shared_repositories.getInscription_repositorie().findById(dto.getId());
+        Admin admin = shared_repositories.getAdminRepositorie().getByIdAdministraAndActive(idAdmin, true);
 
-        if (studentInscrit != null) {
-            Paiement paiement = paiement_repositorie.findByDateDePaiementAndIdInscriptionId(date, idIncription);
-            if(paiement == null) {
-                throw new NoteFundException("La date ne corresponde pas");
-            }
-
-
-
-            if(studentInscrit.getIdEtudiant().getStatus() == Type_status.REGULIER && scolarite > 6000){
-                throw new NoteFundException("Le frais de scolarité est invalide");
-            }
-//            double montant = studentInscrit.getScolarite() + scolarite;
-//            paiement.setDateDePaiement(LocalDate.now());
-//            paiement.setIdInscription(studentInscrit);
-//            studentInscrit.setPayer(true);
-//            studentInscrit.setAdminPaye(idAdmin);
-            inscription_repositorie.save(studentInscrit);
-            return DTO_response_string.fromMessage("Modification effectuer avec succé");
+        if (studentInscrit == null) {
+            throw new NoteFundException("Student does not exist");
         }
-        throw new NoteFundException("Student does not exist");
+
+        if (admin == null) {
+            throw new NoteFundException("Admin not found or inactive");
+        }
+        double seuilScolaire = shared_methods_service.getSeuilScolarite(studentInscrit.getIdEtudiant().getStatus());
+
+        // Vérification si l'étudiant est REGULIER et si le paiement existe déjà
+        if (studentInscrit.getIdEtudiant().getStatus().equals(Type_status.REGULIER)) {
+            if (dto.getPayer() != seuilScolaire){
+                throw new NoteFundException("Montant invalide pour ce type " + dto.getType());
+            }
+            Paiement pExist = shared_repositories.getPaiement_repositorie().getByIdInscriptionId(dto.getId());
+            if (pExist != null) {
+                throw new NoteFundException("L'étudiant a déjà payé");
+            }
+        }
+
+
+        // Validation du paiement par rapport au seuil scolaire
+        boolean isvalid = shared_methods_service.validateScolariteByStatus(dto.getPayer(), dto.getType(), seuilScolaire);
+        if (!isvalid) {
+            throw new NoteFundException("Montant invalide, le seuil est fixé à " + seuilScolaire);
+        }
+
+        // Création du nouvel objet Paiement
+        Paiement newPaie = new Paiement();
+        newPaie.setDateDePaiement(date);
+        newPaie.setMontant(dto.getPayer());
+
+        // Sauvegarde de l'inscription et du paiement
+        studentInscrit.setPayer(true);
+        newPaie.setIdInscription(studentInscrit);
+        newPaie.setIdAdmin(admin);
+        shared_repositories.getPaiement_repositorie().save(newPaie);
+        Double sumTotal = shared_repositories.getPaiement_repositorie().sumMontant(dto.getId());
+
+        if ( (sumTotal != null && sumTotal.equals(seuilScolaire)) || (dto.getPayer() != 0 && dto.getPayer() == seuilScolaire)) {
+            studentInscrit.setTotalPayer(true);
+        }
+        shared_repositories.getInscription_repositorie().save(studentInscrit);
+
+        return DTO_response_string.addMessage(); // Retour du message de succès
     }
+
 
     //    ----------------------------get list student by class id
     public List<GetInscriptionDto> get_by_classId(long idAnnee,long idClass) {
-        List<Inscription> list = inscription_repositorie.getByIdClasseIdAndPayer(idAnnee,idClass, true);
-        System.out.println("-----------------" + list + "--------------------------");
+        List<Inscription> list = shared_repositories.getInscription_repositorie().getByIdClasseIdAndPayer(idAnnee,idClass, true);
+//        System.out.println("-----------------" + list + "--------------------------");
         if (list.isEmpty()) {
             return new ArrayList<>();
         }
@@ -238,7 +246,7 @@ public class Student_service {
     //    -----------------------------get by id annee scolaire
     public Page<GetInscriptionDto> get_by_idAnneeScolaire(int page, int pageSize, long idAnneeScolaire) {
         Pageable pageable = PageRequest.of(page, pageSize);
-        Page<Inscription> list = inscription_repositorie.getByIdClasseIdAnneeScolaireId(idAnneeScolaire, pageable);
+        Page<Inscription> list = shared_repositories.getInscription_repositorie().getByIdClasseIdAnneeScolaireId(idAnneeScolaire, pageable);
         if (list.isEmpty()) {
             return Page.empty(pageable);
         }
@@ -252,7 +260,7 @@ public class Student_service {
 
 
     public GetInscriptionDto getInscriptionById(long idInscrit){
-        Inscription inscrit = inscription_repositorie.findById(idInscrit);
+        Inscription inscrit = shared_repositories.getInscription_repositorie().findById(idInscrit);
         if (inscrit == null) {
             throw new NoteFundException("L'inscription pour cet étudiant est introuvable");
         }
@@ -260,7 +268,8 @@ public class Student_service {
         dto.setIdEtudiant(Student_DTO.toDTO(inscrit.getIdEtudiant()));
         return dto;
     }
-    //    ----------------------get all reliquat of current year
+
+    //get all reliquat of current year
     public MontantsCunt getAll_reliquat() {
         MontantsCunt montantsCunt = new MontantsCunt();
 //        double reliquatPro = inscription_repositorie.getReliquatForCurrentYear(Type_status.PROFESSIONNEL_PRIVEE);
@@ -280,145 +289,45 @@ public class Student_service {
 
     //    ------------------cunt all student inscrit
     public CuntStudentDTO cunt_student_inscrit() {
-        int inscrit = inscription_repositorie.countAllByPayer(true);
-        int non_inscrit = inscription_repositorie.countAllByPayer(false);
+        int inscrit = shared_repositories.getInscription_repositorie().countAllByPayer(true);
+        int non_inscrit = shared_repositories.getInscription_repositorie().countAllByPayer(false);
         return CuntStudentDTO.getCount(inscrit, non_inscrit);
     }
-
-    //-------------------------------------------------------------------------------------
-    @Transactional
-    public Object reinscription(List<Inscription> inscrits, long idClasse, long idAdmin) {
-
-        for (Inscription inscrit : inscrits){
-
-
-            StudentsClasse newClass = classe_repositorie.findById(idClasse);
-
-            // Trouver la classe
-            if (newClass == null) {
-                throw new NoteFundException("La classe est introuvable");
-            }
-//            List<GetInscriptionDto> inscriptionListExist = getListByIdAnneeAndIdClasse(newClass.getIdAnneeScolaire().getId(), idClasse);
-//            if (!inscriptionListExist.isEmpty()) {
-////            System.out.println("il est rentre dans dif de null");
-////            boolean hasEquals = false;
-//                for (GetInscriptionDto inscriptionExist : inscriptionListExist) {
-////                System.out.println("------------le nouveaux-------"+inscrit.getIdEtudiant());
-////                System.out.println("-------------les inscrits---------"+ inscriptionExist.getIdEtudiant());
-////                    if (inscriptionExist.getIdEtudiant().equals(inscrit.getIdEtudiant())){
-////                        desabledInscription(inscriptionExist.getId(),idClasse);
-////
-////                        return DTO_response_string.fromMessage("L'inscription existante a été désactivée pour cet étudiant.");
-////
-////                    }
-//                }
-//
-//            }
-
-//        System.out.println("-----------------liste-----des ----danscallse sup------"+inscriptionListExist + "\n");
-            // Trouver l'étudiant
-            Inscription studentExist = inscription_repositorie.findByIdEtudiantIdEtudiant(inscrit.getIdEtudiant().getIdEtudiant());
-            if (studentExist == null) {
-                throw new NoteFundException("L'étudiant est introuvable");
-            }
-
-
-
-            Admin adminExist = adminRepositorie.findByIdAdministra(idAdmin);
-            if (adminExist == null) {
-                throw new NoteFundException("L'administrateur est introuvable");
-
-            }
-            System.out.println("-------------------------inscrit------------" + inscrit);
-
-            // Trouver l'année scolaire
-            AnneeScolaire newYear = annee_repositorie.findById(newClass.getIdAnneeScolaire().getId());
-            if (newYear == null) {
-                throw new NoteFundException("L'année scolaire est introuvable");
-            }
-
-            // Vérifier si l'étudiant est déjà inscrit dans la nouvelle classe et l'année scolaire
-            if (studentExist.getIdClasse() != null && studentExist.getIdClasse().equals(newClass) && studentExist.getIdClasse().getIdAnneeScolaire().equals(newYear)) {
-                throw new NoteFundException("L'étudiant est déjà inscrit dans cette classe pour cette année scolaire");
-            }
-
-
-            // Vérifier que le niveau de la nouvelle classe est supérieur à l'ancien niveau
-            if (studentExist.getIdClasse() != null && studentExist.getIdClasse().getIdFiliere().getIdNiveau().equals(newClass.getIdFiliere().getIdNiveau())) {
-                throw new NoteFundException("Réinscription invalide, veuillez choisir un niveau supérieur");
-            }
-
-            // Vérifier la filière
-            if (studentExist.getIdClasse() != null && !studentExist.getIdClasse().getIdFiliere().getIdFiliere().equals(newClass.getIdFiliere().getIdFiliere())) {
-                throw new NoteFundException("Réinscription invalide, la filière ne correspond pas");
-            }
-
-            // Création d'un nouvel étudiant pour la réinscription
-
-
-            newClass.setEffectifs(newClass.getEffectifs() + 1);
-            StudentsClasse classSaved = classe_repositorie.save(newClass);
-            Inscription newInscription = new Inscription();
-            newInscription.setIdEtudiant(studentExist.getIdEtudiant());
-            newInscription.setDate(LocalDate.now());
-            newInscription.setDate(classSaved.getIdAnneeScolaire().getDebutAnnee());
-            newInscription.setIdClasse(classSaved);
-
-            newInscription.setIdAdmin(adminExist);
-            inscription_repositorie.save(newInscription);
-        }
-
-        return DTO_response_string.fromMessage("Inscription effectuée avec succès");
-    }
-
     //    -------------------------------------------------
     public List<GetInscriptionDto> getListByIdAnneeAndIdClasse(long idAnnee, long idClasse) {
         // Récupérer les inscriptions actuelles pour la classe et l'année spécifiées
-        List<Inscription> list = inscription_repositorie.findByIdClasseIdAnneeScolaireIdAndIdClasseId(idAnnee, idClasse);
+        List<Inscription> list = shared_repositories.getInscription_repositorie().findByIdClasseIdAnneeScolaireIdAndIdClasseId(idAnnee, idClasse);
 
         List<Students> studentsList = list.stream().map(Inscription::getIdEtudiant).toList();
 
         List<Inscription> inscriptionList = new ArrayList<>();
 
         // Récupérer la classe actuelle
-        StudentsClasse nowClass = classe_repositorie.findById(idClasse);
-        System.out.println("-------------list---------------" +list.size());
+        StudentsClasse nowClass = shared_repositories.getClasse_repositorie().findById(idClasse);
 
         // Calculer l'année suivante pour la réinscription
         int nextYear = nowClass.getIdAnneeScolaire().getFinAnnee().getYear() + 1;
         // Vérifier le niveau d'étude de la classe actuelle
         String currentNiveau = nowClass.getIdFiliere().getIdNiveau().getNom();
 
-        System.out.println("------------- " + nextYear +"---------------" +currentNiveau);
         // Si la classe est en LICENCE 1 (L1)
         if ("LICENCE 1".equals(currentNiveau)) {
             // Récupérer les étudiants inscrits en LICENCE 2 (L2) pour l'année suivante
-            List<Inscription> inscriptionsL2 = inscription_repositorie.getListInscritByNiveauNameAndIdAnnee(
+            List<Inscription> inscriptionsL2 = shared_repositories.getInscription_repositorie().getListInscritByNiveauNameAndIdAnnee(
                     "LICENCE 2",
                     nextYear,
                     nowClass.getIdFiliere().getIdFiliere().getNomFiliere()
             );
-
-
-//            System.out.println("-------------students l2---------------" +inscriptionsL2.size());
-
             // Vérifier si la liste d'étudiants L2 n'est pas vide et ne contient pas déjà les étudiants L1
             if (!inscriptionsL2.isEmpty()) {
                 List<Students> studentsListL2 = inscriptionsL2.stream()
                         .map(Inscription::getIdEtudiant).toList();
                 List<String> listMatriculesL2 = studentsListL2.stream().map(Students::getTelephone).toList();
 
-                System.out.println("-------------inscription l2---------------" +inscriptionsL2.size());
-
-
-
                 // Exclure les étudiants L1 déjà inscrits en L2 pour l'année suivante en fonction de leur matricule
                 List<Inscription> studentsNotReinscribed = new ArrayList<>(list);
                 studentsNotReinscribed.removeIf(inscription ->
                         listMatriculesL2.contains(inscription.getIdEtudiant().getTelephone()));
-                System.out.println("-------------studentsNotReinscribed---------------" +studentsNotReinscribed.size());
-
-                System.out.println("-------------list a return---------------" +list.size());
 
                 return studentsNotReinscribed.stream().map(stnr ->{
                     GetInscriptionDto dto  = GetInscriptionDto.toDto(stnr);
@@ -436,14 +345,14 @@ public class Student_service {
         // Si la classe est en LICENCE 2 (L2)
         else if ("LICENCE 2".equals(currentNiveau)) {
             // Récupérer les étudiants inscrits en LICENCE 3 (L3) pour l'année suivante
-            System.out.println("----------------------------" + nowClass.getIdFiliere().getIdFiliere().getNomFiliere());
+//            System.out.println("----------------------------" + nowClass.getIdFiliere().getIdFiliere().getNomFiliere());
 
-            List<Inscription> inscriptionsL3 = inscription_repositorie.getListInscritByNiveauNameAndIdAnnee(
+            List<Inscription> inscriptionsL3 = shared_repositories.getInscription_repositorie().getListInscritByNiveauNameAndIdAnnee(
                     nowClass.getIdFiliere().getIdNiveau().getNom(),
                     nextYear,
                     nowClass.getIdFiliere().getIdFiliere().getNomFiliere()
             );
-            System.out.println("-------------inscription l3---------------" +inscriptionsL3);
+//            System.out.println("-------------inscription l3---------------" +inscriptionsL3);
 
             List<Students> studentsListL3 = inscriptionsL3.stream().map(Inscription::getIdEtudiant).toList();
 
@@ -474,7 +383,6 @@ public class Student_service {
         return new ArrayList<>();
     }
 
-
     @Transactional
     public Object addStudentsImport(List<Inscription> inscriptionList){
         System.out.println("--------------------------------le tout debut------------------" + inscriptionList.size());
@@ -500,44 +408,11 @@ public class Student_service {
                 if (!violations.isEmpty()) {
                     throw new ConstraintViolationException(violations);
                 }
-                String dateString = inscrit.getIdEtudiant().getDateNaissance();
-
-                if(dateString.toLowerCase().contains("vers")){
-                    System.out.println("__________date naissance nee vers" + dateString);
-                    // Remplacer les espaces multiples par un seul espace
-                    String cleanedDateString = dateString.replaceAll("\\s+", " ").trim();
-
-                    // Split sur le premier espace pour récupérer l'année
-                    String yearString = cleanedDateString.split(" ")[1].trim();
-
-                    try {
-                        int year = Integer.parseInt(yearString);
-                        LocalDate date = LocalDate.of(year, 1, 1);
-
-                        LocalDate diff = LocalDate.now().minusYears(15);
-                        if (diff.isBefore(date)) {
-                            throw new NoteFundException("La date de naissance n'est pas valide. L'étudiant doit avoir au moins 15 ans.");
-                        }
-
-                    } catch (NumberFormatException e) {
-                        throw new NoteFundException("L'année fournie n'est pas valide.");
-                    }
-                }else {
-                    System.out.println("__________date naissance" + inscrit.getIdEtudiant().getDateNaissance());
-                    shared_service.processDate(inscrit.getIdEtudiant().getDateNaissance());
-                }
-                if (inscrit.getIdEtudiant().getSeries() != null) {
-                    String seriAbreg = shared_service.abrevigateSerie(inscrit.getIdEtudiant().getSeries().toString());
-                    System.out.println("___________serie----brut------" + seriAbreg + "___________");
-                    inscrit.getIdEtudiant().setSeries(InscriptionSeries.fromAbbreviation(seriAbreg));
-
-                }
-
-
+                inscrit = shared_methods_service.validateInscrit(inscrit);
 
                 Students students = inscrit.getIdEtudiant();
                 StudentsClasse cl = inscrit.getIdClasse();
-                StudentsClasse classe = classe_repositorie.findById(cl.getId());
+                StudentsClasse classe = shared_repositories.getClasse_repositorie().findById(cl.getId());
 
 //            if (students.getMatricule() != null && students.getMatricule().length() != 11) {
 //                throw new NoteFundException("Le matricule n'est pas valide  " + students.getMatricule());
@@ -548,7 +423,7 @@ public class Student_service {
                     students.setTelephone("Neant");
                 }
                 if(students.getMatricule() != null && students.getTelephone() != null){
-                    Students studentExist = students_repositorie.findByMatriculeAndTelephone(students.getMatricule(), students.getTelephone());
+                    Students studentExist = shared_repositories.getStudents_repositorie().findByMatriculeAndTelephone(students.getMatricule(), students.getTelephone());
                     if (studentExist != null) {
                         throw new RuntimeException("l'etudiant avec ce numero matricule  et ce numero de telephone existe deja");
 
@@ -559,8 +434,8 @@ public class Student_service {
                 students.setUrlPhoto("urlPhoto.png");
                 LocalDate dateInscription = classe.getIdAnneeScolaire().getDebutAnnee();
 
-                Students savedStudent = students_repositorie.save(students);
-                StudentsClasse SavedClasse =  classe_repositorie.save(classe);
+                Students savedStudent = shared_repositories.getStudents_repositorie().save(students);
+                StudentsClasse SavedClasse =  shared_repositories.getClasse_repositorie().save(classe);
 
                 Inscription newInscription = new Inscription();
                 newInscription.setIdAdmin(inscrit.getIdAdmin());
@@ -568,7 +443,7 @@ public class Student_service {
                 newInscription.setIdClasse(SavedClasse);
                 newInscription.setIdEtudiant(savedStudent);
                 newInscription.setNumeroInscrit(inscrit.getNumeroInscrit());
-                inscription_repositorie.save(newInscription);
+                shared_repositories.getInscription_repositorie().save(newInscription);
 
             processed++;
             } catch (Exception e) {
@@ -578,9 +453,6 @@ public class Student_service {
             }
         }
 
-        System.out.println("Processed: " + processed);
-        System.out.println("Skipped: " + skipped);
-
         return DTO_response_string.fromMessage("Importations effectuer avec succès");
 
     }
@@ -588,9 +460,8 @@ public class Student_service {
     public Page<GetInscriptionDto> readAllByEtat(int value, int page, int size){
         Sort sort = Sort.by(Sort.Order.asc("idEtudiant.nom"));
         Pageable pageable = PageRequest.of(page, size, sort);
-        AnneeScolaire currentYear = annee_repositorie.findCurrentYear(LocalDate.now());
         if(value == 1){
-            Page<Inscription> studensList = inscription_repositorie.findStudentByEtat(LocalDate.now(), true, pageable);
+            Page<Inscription> studensList = shared_repositories.getInscription_repositorie().findStudentByEtat(LocalDate.now(), true, pageable);
             if (studensList.isEmpty()) {
                 return Page.empty(pageable);
             }
@@ -601,7 +472,7 @@ public class Student_service {
             });
         }
 
-            Page<Inscription> studensList = inscription_repositorie.findStudentByEtat(LocalDate.now(), false, pageable);
+            Page<Inscription> studensList = shared_repositories.getInscription_repositorie().findStudentByEtat(LocalDate.now(), false, pageable);
         if (studensList.isEmpty()) {
             return Page.empty(pageable);
         }
@@ -612,19 +483,30 @@ public class Student_service {
         });
     }
 
-    //--------------disabled inscription
+    //disabled inscription
     public Object desabledInscription(long idInscription, long idClasse){
         System.out.println("je suis de dans");
-        Inscription inscription = inscription_repositorie.getByIdAndIdClasseId(idInscription, idClasse);
+        Inscription inscription = shared_repositories.getInscription_repositorie().getByIdAndIdClasseId(idInscription, idClasse);
         if (inscription != null) {
-            System.out.println("---------------------inscription-------------"+inscription);
-
            inscription.setActive(!inscription.isActive());
-           inscription_repositorie.save(inscription);
-           System.out.println("---------------is active------"+inscription.isActive());
+            shared_repositories.getInscription_repositorie().save(inscription);
            return DTO_response_string.fromMessage("Mises à jour éffectué avec succès");
         }
         throw new NoteFundException("L'inscription n'existe pas");
 
     }
+
+    //get student by idInscrit
+    public List<Students> getStudentsNotInscribed(List<Long> idsInscrit, long idClasse) {
+        // Récupérer directement les étudiants non inscrits dans la classe
+        List<Students> studentsNotInscribed = shared_repositories.getStudents_repositorie().getStudentsNotInscribed(idsInscrit);
+
+        // Retourner la liste des étudiants non inscrits
+        if(studentsNotInscribed.isEmpty()){
+            return  new ArrayList<>();
+        }
+
+        return studentsNotInscribed;
+    }
+
 }

@@ -1,8 +1,11 @@
 package Gestion_scolaire.students.dtos;
 
+import Gestion_scolaire.Dto_classe.UeValidateDTO;
 import Gestion_scolaire.students.entity.Inscription;
 import Gestion_scolaire.students.entity.StudentsClasse;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class InscriptionNoteDTO {
@@ -14,6 +17,7 @@ public class InscriptionNoteDTO {
     private boolean active = true;
     private String sexe;
     private String dateNaissance;
+    private List<UeValidateDTO> ueValidate;
 
 
     public static InscriptionNoteDTO toDTO(Inscription inscription) {

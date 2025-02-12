@@ -13,5 +13,7 @@ public interface StudentGroup_repositorie extends JpaRepository<StudentGroupe, L
 
     List<StudentGroupe> getByIdEmploiId(long idEmplois);
 
-//    List<StudentGroupe> getBy
+    List<StudentGroupe> getByIdEmploiIdClasseId(long idClasse);
+
+    StudentGroupe findById(long id);
 }

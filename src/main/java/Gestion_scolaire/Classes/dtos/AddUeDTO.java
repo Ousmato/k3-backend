@@ -1,6 +1,5 @@
 package Gestion_scolaire.Classes.dtos;
 
-import Gestion_scolaire.Classes.entity.ClasseModule;
 import Gestion_scolaire.Classes.entity.Modules;
 import Gestion_scolaire.Models.Semestres;
 import Gestion_scolaire.Classes.entity.UE;

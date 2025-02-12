@@ -1,5 +1,6 @@
 package Gestion_scolaire.students.repositories;
 
+import Gestion_scolaire.students.entity.Students;
 import Gestion_scolaire.students.enumClass.Type_status;
 import Gestion_scolaire.students.entity.Inscription;
 import org.springframework.data.domain.Page;
@@ -20,7 +21,8 @@ public interface Inscription_repositorie extends JpaRepository<Inscription, Long
 
     Inscription getByIdAndIdClasseId(long id, long classeId);
 
-    Inscription findByIdEtudiantIdEtudiant(long etudiantId);
+    List<Inscription> findByIdEtudiantIdEtudiant(long etudiantId);
+
 
     List<Inscription> findByIdClasseIdAnneeScolaireId(long anneeScolaireId);
 
@@ -83,7 +85,23 @@ public interface Inscription_repositorie extends JpaRepository<Inscription, Long
     @Query("SELECT COUNT(c) from Inscription c WHERE YEAR(c.date) = YEAR(current_date) and c.payer =:payer")
     int countAllByPayer(@Param("payer") boolean payer);
 
-    int countAllByIdClasseIdAndIdClasseIdAnneeScolaireId(long idClasseId, long idAnneeScolaireId);
+    @Query("select count(i) from Inscription i where i.idClasse.idFiliere.idFiliere.id =:idFiliere and i.totalPayer =:isPay and i.idClasse.idAnneeScolaire.id =:idAnnee")
+    Integer cuntByFiliere(@Param("idFiliere") long idFiliere, @Param("isPay") boolean isPay, @Param("idAnnee") long idAnnee);
+
+    @Query("select count(i) from  Inscription i where  i.idEtudiant.status =:status and i.payer =:isPay and i.totalPayer =:isTotal and i.idClasse.idAnneeScolaire.id =:idAnnee")
+    Integer cuntByStatus(@Param("status") Type_status status, @Param("isPay") boolean isPay, @Param("isTotal") boolean isTotal,  @Param("idAnnee") long idAnnee);
+
+    @Query("select i from  Inscription i where  i.idEtudiant.status =:status and i.payer =:isPay and i.totalPayer =:isTotal and i.idClasse.idAnneeScolaire.id =:idAnnee")
+    List<Inscription> getInscriptionByStatusAndPaye(@Param("status") Type_status status, @Param("isPay") boolean isPay, @Param("isTotal") boolean isTotal,  @Param("idAnnee") long idAnnee);
+
+
+    @Query("select count(i) from  Inscription i where  i.idClasse.idAnneeScolaire.id =:idAnnee and i.payer =:isPay and i.totalPayer =:isTotal")
+    Double cuntByIdAnnee(@Param("idAnnee") long idAnnee, @Param("isPay") boolean isPay, @Param("isTotal") boolean isTotal);
+
+    Double countByIdClasseIdAnneeScolaireId(long idAnnee);
+
+    @Query("select i from Inscription i where i.idClasse.idFiliere.idFiliere.id =:idFiliere and i.idClasse.idAnneeScolaire.id =:idAnnee and i.payer =:isPaye")
+    List<Inscription> getInscriptionByFilieresAndPaye(@Param("idFiliere") long idFiliere, @Param("idAnnee") long idAnnee, @Param("isPaye") boolean isPaye);
 
     @Query("SELECT i FROM Inscription i WHERE YEAR(i.date) = YEAR(CURRENT_DATE)")
     Page<Inscription> findStudentOfCurrentYear( Pageable pageable);

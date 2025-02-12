@@ -1,7 +1,6 @@
 package Gestion_scolaire.Administrators.services;
 
 import Gestion_scolaire.Administrators.dtos.AdminDTO;
-import Gestion_scolaire.Administrators.dtos.AdminPostesDTO;
 import Gestion_scolaire.Administrators.entity.Roles;
 import Gestion_scolaire.Administrators.repositories.Role_repositorie;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
@@ -11,7 +10,7 @@ import Gestion_scolaire.Administrators.entity.Admin;
 import Gestion_scolaire.Models.RefreshToken;
 import Gestion_scolaire.Administrators.repositories.AdminRepositorie;
 import Gestion_scolaire.Repositories.RefreshRepositorie;
-import Gestion_scolaire.SharedService.Shared_service;
+import Gestion_scolaire.Shareds.Shared_methods_service;
 import Gestion_scolaire.configuration.NoteFundException;
 import Gestion_scolaire.configuration.SecurityConfigs.AdminInfoDetails;
 import jakarta.annotation.PostConstruct;
@@ -59,7 +58,7 @@ public class Admin_service implements UserDetailsService {
     private MessaSender messages;
 
     @Autowired
-    private Shared_service sharedService;
+    private Shared_methods_service sharedService;
 
     @Autowired
     private HttpSession session;
@@ -117,7 +116,7 @@ public class Admin_service implements UserDetailsService {
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
-        Admin adminExist = adminRepositorie.findByIdRoleIdAndActiveAndEmail(admin.getIdRole().getId(), true, admin.getEmail());
+        Admin adminExist = adminRepositorie.findByIdRoleIdAndActiveAndEmailAndIdRoleTypeFiliere(admin.getIdRole().getId(), true, admin.getEmail(), admin.getIdRole().getTypeFiliere());
         if (adminExist != null) {
            throw new NoteFundException("Impossible d'attribuer le meme role a deux administrateur");
         }
@@ -147,7 +146,7 @@ public class Admin_service implements UserDetailsService {
         Admin admin = adminRepositorie.findByIdAdministra(id);
         if(admin != null){
 
-            if(!admin.isActive() && adminRepositorie.findByIdRoleIdAndActiveAndEmail(admin.getIdRole().getId(), true, admin.getEmail()) != null){
+            if(!admin.isActive() && adminRepositorie.findByIdRoleIdAndActiveAndEmailAndIdRoleTypeFiliere(admin.getIdRole().getId(), true, admin.getEmail(), admin.getIdRole().getTypeFiliere()) != null){
                 throw new NoteFundException("Il existe déjà un "+ admin.getIdRole().toString().toUpperCase() + " en activité");
             }
             admin.setActive(!admin.isActive());

@@ -1,6 +1,6 @@
 package Gestion_scolaire.students.entity;
 
-import Gestion_scolaire.Models.Emplois;
+import Gestion_scolaire.Emplois.entity.Emplois;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

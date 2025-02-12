@@ -1,8 +1,11 @@
 package Gestion_scolaire.Services;
 
 import Gestion_scolaire.Dto_classe.DTO_response_string;
-import Gestion_scolaire.Models.*;
-import Gestion_scolaire.Repositories.Emplois_repositorie;
+import Gestion_scolaire.Dto_classe.GetInputNoteInscritDTO;
+import Gestion_scolaire.Emplois.entity.Emplois;
+import Gestion_scolaire.Emplois.repositorie.Emplois_repositorie;
+import Gestion_scolaire.Shareds.Shared_methods_service;
+import Gestion_scolaire.students.dtos.InscriptionNoteDTO;
 import Gestion_scolaire.students.repositories.Participant_repositorie;
 import Gestion_scolaire.students.repositories.StudentGroup_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
@@ -34,7 +37,7 @@ public class Groupe_service {
     @Autowired
     private Participant_repositorie participant_repositorie;
     @Autowired
-    private StudentGroup_repositorie studentGroup_repositorie;
+    private Shared_methods_service shared_methods_service;
 
     public Object add_group(long idEmploi, String name){
         Emplois emploiExist = emplois_repositorie.findById(idEmploi);
@@ -74,7 +77,6 @@ public class Groupe_service {
 //-------------------------------------------------------------------
 //    add participant
     public Object add_participant(List<Participant> listParticipant) {
-        System.out.println("----------------------liste participant------------------" + listParticipant);
         boolean addedAtLeastOne = false;
         if(listParticipant.isEmpty()){
             throw new NoteFundException("Veuillez choisir au moins un étudiant");
@@ -125,7 +127,7 @@ public class Groupe_service {
     }
 
 
-    //    ---------------get all participation by emploi id
+    //get all participation by emploi id
     public List<Participant> ge_allBy_idClass(long idEmploi){
         List<Participant> participantList = participant_repositorie.getAllByIdStudentGroupIdEmploiId(idEmploi);
 
@@ -135,15 +137,33 @@ public class Groupe_service {
         return participantList;
     }
 
-//    ------------------------get list student of group
-    public List<Inscription> getAllStudentsByGroupId(long groupId) {
+    //get list student of group
+    public List<GetInputNoteInscritDTO> getAllStudentsByGroupId(long groupId, long idEmploi) {
         // Récupérer les participants associés au groupe
         List<Participant> participantList = participant_repositorie.findByIdStudentGroupId(groupId);
-
+        Emplois emp = emplois_repositorie.findById(idEmploi);
+       List<GetInputNoteInscritDTO> inputDtos = new ArrayList<>();
         // Mapper les participants pour obtenir la liste des étudiants
-        return participantList.stream()
-                .map(Participant::getIdInscription)
-                .collect(Collectors.toList());
+        List<Inscription> inscriptionList = participantList.stream()
+                .map(Participant::getIdInscription).toList();
+
+        for (Inscription inscription : inscriptionList) {
+            GetInputNoteInscritDTO inputDto = new GetInputNoteInscritDTO();
+            InscriptionNoteDTO dto = InscriptionNoteDTO.toDTO(inscription);
+            inputDto.setInscriptions(dto);
+
+            inputDtos.add(inputDto);
+        }
+
+        inputDtos.getLast().setNomModule(emp.getIdModule().getNomModule());
+        inputDtos.getLast().setNomClasse(shared_methods_service.abregNiveauName(
+                emp.getIdClasse().getIdFiliere().getIdNiveau().getNom()) +"-"+ shared_methods_service.abrevigateName(
+                emp.getIdClasse().getIdFiliere().getIdFiliere().getNomFiliere()
+        ));
+        inputDtos.getLast().setSemestre(emp.getIdSemestre().getNomSemetre());
+        inputDtos.getLast().setAnneeScolaire(emp.getIdClasse().getIdAnneeScolaire());
+
+        return inputDtos;
     }
 
     public List<Inscription> getAllStudentsByGroupes(long idEmploi) {
@@ -156,5 +176,15 @@ public class Groupe_service {
                 .collect(Collectors.toList());
     }
 
+    //get group by id
+    public StudentGroupe getStudentGroupeById(long idGroupe) {
+        StudentGroupe grp = group_repositorie.findById(idGroupe);
+        if(grp == null){
+            throw new NoteFundException("Le groupe est introuvable");
+        }
+        return grp;
+    }
 
 }
+
+

@@ -1,8 +1,9 @@
 package Gestion_scolaire.Services;
 
-import Gestion_scolaire.Administrators.repositories.AdminRepositorie;
 import Gestion_scolaire.Classes.repositories.Classe_repositorie;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
+import Gestion_scolaire.Emplois.entity.Emplois;
+import Gestion_scolaire.Emplois.repositorie.Emplois_repositorie;
 import Gestion_scolaire.Models.*;
 import Gestion_scolaire.Repositories.*;
 import Gestion_scolaire.configuration.NoteFundException;
@@ -11,6 +12,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,32 +20,27 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class InfoScool_service {
 
-    @Autowired
-    private InfoSchool_repositorie infoSchool_repositorie;
+    private final InfoSchool_repositorie infoSchool_repositorie;
 
-    @Autowired
-    private fileManagers fileManagers;
+    private final fileManagers fileManagers;
 
-    @Autowired
-    private AdminRepositorie adminRepositorie;
+    private final Emplois_repositorie emplois_repositorie;
 
-    @Autowired
-    private Validator validator;
+    private final Validator validator;
 
-    @Autowired
-    private Classe_repositorie classe_repositorie;
+    private final Classe_repositorie classe_repositorie;
 
-
-    @Autowired
-    private AnneeScolaire_repositorie anneeScolaire_repositorie;
+    private final AnneeScolaire_repositorie anneeScolaire_repositorie;
 
     @PostConstruct
     public void init() {
@@ -120,6 +117,7 @@ public class InfoScool_service {
 
         // Vérification que la période est inférieure ou égale à 1 an
         Period period = Period.between(anneeScolaire.getDebutAnnee(), anneeScolaire.getFinAnnee());
+        System.out.println("---------periode----------" + period);
         if (period.getYears() < 1 || (period.getYears() == 1 && period.getMonths() == 0 && period.getDays() == 0)) {
             throw new NoteFundException("L'année scolaire doit être d'au moins 1 an.");
         }
@@ -188,6 +186,15 @@ public class InfoScool_service {
             return DTO_response_string.fromMessage("Suppression effectué avec succès");
         }
         throw new NoteFundException("L'année scolaire n'existe pas");
+    }
+
+    public List<AnneeScolaire> getAllAnneeOfTeacherEmploiByIdTeacher(long idTeacher){
+        List<Emplois> emplois = emplois_repositorie.getByAllEmploiByIdTeacher(idTeacher);
+        List<AnneeScolaire> anneeScolaires = new ArrayList<>();
+        for (Emplois emp : emplois) {
+            anneeScolaires.add(emp.getIdClasse().getIdAnneeScolaire());
+        }
+        return anneeScolaires;
     }
 
 

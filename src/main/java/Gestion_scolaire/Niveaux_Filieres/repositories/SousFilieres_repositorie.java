@@ -12,4 +12,6 @@ public interface SousFilieres_repositorie extends JpaRepository<SousFilieres, Lo
 
     List<SousFilieres> findByIdClasseId(long idClasseId);
 
+    SousFilieres findById(long id);
+
 }

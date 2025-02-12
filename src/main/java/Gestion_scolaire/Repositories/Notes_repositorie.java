@@ -35,13 +35,18 @@ public interface Notes_repositorie extends JpaRepository<Notes, Long> {
     List<Notes> findByIdSemestreId(long idSemeatre);
     List<Notes> getByIdSemestreIdAndIdInscriptionId(long idSemestre, long idStudent);
 
+    @Query("SELECT n from Notes n where n.idInscription.id =:idInscription and n.idSemestre.id =:idSemestre and n.noteModule > 10")
+    List<Notes> sessionNotesByIdinscription(@Param("idInscription") long idInscription, @Param("idSemestre") long idSemestre);
 
+
+    @Query("select n from  Notes n where n.idInscription.id =:idInscrit and n.noteModule < 10")
+    List<Notes> getNotesAjournees(@Param("idInscrit") long idInscrit);
 //    Notes findByIdSemestreIdAndIdModuleIdAndIdInscriptionId(long idSemestre,long idModule, long idStudent);
 
     @Query("select n from Notes n where n.idSemestre.id =:idSemestre and n.idInscription.id =:idInscription and n.idModule.id =:idModule")
     Notes findStudentNoteByModuleAndSemestre(@Param("idSemestre") long idSemestre, @Param("idInscription") long idInscription, @Param("idModule") long idModule);
 
-    @Query("SELECT n from Notes n WHERE n.idSemestre.id =:idSemestre and n.idInscription.idClasse.id =:idClass")
+    @Query("SELECT n from Notes n WHERE n.idSemestre.id =:idSemestre and n.idInscription.idClasse.id =:idClass and n.idModule.active = true")
     List<Notes> getByIdSemestreIdAndIdClasseId(@Param("idSemestre") long idSemestre, @Param("idClass") long idClass);
 
     List<Notes> getByIdSemestreIdAndIdModuleId(long idSemestre, long idModule);

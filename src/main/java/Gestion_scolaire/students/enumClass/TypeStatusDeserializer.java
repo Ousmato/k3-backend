@@ -8,6 +8,7 @@ import java.io.IOException;
 
 public class TypeStatusDeserializer extends JsonDeserializer<Type_status> {
 
+    // transform string in type enum
     @Override
     public Type_status deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         String value = p.getText().replaceAll(" ", "_"); // Remplace les espaces par des underscores

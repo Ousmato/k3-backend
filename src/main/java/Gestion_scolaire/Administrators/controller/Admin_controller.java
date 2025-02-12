@@ -128,7 +128,7 @@ public class Admin_controller {
 
     @PostMapping("add-role/{idAdmin}")
     @Operation(summary = "Ajouter un role")
-    public Object addRole(@RequestBody String role, @PathVariable long idAdmin) {
+    public Object addRole(@RequestBody Roles role, @PathVariable long idAdmin) {
         return roles_services.addRole(role, idAdmin);
     }
 
@@ -136,6 +136,7 @@ public class Admin_controller {
     @Operation(summary = "Modifier le role ")
     @PreAuthorize("hasAuthority('ROLE_Admin')")
     public Object updateRole(@RequestBody Roles role) {
+        System.out.println("---------------------role controller :" + role);
         return roles_services.updateRole(role);
     }
 

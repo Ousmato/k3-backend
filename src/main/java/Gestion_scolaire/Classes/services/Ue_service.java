@@ -1,6 +1,5 @@
 package Gestion_scolaire.Classes.services;
 
-import Gestion_scolaire.Classes.entity.ClasseModule;
 import Gestion_scolaire.Classes.entity.Modules;
 import Gestion_scolaire.Classes.entity.UE;
 import Gestion_scolaire.Classes.repositories.Classe_repositorie;
@@ -9,7 +8,8 @@ import Gestion_scolaire.Classes.dtos.AddUeDTO;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Models.*;
 import Gestion_scolaire.Repositories.*;
-import Gestion_scolaire.SharedService.Shared_service;
+import Gestion_scolaire.Shareds.Shared_methods_service;
+import Gestion_scolaire.Shareds.Shared_repositories;
 import Gestion_scolaire.configuration.NoteFundException;
 import Gestion_scolaire.students.dtos.InscriptionNoteDTO;
 import Gestion_scolaire.students.entity.Inscription;
@@ -44,7 +44,7 @@ public class Ue_service {
     private Inscription_repositorie inscription_repositorie;
 
     @Autowired
-    private ClasseModule_repositorie classeModule_repositorie;
+    private Shared_repositories shared_repositories;
 
     @Autowired
     private Notes_repositorie notes_repositorie;
@@ -58,7 +58,7 @@ public class Ue_service {
     private Classe_repositorie classe_repositorie;
 
     @Autowired
-    private Shared_service shared_service;
+    private Shared_methods_service shared_methods_service;
 
     @Autowired
     private Sessions_repositorie sessions_repositorie;
@@ -78,37 +78,14 @@ public class Ue_service {
             if (!violation.isEmpty()) {
                 throw new ConstraintViolationException(violation);
             }
-            List<ClasseModule> list  = classeModule_repositorie.getClasseModuleByIdUEId(uEexist.getId());
-            for (ClasseModule cm : list) {
-                if(cm.getIdSemestre().equals(dto.getSemestre())){
-                    throw new NoteFundException("Ce nom existe déjà: " + uEexist.getNomUE());
 
-                }
-            }
         }
 
         if(dto.getModules().isEmpty()){
             throw new NoteFundException("Veuillez ajouter au moins un module et son coefficient");
         }
-//        LocalDate dateDebutSemestre = dto.getSemestre().getDateDebut();
-//        LocalDate dateFinSemestre = dto.getSemestre().getDatFin();
-        LocalDate dateDebutAnne = classe.getIdAnneeScolaire().getDebutAnnee();
-        LocalDate dateFinAnne = classe.getIdAnneeScolaire().getFinAnnee();
-
-//        System.out.println("-------------debut s----------" + dateDebutSemestre);
-//        System.out.println("--------- fin s---------------" + dateFinSemestre);
-//        System.out.println("------------debut a------------" + dateDebutAnne);
-//        System.out.println("-------------fin a-----------" + dateFinAnne);
-//        if (dateDebutSemestre.isBefore(dateDebutAnne) || dateFinSemestre.isAfter(dateFinAnne)) {
-//            throw new NoteFundException("La date de fin : " +  dateFinSemestre + " du semestre  \n doit être dans l'intervalle de l'année scolaire \n date de fin d'année " + dateFinAnne);
-//        }
-
         UE ueSaved = ue_repositorie.save(dto.getIdUe());
-        ClasseModule classeModule = new ClasseModule();
-        classeModule.setIdUE(ueSaved);
-        classeModule.setIdSemestre(dto.getSemestre());
-        classeModule.setIdNiveauFiliere(classe.getIdFiliere());
-        classeModule_repositorie.save(classeModule);
+
 
         boolean hasModule = false;
         for (Modules module : dto.getModules()) {
@@ -134,65 +111,65 @@ public class Ue_service {
             modules_repositories.save(mod);
         }
 
-        return DTO_response_string.fromMessage("Ajout effectué avec succès");
+        return DTO_response_string.addMessage();
     }
 
-//    -------------------------------------------
-    public List<UE> readAllAssociated(long idClasse){
-        List<UE> list = ue_repositorie.findAll();
-        List<UE> ueNewList = new ArrayList<>();
-
-        for (UE ue : list) {
-            ClasseModule cm = classeModule_repositorie.findByIdNiveauFiliereIdAndIdUEId(idClasse, ue.getId());
-            if (cm != null){
-                ueNewList.add(ue);
-            }
-        }
-        return ueNewList;
-    }
+////    -------------------------------------------
+//    public List<UE> readAllAssociated(long idClasse){
+//        List<UE> list = ue_repositorie.findAll();
+//        List<UE> ueNewList = new ArrayList<>();
+//
+//        for (UE ue : list) {
+//            ClasseModule cm = classeModule_repositorie.findByIdNiveauFiliereIdAndIdUEId(idClasse, ue.getId());
+//            if (cm != null){
+//                ueNewList.add(ue);
+//            }
+//        }
+//        return ueNewList;
+//    }
 
 //    ------------------------methode get all modules in classe-----------------------
-    public  List<Modules> listModule(long idClass){
-        List<UE> list = readAllAssociated(idClass);
-        System.out.println("----------list ue-----" + list);
-        List<Modules> modulesList = new ArrayList<>();
-        for (UE ue : list){
-         List<Modules> modulesForUe = modules_repositories.findByIdUeId(ue.getId());
-            if (modulesForUe != null) {
-                modulesList.addAll(modulesForUe);
-            }
-          System.out.println("--------list module-------" + modulesList);
-        }
-        return modulesList;
-    }
+//    public  List<Modules> listModule(long idClass){
+//        List<UE> list = readAllAssociated(idClass);
+//        System.out.println("----------list ue-----" + list);
+//        List<Modules> modulesList = new ArrayList<>();
+//        for (UE ue : list){
+//         List<Modules> modulesForUe = modules_repositories.findByIdUeIdAndActive(ue.getId(), true);
+//            if (modulesForUe != null) {
+//                modulesList.addAll(modulesForUe);
+//            }
+//          System.out.println("--------list module-------" + modulesList);
+//        }
+//        return modulesList;
+//    }
 //    -----------------------------------------------method get all module without note
-    public  List<Modules> listModule_without_note(long idClass, long idSemestre){
-        List<UE> list = readAllAssociated(idClass);
-        List<Modules> modulesList = new ArrayList<>();
-//        Semestres semestre = semestre_repositorie.getCurrentSemestre(LocalDate.now());
-
-        for (UE ue : list) {
-            List<Modules> modulesForUe = modules_repositories.findByIdUeId(ue.getId());
-            List<Notes> notesList = notes_repositorie.findByIdSemestreId(idSemestre);
-            if (modulesForUe != null) {
-                for (Modules modules: modulesForUe){
-                    boolean hasNote = false;
-                    for (Notes note : notesList){
-                        if(note.getIdModule().equals(modules)){
-                            hasNote = true;
-                            break;
-                        }
-                    }
-                    if (!hasNote) {
-                        modulesList.add(modules);
-                    }
-                }
-            }
-            System.out.println("--------list module-------" + modulesList);
-        }
-
-        return modulesList;
-    }
+//    public  List<Modules> listModule_without_note(long idClass, long idSemestre){
+//        List<UE> list = readAllAssociated(idClass);
+//        List<Modules> modulesList = new ArrayList<>();
+////        Semestres semestre = semestre_repositorie.getCurrentSemestre(LocalDate.now());
+//
+//        for (UE ue : list) {
+//            List<Modules> modulesForUe = modules_repositories.findByIdUeIdAndActive(ue.getId(), true);
+//            List<Notes> notesList = notes_repositorie.findByIdSemestreId(idSemestre);
+//            if (modulesForUe != null) {
+//                for (Modules modules: modulesForUe){
+//                    boolean hasNote = false;
+//                    for (Notes note : notesList){
+//                        if(note.getIdModule().equals(modules)){
+//                            hasNote = true;
+//                            break;
+//                        }
+//                    }
+//                    if (!hasNote) {
+//                        modulesList.add(modules);
+//                    }
+//                }
+//            }
+//            System.out.println("--------list module-------" + modulesList);
+//        }
+//
+//        return modulesList;
+//    }
 //liste des tous les modules sans note pour modifier dans le parameter
 public  List<Modules> listModule_without_note_all(long idSemestre){
     List<UE> list = ue_repositorie.findAll();
@@ -200,7 +177,7 @@ public  List<Modules> listModule_without_note_all(long idSemestre){
 //    Semestres semestre = semestre_repositorie.findById(idSemestre);
 
     for (UE ue : list) {
-        List<Modules> modulesForUe = modules_repositories.findByIdUeId(ue.getId());
+        List<Modules> modulesForUe = modules_repositories.findByIdUeIdAndActive(ue.getId(), true);
         List<Notes> notesList = notes_repositorie.findByIdSemestreId(idSemestre);
         if (modulesForUe != null) {
             for (Modules modules: modulesForUe){
@@ -223,32 +200,32 @@ public  List<Modules> listModule_without_note_all(long idSemestre){
 }
 
     //    --------------------------get module of student without note for a student
-    public  List<Modules> getByIdStudentAndIdClasse(long idStudent, long idClasse, long idSemestre){
-       List<Modules> modulesList = new ArrayList<>();
-       List<UE> ueList = new ArrayList<>();
-        List<ClasseModule> list = classeModule_repositorie.getAllByIdNiveauFiliereIdAndIdSemestreId(idClasse, idSemestre);
-        for (ClasseModule classeModule : list) {
-            ueList.add(classeModule.getIdUE());
-        }
-        for (UE ue : ueList) {
-           List<Modules> modules = modules_repositories.findByIdUeId(ue.getId());
-           modulesList.addAll(modules);
-        }
-
-//        Semestres semestre = semestre_repositorie.getCurrentSemestre(LocalDate.now());
-        List<Notes> notesList = notes_repositorie.getByIdSemestreIdAndIdInscriptionId(idSemestre, idStudent);
-
-        System.out.println("------note----------------------------" + notesList);
-
-        for (Notes notes : notesList) {
-            // Filtrer les modules avec note pour cet étudiant et les retirer de la liste sans note
-            modulesList.removeIf(module -> module.getId() == notes.getIdModule().getId());
-        }
-    if(modulesList.isEmpty()){
-        return new ArrayList<>();
-    }
-    return modulesList;
-    }
+//    public  List<Modules> getByIdStudentAndIdClasse(long idStudent, long idClasse, long idSemestre){
+//       List<Modules> modulesList = new ArrayList<>();
+//       List<UE> ueList = new ArrayList<>();
+//        List<ClasseModule> list = classeModule_repositorie.getAllByIdNiveauFiliereIdAndIdSemestreId(idClasse, idSemestre);
+//        for (ClasseModule classeModule : list) {
+//            ueList.add(classeModule.getIdUE());
+//        }
+//        for (UE ue : ueList) {
+//           List<Modules> modules = modules_repositories.findByIdUeIdAndActive(ue.getId(), true);
+//           modulesList.addAll(modules);
+//        }
+//
+////        Semestres semestre = semestre_repositorie.getCurrentSemestre(LocalDate.now());
+//        List<Notes> notesList = notes_repositorie.getByIdSemestreIdAndIdInscriptionId(idSemestre, idStudent);
+//
+//        System.out.println("------note----------------------------" + notesList);
+//
+//        for (Notes notes : notesList) {
+//            // Filtrer les modules avec note pour cet étudiant et les retirer de la liste sans note
+//            modulesList.removeIf(module -> module.getId() == notes.getIdModule().getId());
+//        }
+//    if(modulesList.isEmpty()){
+//        return new ArrayList<>();
+//    }
+//    return modulesList;
+//    }
 
     //method pour modifier l'ue and this modules
     @Transactional
@@ -264,6 +241,7 @@ public  List<Modules> listModule_without_note_all(long idSemestre){
                     modExist.setIdUe(ueSaved);
                     modExist.setCoefficient(modules.getCoefficient());
                     modExist.setNomModule(modules.getNomModule());
+                    modExist.setDescription(modules.getDescription());
                     modules_repositories.save(modExist);
                 }else {
                     throw new NoteFundException("Le module " + modules.getNomModule() + " n'existe pas");
@@ -314,11 +292,9 @@ public  List<Modules> listModule_without_note_all(long idSemestre){
             throw new NoteFundException("Suppression a échoué, il existe des notes associées aux modules");
         }
 
-        // Supprimer la ligne de ClasseModule correspondant à l'UE
-        classeModule_repositorie.deleteByUeId(ueExist.getId());
 
         // Supprimer les modules associés
-        List<Modules> modulesList = modules_repositories.findByIdUeId(ueExist.getId());
+        List<Modules> modulesList = modules_repositories.findByIdUeIdAndActive(ueExist.getId(), true);
         if (modulesList != null && !modulesList.isEmpty()) {
             modules_repositories.deleteAll(modulesList);
         }
@@ -327,16 +303,6 @@ public  List<Modules> listModule_without_note_all(long idSemestre){
         return DTO_response_string.fromMessage("Suppression effectuée avec succès");
     }
 
-    //method delete module
-    public Object delete_module_by_id(long idModule) {
-        Modules modules = modules_repositories.findById(idModule);
-        if (modules == null) {
-            throw new  NoteFundException("Module doesn't exist");
-
-        }
-        modules_repositories.delete(modules);
-        return DTO_response_string.fromMessage("Suppression effectue avec success");
-    }
 
     //    -------------------------------method liste des ues dont les modules n'ont pas de notes associe
     public List<UE> getAllUe_without_modules() {
@@ -345,7 +311,7 @@ public  List<Modules> listModule_without_note_all(long idSemestre){
 
         for (UE ue : list) {
             boolean hasModuleWithoutNotes = false;
-            List<Modules> modulesForUe = modules_repositories.findByIdUeId(ue.getId());
+            List<Modules> modulesForUe = modules_repositories.findByIdUeIdAndActive(ue.getId(), true);
             if(modulesForUe.isEmpty()){
                 hasModuleWithoutNotes = true;
             }
@@ -357,28 +323,28 @@ public  List<Modules> listModule_without_note_all(long idSemestre){
         return newListUes;
     }
 //---------------------------------nethode pour appeller tous les ues qui n'ont pas de notes ni des classes
-    public List<UE> getAll_ue_without_modules_and_classes() {
-        // Obtenir toutes les UEs
-        List<UE> allUes = ue_repositorie.findAll();
-        List<UE> ues_without_modules_and_classes = new ArrayList<>();
-
-        for (UE ue : allUes) {
-            // Vérifier si l'UE n'a pas de modules
-            List<Modules> modulesForUe = modules_repositories.findByIdUeId(ue.getId());
-            boolean hasNoModules = modulesForUe.isEmpty();
-
-            // Vérifier si l'UE n'a pas de classes
-            List<ClasseModule> classeModulesForUe = classeModule_repositorie.getClasseModuleByIdUEId(ue.getId());
-            boolean hasNoClasses = classeModulesForUe.isEmpty();
-
-            // Ajouter à la liste si l'UE n'a ni modules ni classes
-            if (hasNoModules && hasNoClasses) {
-                ues_without_modules_and_classes.add(ue);
-            }
-        }
-
-        return ues_without_modules_and_classes;
-    }
+//    public List<UE> getAll_ue_without_modules_and_classes() {
+//        // Obtenir toutes les UEs
+//        List<UE> allUes = ue_repositorie.findAll();
+//        List<UE> ues_without_modules_and_classes = new ArrayList<>();
+//
+//        for (UE ue : allUes) {
+//            // Vérifier si l'UE n'a pas de modules
+//            List<Modules> modulesForUe = modules_repositories.findByIdUeIdAndActive(ue.getId(), true);
+//            boolean hasNoModules = modulesForUe.isEmpty();
+//
+//            // Vérifier si l'UE n'a pas de classes
+//            List<ClasseModule> classeModulesForUe = classeModule_repositorie.getClasseModuleByIdUEId(ue.getId());
+//            boolean hasNoClasses = classeModulesForUe.isEmpty();
+//
+//            // Ajouter à la liste si l'UE n'a ni modules ni classes
+//            if (hasNoModules && hasNoClasses) {
+//                ues_without_modules_and_classes.add(ue);
+//            }
+//        }
+//
+//        return ues_without_modules_and_classes;
+//    }
 
     //get
 
@@ -414,20 +380,32 @@ public  List<Modules> listModule_without_note_all(long idSemestre){
         // Boucle sur chaque module de la classe pour récupérer les notes de l'étudiant
         for (Inscription inscription : inscriptionPage.getContent()) {
 
-                inscription.getIdEtudiant().setSexe(inscription.getIdEtudiant().getSexe().equalsIgnoreCase("FEMME") ? "F" : "M");
+            inscription.getIdEtudiant().setSexe(inscription.getIdEtudiant().getSexe().equalsIgnoreCase("FEMME") ? "F" : "M");
+
+            // On crée un DTO pour la note
+            GetInputNoteInscritDTO noteDTO = new GetInputNoteInscritDTO();
+            InscriptionNoteDTO inscriptionDTO = InscriptionNoteDTO.toDTO(inscription);
+            noteDTO.setAnneeScolaire(classe.getIdAnneeScolaire());
+            noteDTO.setSemestre(semestre.getNomSemetre());
+            noteDTO.setNomModule(module.getNomModule());
+            noteDTO.setNomClasse( shared_methods_service.abrevigateName(classe.getIdFiliere().getIdFiliere().getNomFiliere()) + "-" + nom );
+
+            // Recherche de la note de l'étudiant pour ce module
+            Notes note = notes_repositorie.findStudentNoteByModuleAndSemestre(idSemestre, inscription.getId(),  idModule);
+            if (module.getIdUe().getNomUE().toLowerCase().contains("lib")) {
+
+                // On associe les inscrits a chaque DTO de note
+                if (note != null) {
+                    noteDTO.setClasseNote(note.getNoteModule());
+
+                }else {
+                    noteDTO.setClasseNote(0);
+                }
+                noteDTO.setValidate(noteDTO.getClasseNote() >= 10 ? "ACQUIS" : "NON");
 
 
-                // On crée un DTO pour la note
-                GetInputNoteInscritDTO noteDTO = new GetInputNoteInscritDTO();
-                InscriptionNoteDTO inscriptionDTO = InscriptionNoteDTO.toDTO(inscription);
-                noteDTO.setAnneeScolaire(classe.getIdAnneeScolaire());
-                noteDTO.setSemestre(semestre.getNomSemetre());
-                noteDTO.setNomModule(module.getNomModule());
-                noteDTO.setNomClasse( shared_service.abrevigateRoleName(classe.getIdFiliere().getIdFiliere().getNomFiliere()) + "-" + nom );
-
-                // Recherche de la note de l'étudiant pour ce module
-                Notes note = notes_repositorie.findStudentNoteByModuleAndSemestre(idSemestre, inscription.getId(),  idModule);
-                double noteUe = shared_service.noteUe(module.getIdUe().getId(),idSemestre,inscription.getId());
+            }else {
+                double noteUe = shared_methods_service.noteUe(module.getIdUe().getId(),idSemestre,inscription.getId());
 
                 StudentSession session = sessions_repositorie.findByIdInscritIdAndIdSemestreIdAndIdModuleId(inscription.getId(), idSemestre, idModule);
                 if (session == null){
@@ -445,17 +423,17 @@ public  List<Modules> listModule_without_note_all(long idSemestre){
                     noteDTO.setNoteUe(noteUe);
                 }else {
                     noteDTO.setIdModule(idModule);
-                    System.out.println("--------------------------"+noteDTO);
+//                    System.out.println("--------------------------"+noteDTO);
                 }
+                noteDTO.setValidate(noteUe >= 10 ? "AD" : "AJ");
 
-
-
-            noteDTO.setValidate(noteUe > 10 ? "AD" : "AJ");
+            }
                 // On associe les inscrits a chaque DTO de note
-                noteDTO.setInscriptions(inscriptionDTO);
+            noteDTO.setInscriptions(inscriptionDTO);
+            noteDTO.setIdModule(idModule);
 
                 // Ajout du DTO de note à la liste
-                getInputNoteInscritDTOList.add(noteDTO);
+            getInputNoteInscritDTOList.add(noteDTO);
         }
 
         return new PageImpl<>(getInputNoteInscritDTOList, pageable, inscriptionPage.getTotalElements());
@@ -468,7 +446,8 @@ public  List<Modules> listModule_without_note_all(long idSemestre){
         for (UE ue : ueList) {
 
 
-            List<Modules> modulesForUe = modules_repositories.findByIdUeId(ue.getId());
+            List<Modules> modulesForUe = modules_repositories.findByIdUeIdAndActive(ue.getId(), true);
+            //System.out.println("--------------------modules bien passee" + modulesForUe);
             AddUeDTO dto = AddUeDTO.getAddUeDTO(ue);
             dto.setModules(modulesForUe);
             addUeDTOList.add(dto);

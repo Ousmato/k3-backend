@@ -2,16 +2,10 @@ package Gestion_scolaire.students.entity;
 
 import Gestion_scolaire.students.enumClass.Type_status;
 import Gestion_scolaire.Models.UsersAbstract;
-import Gestion_scolaire.students.enumClass.Academies;
-import Gestion_scolaire.students.enumClass.InscriptionSeries;
-import Gestion_scolaire.students.enumClass.QuartiersResidence;
 import Gestion_scolaire.students.enumClass.StudentDiplome;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
-
-import java.time.LocalDate;
 
 @Entity
 @Data
@@ -19,13 +13,9 @@ public class Students extends UsersAbstract {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idEtudiant;
-
-
-
 //    @NotBlank(message = "Le champ matricule ne doit pas être nul ou vide.\n")
 //    @Pattern(regexp = "^(?=.*[a-zA-Z])[a-zA-Z0-9]+$", message = "Le matricule doit contenir des lettres et des chiffres, et ne doit pas être composé uniquement de chiffres.")
     private String matricule;
-
 
 //    @NotBlank(message = "Le champ matricule ne doit pas être nul ou vide.\n")
 //    @Size(min = 3, max = 20, message = "Le champ nom doit contenir entre 3 et 20 caractères.\n")
@@ -64,17 +54,16 @@ public class Students extends UsersAbstract {
     private StudentDiplome diplome;
 
 //    @NotNull(message = "L'académie est obligatoire.\n")
-    @Enumerated(EnumType.STRING)
-    private Academies academies;
+
+    private String academies;
 
 //    @NotNull(message = "La serie est obligatoire.\n")
-    @Enumerated(EnumType.STRING)
-    private InscriptionSeries series;
+
+    private String series;
 
     @NotNull(message = "Le status est obligatoire.\n")
     @Enumerated(EnumType.STRING)
     private Type_status status;
-
 
 //    @NotNull(message = "Le numéro de place est obligatoire")
 //    @Min(value = 1, message = "Le numéro de place doit être supérieur ou égal à 1")
@@ -85,9 +74,7 @@ public class Students extends UsersAbstract {
     private int anneeObtention;
 
 //    @NotNull(message = "Le quartier de résidence  es obligatoire")
-    @Enumerated(EnumType.STRING)
-    private QuartiersResidence quartier;
 
-
+    private String quartier;
 
 }

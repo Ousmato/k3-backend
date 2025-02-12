@@ -1,18 +1,7 @@
 package Gestion_scolaire.students.services;
 
-import Gestion_scolaire.Classes.entity.Modules;
-import Gestion_scolaire.Classes.entity.UE;
-import Gestion_scolaire.Dto_classe.NoteModuleDTO;
-import Gestion_scolaire.Models.Notes;
-import Gestion_scolaire.Repositories.Modules_repositories;
-import Gestion_scolaire.Repositories.Notes_repositorie;
-import Gestion_scolaire.Repositories.Ue_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
 import Gestion_scolaire.students.entity.Students;
-import Gestion_scolaire.students.enumClass.InscriptionSeries;
-import Gestion_scolaire.students.enumClass.StudentDiplome;
-import Gestion_scolaire.students.repositories.Inscription_repositorie;
-import Gestion_scolaire.students.repositories.Students_repositorie;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
@@ -20,29 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Set;
 
 @Service
 public class MehodShared {
 
-    @Autowired
-    private Students_repositorie students_repositorie;
-
-    @Autowired
-    private Inscription_repositorie inscription_repositorie;
 
     @Autowired
     private Validator validator;
 
-    @Autowired
-    private Ue_repositorie ue_repositorie;
-
-    @Autowired
-    private Modules_repositories modules_repositories;
-
-    @Autowired
-    private Notes_repositorie notes_repositorie;
 
     public Students validateSudent(Students student) {
         int currentYear = LocalDate.now().getYear();
@@ -78,6 +53,7 @@ public class MehodShared {
     public String enumFormated(String enumName){
         return  enumName.replace("_", " ").toUpperCase();
     }
+
 
 
 }

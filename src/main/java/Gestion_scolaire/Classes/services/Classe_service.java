@@ -1,16 +1,21 @@
 package Gestion_scolaire.Classes.services;
 
+import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Classes.dtos.StudentClasseDTO;
 import Gestion_scolaire.Classes.repositories.Classe_repositorie;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
+import Gestion_scolaire.EnumClasse.TypeFiliere;
 import Gestion_scolaire.Models.*;
 import Gestion_scolaire.Niveaux_Filieres.entity.Filiere;
 import Gestion_scolaire.Niveaux_Filieres.entity.Niveau;
 import Gestion_scolaire.Niveaux_Filieres.entity.NiveauFilieres;
+import Gestion_scolaire.Niveaux_Filieres.entity.SousFilieres;
 import Gestion_scolaire.Niveaux_Filieres.repositories.Filiere_repositorie;
 import Gestion_scolaire.Niveaux_Filieres.repositories.NiveauFiliere_repositorie;
 import Gestion_scolaire.Niveaux_Filieres.repositories.Niveau_repositorie;
 import Gestion_scolaire.Repositories.*;
-import Gestion_scolaire.SharedService.Shared_service;
+import Gestion_scolaire.Shareds.Shared_methods_service;
+import Gestion_scolaire.Shareds.Shared_repositories;
 import Gestion_scolaire.configuration.NoteFundException;
 import Gestion_scolaire.students.entity.Inscription;
 import Gestion_scolaire.students.entity.StudentsClasse;
@@ -22,53 +27,36 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class Classe_service {
-    @Autowired
-    private ClasseModule_repositorie classeModule_repositorie;
 
     @Autowired
-    private Classe_repositorie classe_repositorie;
+    private Shared_repositories shared_repositories;
 
     @Autowired
-    private Inscription_repositorie inscription_repositorie;
-
-    @Autowired
-    private Niveau_repositorie niveau_repositorie;
-
-    @Autowired
-    private Filiere_repositorie filiere_repositorie;
-    
-
-    @Autowired
-    private AnneeScolaire_repositorie annee_scolaire_repositorie;
-
-    @Autowired
-    private NiveauFiliere_repositorie niveauFiliere_repositorie;
-
-    @Autowired
-    private Shared_service shared_service;
+    private Shared_methods_service shared_methods_service;
 
 //    ------------------------------------------------------------------------------------------
 
     public Object create(NiveauFilieres nvF){
 
-        Niveau niveau = niveau_repositorie.findById(nvF.getIdNiveau().getId());
+        Niveau niveau = shared_repositories.getNiveau_repositorie().findById(nvF.getIdNiveau().getId());
         if(niveau == null){
             throw new NoteFundException("Le niveau n'existe pas");
         }
-        Filiere filiere = filiere_repositorie.findById(nvF.getIdFiliere().getId());
+        Filiere filiere = shared_repositories.getFiliere_repositorie().findById(nvF.getIdFiliere().getId());
         if(filiere == null){
             throw new NoteFundException("La filière n'existe pas");
         }
-      NiveauFilieres nivFiliereExist = niveauFiliere_repositorie.findByIdFiliereIdAndIdNiveauId(filiere.getId(), niveau.getId());
+      NiveauFilieres nivFiliereExist = shared_repositories.getNiveauFiliere_repositorie().findByIdFiliereIdAndIdNiveauId(filiere.getId(), niveau.getId());
         if(nivFiliereExist != null){
             throw new NoteFundException("Cette mention : " +  nivFiliereExist.getIdNiveau().getNom() + nivFiliereExist.getIdFiliere().getNomFiliere() + "existe déjà");
 
         }
 
-        niveauFiliere_repositorie.save(nvF);
+        shared_repositories.getNiveauFiliere_repositorie().save(nvF);
         return DTO_response_string.fromMessage("Ajout effectué avec succé");
     }
 
@@ -76,122 +64,156 @@ public class Classe_service {
 //    =====================================method pour fermer une classe====================================================
 
     public String fermer(long id){
-        StudentsClasse classeExist = classe_repositorie.findById(id);
+        StudentsClasse classeExist = shared_repositories.getClasse_repositorie().findById(id);
         if (classeExist != null){
             classeExist.setFermer(!classeExist.isFermer());
-            classe_repositorie.save(classeExist);
+            shared_repositories.getClasse_repositorie().save(classeExist);
         }
         return "Ajout effectué  avec succès";
     }
-    //    --------------------method pour appeler tous les classes ouverte-------
-    public List<StudentsClasse> readAllClass(){
+    //method pour appeler tous les classes ouverte-------
+    public List<StudentClasseDTO> readAllClass(long idAdmin){
 
-        AnneeScolaire currentYear = annee_scolaire_repositorie.findCurrentYear(LocalDate.now());
-        System.out.println("----------------current Year-----------" + currentYear);
+        AnneeScolaire currentYear = shared_repositories.getAnneeScolaire_repositorie().findCurrentYear(LocalDate.now());
+        //System.out.println("----------------current Year-----------" + currentYear);
 
-      return  readAllClassIdAnneeId(currentYear.getId());
+      return readAllClassIdAnneeId(currentYear.getId(), idAdmin);
 
     }
 
     //---------------------------------------------------------------------------
-    public List<StudentsClasse> readAllClassIdAnneeId(long idAnnee){
-        List<StudentsClasse> classes = classe_repositorie.findByIdAnneeScolaireId(idAnnee);
-        classes.forEach(cl ->{
-            int  effectifs = inscription_repositorie.cuntByIdClasse(cl.getId());
-            cl.setEffectifs(effectifs);
-        });
-        return classes;
+    public List<StudentClasseDTO> readAllClassIdAnneeId(long idAnnee, long idAdmin){
+        Admin admin = shared_repositories.getAdminRepositorie().getByIdAdministraAndActive(idAdmin, true);
+        List<StudentsClasse> classes = shared_repositories.getClasse_repositorie().findByIdAnneeScolaireId(idAnnee);
+        List<StudentClasseDTO> classeList = new ArrayList<>();
+        TypeFiliere typeFiliere = admin.getIdRole().getTypeFiliere();
+//        System.out.println("-------------admin " + admin);
+        if (typeFiliere != null && typeFiliere.equals(TypeFiliere.GESTIONS) || Objects.equals(typeFiliere, TypeFiliere.SCIENTIFIQUES)) {
+            // Filtrer les classes en fonction du type de filière de l'admin
+            for (StudentsClasse cl : classes) {
+                int effectifs =0;
+                StudentClasseDTO classDTO = StudentClasseDTO.toDto(cl);
+                // Compter le nombre d'inscriptions pour chaque classe
+                effectifs = shared_repositories.getInscription_repositorie().cuntByIdClasse(cl.getId());
+                classDTO.setEffectifs(effectifs);
+//                System.out.println("---efectif de " + cl.getIdFiliere().getIdNiveau().getNom() +"_ "+ effectifs);
+                // Si l'admin a un rôle avec la filière "GESTIONS", on ajoute la classe correspondante
+                if (typeFiliere.equals(TypeFiliere.GESTIONS) && cl.getIdFiliere().getIdFiliere().getTypeFiliere().equals(TypeFiliere.GESTIONS)) {
 
+                    classeList.add(classDTO);
+                }
+                // Si l'admin a un rôle avec la filière "SCIENTIFIQUES", on ajoute la classe correspondante
+                else if (typeFiliere.equals(TypeFiliere.SCIENTIFIQUES) && cl.getIdFiliere().getIdFiliere().getTypeFiliere().equals(TypeFiliere.SCIENTIFIQUES)) {
+                    cl.setEffectifs(effectifs);
+                    classeList.add(classDTO);
+                }
+            }
+            return classeList;
+        }else {
+            for (StudentsClasse cl :classes) {
+                int effectifs = shared_repositories.getInscription_repositorie().cuntByIdClasse(cl.getId());
+
+                StudentClasseDTO classDTO = StudentClasseDTO.toDto(cl);
+                List<SousFilieres> specialiteFilieres = shared_repositories.getSousFilieres_repositorie().findByIdClasseId(cl.getId());
+                classDTO.setSpecialites(specialiteFilieres);
+                classDTO.setEffectifs(effectifs);
+                classeList.add(classDTO);
+            }
+            return classeList;
+        }
     }
+
+
+
 
 //    ----------------------------------cunt number of class
     public int cunt_class(){
         LocalDate today = LocalDate.now();
-        return classe_repositorie.countAllByFermer(today.getYear(), false);
+        return shared_repositories.getClasse_repositorie().countAllByFermer(today.getYear(), false);
     }
     //-------------------------------------------methode pour appeler une classe par id---------------
     public StudentsClasse readByIdClasse(long id){
-        StudentsClasse classe = classe_repositorie.findById(id);
+        StudentsClasse classe = shared_repositories.getClasse_repositorie().findById(id);
         if(classe == null){
             throw new NoteFundException("Le classe n'existe pas");
         }
-        String nameNivabreg = shared_service.abregNiveauName(classe.getIdFiliere().getIdNiveau().getNom());
+        String nameNivabreg = shared_methods_service.abregNiveauName(classe.getIdFiliere().getIdNiveau().getNom());
         classe.getIdFiliere().getIdNiveau().setNom(nameNivabreg);
         return classe;
     }
 
     public StudentsClasse readByIdNivFiliere(long idNivFiliere){
-        return classe_repositorie.findStudentsClasseByIdFiliereId(idNivFiliere);
+        return shared_repositories.getClasse_repositorie().findStudentsClasseByIdFiliereId(idNivFiliere);
     }
 
 //    ------------------------------------------------------update student classe methode
     public Object update(long idClasse, long idAnnee){
 
-        StudentsClasse classExist = classe_repositorie.findById(idClasse);
-        AnneeScolaire anneExist = annee_scolaire_repositorie.findById(idAnnee);
+        StudentsClasse classExist = shared_repositories.getClasse_repositorie().findById(idClasse);
+        AnneeScolaire anneExist = shared_repositories.getAnneeScolaire_repositorie().findById(idAnnee);
         if(anneExist == null){
             throw new NoteFundException("La promotion n'existe pas");
         }
         if (classExist != null){
-            List<Inscription> list = inscription_repositorie.findByIdClasseIdAndActive(classExist.getId(), true);
+            List<Inscription> list = shared_repositories.getInscription_repositorie().findByIdClasseIdAndActive(classExist.getId(), true);
             if(!list.isEmpty()){
                 throw new NoteFundException("La promotion ne peut pas etre modifier, des étudiants sont déjà inscrit ");
 
             }
 
            classExist.setIdAnneeScolaire(anneExist);
-          classe_repositorie.save(classExist);
+            shared_repositories.getClasse_repositorie().save(classExist);
 
             return DTO_response_string.fromMessage("Mise à effectué  avec succès");
         }
         throw new NoteFundException("classe  exist pas");
     }
 
-    public List<StudentsClasse> getAllArchivesById(long idClasse){
-       List<StudentsClasse> classeArchives = classe_repositorie.getAllArchivesByIdClasse(LocalDate.now().getYear(), idClasse);
-        if(classeArchives.isEmpty()){
-            return new ArrayList<>();
-        }
-        return classeArchives;
-    }
+//    public List<StudentsClasse> getAllArchivesById(long idClasse){
+//       List<StudentsClasse> classeArchives = shared_repositories.getClasse_repositorie().getAllArchivesByIdClasse(LocalDate.now().getYear(), idClasse);
+//        if(classeArchives.isEmpty()){
+//            return new ArrayList<>();
+//        }
+//        return classeArchives;
+//    }
 
     //    --------------------------all niveau/filiere
     public List<NiveauFilieres> getAllNiveauFilieres(){
 
-        return  niveauFiliere_repositorie.findAll();
+        return  shared_repositories.getNiveauFiliere_repositorie().findAll();
     }
 
     public StudentsClasse addProClasse( long nivFiliere, long idAnnee){
-        AnneeScolaire anneExist = annee_scolaire_repositorie.findById(idAnnee);
+        AnneeScolaire anneExist = shared_repositories.getAnneeScolaire_repositorie().findById(idAnnee);
         if(anneExist == null){
             throw new NoteFundException("La promotion n'existe pas");
         }
         System.out.println( "----------------------------------------" + anneExist);
-        NiveauFilieres nivFilieweExist = niveauFiliere_repositorie.findById(nivFiliere);
+        NiveauFilieres nivFilieweExist = shared_repositories.getNiveauFiliere_repositorie().findById(nivFiliere);
         if(nivFilieweExist == null){
             throw new NoteFundException("La mention n'existe pas");
         }
-        StudentsClasse classeExist = classe_repositorie.findByIdFiliereIdAndIdAnneeScolaireId(nivFiliere,idAnnee);
+        StudentsClasse classeExist = shared_repositories.getClasse_repositorie().findByIdFiliereIdAndIdAnneeScolaireId(nivFiliere,idAnnee);
         if(classeExist != null){
             throw new NoteFundException("La promotion pour cette mention existe déjà");
         }
         StudentsClasse newClasse = new StudentsClasse();
         newClasse.setIdAnneeScolaire(anneExist);
         newClasse.setIdFiliere(nivFilieweExist);
-       return classe_repositorie.save(newClasse);
+       return shared_repositories.getClasse_repositorie().save(newClasse);
 
 
     }
     //    ----------------------------------------------------------
 
     public Object deleteProClasse(long idClasse){
-        StudentsClasse classeExist = classe_repositorie.findById(idClasse);
+        StudentsClasse classeExist = shared_repositories.getClasse_repositorie().findById(idClasse);
         if(classeExist == null){
             throw new NoteFundException("La promotion n'existe pas");
 
         }
         if(classeExist.getEffectifs() == 0){
-            classe_repositorie.delete(classeExist);
+            shared_repositories.getClasse_repositorie().delete(classeExist);
             return DTO_response_string.fromMessage("Suppression effectuer avec sucès");
         }
         throw new NoteFundException("Impossible de supprimer une promotion qui a déjà des étudiants");
@@ -199,112 +221,14 @@ public class Classe_service {
 
     //  -----------------------------------------
     public Object updateNivFiliere(NiveauFilieres nvF){
-        NiveauFilieres nvFExist = niveauFiliere_repositorie.findById(nvF.getId());
+        NiveauFilieres nvFExist = shared_repositories.getNiveauFiliere_repositorie().findById(nvF.getId());
         if(nvFExist == null){
             throw new NoteFundException("La mention n'existe pas");
         }
 //        nvFExist.setScolarite(nvF.getScolarite());
-        niveauFiliere_repositorie.save(nvFExist);
+        shared_repositories.getNiveauFiliere_repositorie().save(nvFExist);
         return DTO_response_string.fromMessage("Mise à jours effectué avec succès");
     }
-
-    //    --------------------------------------appeler les classe superieur a la classe actuelle
-    public List<StudentsClasse> getPreviousClasseById(long idClasse){
-        StudentsClasse classeExist = readByIdClasse(idClasse);
-        if(classeExist == null){
-            throw new NoteFundException("La promotion n'existe pas");
-        }
-        AnneeScolaire oldAnnee = classeExist.getIdAnneeScolaire();
-        int nextYear = oldAnnee.getFinAnnee().getYear() + 1;
-
-        List<Niveau> niveauList = niveau_repositorie.findAll();
-        Niveau nextNiveau = new Niveau();
-        List<Integer> niveauLevel = new ArrayList<>();
-        for(Niveau niveau : niveauList){
-            switch (niveau.getNom()) {
-                case "LICENCE 1" -> niveauLevel.add(1);
-                case "LICENCE 2" -> niveauLevel.add(2);
-                case "LICENCE 3" -> niveauLevel.add(3);
-                case "MASTER 1" -> niveauLevel.add(4);
-                case "MASTER 2" -> niveauLevel.add(5);
-            }
-
-        }
-         // Trouver le niveau supérieur
-        int finalCurrentLevel = getFinalCurrentLevel(classeExist);
-        Integer nextLevel = niveauLevel.stream()
-                .filter(level -> level > finalCurrentLevel) // Filtrer pour les niveaux supérieurs
-                .findFirst() // Prendre le premier niveau supérieur
-                .orElse(null); // Si aucun niveau supérieur n'est trouvé
-
-//        Niveau nextNiveau = null;
-        if (nextLevel != null) {
-            for (Niveau niveau : niveauList) {
-                if ((nextLevel == 1 && niveau.getNom().equals("LICENCE 1")) ||
-                        (nextLevel == 2 && niveau.getNom().equals("LICENCE 2")) ||
-                        (nextLevel == 3 && niveau.getNom().equals("LICENCE 3")) ||
-                        (nextLevel == 4 && niveau.getNom().equals("MASTER 1")) ||
-                        (nextLevel == 5 && niveau.getNom().equals("MASTER 2"))) {
-                    nextNiveau = niveau;
-                    break;
-                }
-            }
-        }
-
-        long idFiliereId = classeExist.getIdFiliere().getIdFiliere().getId();
-
-        // Utiliser la requête pour récupérer la classe du même filière pour l'année suivante
-       List<StudentsClasse> nextClasse = classe_repositorie.findByIdFiliereIdFiliereIdAndNextYear(nextYear, idFiliereId, nextNiveau.getId());
-
-       List<StudentsClasse> newClassSup = new ArrayList<>();
-        if (nextClasse.isEmpty()) {
-            throw new NoteFundException("Aucune classe trouvée pour l'année suivante");
-        }
-        newClassSup.add(nextClasse.getFirst());
-        // Retourner la classe supérieure trouvée
-        return newClassSup;
-
-    }
-
-
-    //------------------
-//    public List<StudentsClasse> getAllCurrentClasseWithUe(){
-//        List<StudentsClasse> list = readAllClass();
-//        if(list.isEmpty()){
-//            return new ArrayList<>();
-//        }
-//        List<StudentsClasse> studentsClasses = new ArrayList<>();
-//        List<ClasseModule> listCM = classeModule_repositorie.getCurrentClasseModule(LocalDate.now().getYear());
-//
-//        for(StudentsClasse classe : list){
-//            for(ClasseModule classeModule : listCM){
-//                if (classe.getIdFiliere().equals(classeModule.getIdNiveauFiliere())){
-//                    studentsClasses.add(classe);
-//                }
-//            }
-//
-//        }
-//        studentsClasses.sort(Comparator.comparing(classe -> classe.getIdFiliere().getIdFiliere().getNomFiliere()));
-//        return studentsClasses;
-//    }
-
-    private  int getFinalCurrentLevel(StudentsClasse classeExist) {
-        Niveau oldNiv = classeExist.getIdFiliere().getIdNiveau();
-        int currentLevel = 0;
-
-// Trouver le niveau correspondant à l'ancien niveau
-        switch (oldNiv.getNom()) {
-            case "LICENCE 1" -> currentLevel = 1;
-            case "LICENCE 2" -> currentLevel = 2;
-            case "LICENCE 3" -> currentLevel = 3;
-            case "MASTER 1" -> currentLevel = 4;
-            case "MASTER 2" -> currentLevel = 5;
-        }
-
-        // Trouver le niveau supérieur
-        return currentLevel;
-    }
-
     //---------------------------------------------
     public List<StudentsClasse> getListClassForDepotDoc(long type){
         String nomNiveau1 = "LICENCE 2";
@@ -316,7 +240,7 @@ public class Classe_service {
 
         if (type == 1){
             System.out.println("currentYear: " + currentYear + ", earlyYear: " + earlyYear + ", nomNiveau1: " + nomNiveau1);
-            List<StudentsClasse> listClasse = classe_repositorie.findClassesFromLastThreeYears(dateTroisAns, nomNiveau1);
+            List<StudentsClasse> listClasse = shared_repositories.getClasse_repositorie().findClassesFromLastThreeYears(dateTroisAns, nomNiveau1);
 
             System.out.println("Résultats de la requête : " + listClasse);
            if (listClasse.isEmpty()){
@@ -327,7 +251,7 @@ public class Classe_service {
            return listClasse;
         }
         if (type == 2){
-            List<StudentsClasse> listClasse = classe_repositorie.findClassesFromLastThreeYears(dateTroisAns,nomNiveau2);
+            List<StudentsClasse> listClasse = shared_repositories.getClasse_repositorie().findClassesFromLastThreeYears(dateTroisAns,nomNiveau2);
             if (listClasse.isEmpty()){
                 return new ArrayList<>();
             }

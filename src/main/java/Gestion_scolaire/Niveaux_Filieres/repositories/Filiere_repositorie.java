@@ -14,4 +14,7 @@ public interface Filiere_repositorie extends JpaRepository<Filiere, Long> {
     @Query("SELECT distinct f From Filiere f INNER JOIN Filiere_specialite fs ON fs.idFiliere.id = f.id where fs.idSpecialite.id =:idSpecialite")
     List<Filiere> getListByIdSpecialite(@Param("idSpecialite") long idSpecialite);
 
+    @Query("select f from Filiere f inner JOIN StudentsClasse cl on cl.idFiliere.idFiliere.id = f.id where cl.idAnneeScolaire.id =:idAnnee")
+    List<Filiere> getByIdAnnee(@Param("idAnnee") long idAnnee);
+
 }

@@ -1,5 +1,6 @@
 package Gestion_scolaire.Niveaux_Filieres.entity;
 
+import Gestion_scolaire.EnumClasse.TypeFiliere;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -17,5 +18,8 @@ public class Filiere {
     @NotBlank(message = "Le champ ne doit pas être nul ou vide.\n")
     @Size(min = 3, max = 45, message = "Le champ doit contenir entre 3 et 40 caractères.\n")
     private String nomFiliere;
+
+    @Enumerated(EnumType.STRING)
+    private TypeFiliere typeFiliere;
 
 }

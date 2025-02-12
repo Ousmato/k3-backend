@@ -1,6 +1,7 @@
 package Gestion_scolaire.Models;
 
 import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Emplois.entity.Emplois;
 import Gestion_scolaire.Teachers.entity.Teachers;
 import Gestion_scolaire.students.entity.Documents;
 import jakarta.persistence.*;

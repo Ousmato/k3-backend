@@ -11,7 +11,7 @@ import Gestion_scolaire.Administrators.repositories.Role_repositorie;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.MailSender.MessaSender;
 import Gestion_scolaire.MailSender.PendingEmail;
-import Gestion_scolaire.SharedService.Shared_service;
+import Gestion_scolaire.Shareds.Shared_methods_service;
 import Gestion_scolaire.configuration.NoteFundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -38,7 +38,7 @@ public class Roles_services {
     private MessaSender messages;
 
     @Autowired
-    private Shared_service sharedService;
+    private Shared_methods_service sharedService;
 
 
     @Autowired
@@ -47,13 +47,14 @@ public class Roles_services {
     String schoolEmail = "ousmatotoure98@gmail.com";
 
 
-    public Object addRole(String nom, long idAdmin) {
-        Roles roleExist = role_repositorie.findByNom(nom);
+    public Object addRole(Roles role, long idAdmin) {
+        Roles roleExist = role_repositorie.findByNomAndTypeFiliere(role.getNom(), role.getTypeFiliere());
         if (roleExist != null) {
             throw new NoteFundException("Le role exist dejà");
         }
-        Roles role = new Roles();
-        role.setNom(nom.toUpperCase());
+        Roles newRole = new Roles();
+        newRole.setNom(role.getNom().toUpperCase());
+        newRole.setTypeFiliere(role.getTypeFiliere());
         Set<ConstraintViolation<Roles>> violations = validator.validate(role);
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
@@ -63,8 +64,8 @@ public class Roles_services {
         if (admin == null) {
             throw new NoteFundException("L'admin n'existe pas");
         }
-        String nomRole = sharedService.abrevigateRoleName(admin.getIdRole().getNom());
-        if(!sharedService.abrevigateRoleName(admin.getIdRole().getNom()).equalsIgnoreCase(nomRole)){
+        String nomRole = sharedService.abrevigateName(admin.getIdRole().getNom());
+        if(!sharedService.abrevigateName(admin.getIdRole().getNom()).equalsIgnoreCase(nomRole)){
             throw new NoteFundException("Vous n'êtes pas autorisé");
         }
 
@@ -117,12 +118,19 @@ public class Roles_services {
     }
 
     public Object updateRole(Roles role) {
+        if (role.getTypeFiliere() == null) {
+            throw new NoteFundException("Le type de filière est obligatoire et ne peut pas être null");
+        }
+
         Roles roleExist = role_repositorie.findById(role.getId());
         if(roleExist == null){
             throw new NoteFundException("Le role n'existe pas");
         }
+
         roleExist.setNom(role.getNom().toUpperCase());
         roleExist.setIdAdminDg(role.getIdAdminDg());
+        roleExist.setTypeFiliere(role.getTypeFiliere());
+        System.out.println("------------role ----------: " + role);
         role_repositorie.save(roleExist);
         return DTO_response_string.fromMessage("Mises à jour effectuée avec succés");
     }

@@ -32,7 +32,7 @@ public class TranchePaiement {
             switch (t) {
                 case PROFESSIONNEL_PRIVEE:
                     tp.setTypeStudent(t);
-                    tp.setMontantPaiement(50000.0);
+                    tp.setMontantPaiement(200000.0);
                     break;
 
                 case REGULIER:
@@ -42,22 +42,17 @@ public class TranchePaiement {
 
                 case CANDIDAT_LIBRE:
                     tp.setTypeStudent(t);
-                    tp.setMontantPaiement(60000.0);
+                    tp.setMontantPaiement(75000.0);
                     break;
 
-                case PROFESSIONNEL_ETAT:
+                case PROFESSIONNEL_ETAT, PROFESSIONNEL_COLLECTIVITE:
                     tp.setTypeStudent(t);
-                    tp.setMontantPaiement(25000.0);
-                    break;
-
-                case PROFESSIONNEL_COLLECTIVITE:
-                    tp.setTypeStudent(t);
-                    tp.setMontantPaiement(10000.0);
+                    tp.setMontantPaiement(150000.0);
                     break;
 
                 case FORMATION_CONTINUE: // Nouveau cas ajouté
                     tp.setTypeStudent(t);
-                    tp.setMontantPaiement(70000.0); // Exemple de montant
+                    tp.setMontantPaiement(300000); // Exemple de montant
                     break;
 
                 default:

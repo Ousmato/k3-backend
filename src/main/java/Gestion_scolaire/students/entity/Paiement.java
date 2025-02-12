@@ -15,9 +15,11 @@ public class Paiement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotNull(message = "Le tranche de paiement est obligatoire")
-    @ManyToOne
-    private TranchePaiement idTranchePaiement;
+//    @NotNull(message = "Le tranche de paiement est obligatoire")
+//    @ManyToOne
+//    private TranchePaiement idTranchePaiement;
+
+    private double montant;
 
     @NotNull(message = "L'inscription est obligatoire")
     @ManyToOne
@@ -28,5 +30,7 @@ public class Paiement {
     private Admin idAdmin;
 
     @NotNull(message = "La date de paiement est obligatoire")
-    private LocalDate dateDePaiement = LocalDate.now();
+    private LocalDate dateDePaiement;
+
+    private LocalDate updateDate = LocalDate.now();
 }

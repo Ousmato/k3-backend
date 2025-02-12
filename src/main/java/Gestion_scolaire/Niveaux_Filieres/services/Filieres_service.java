@@ -111,30 +111,6 @@ public class Filieres_service {
         // Sauvegarder la nouvelle relation
        return niveauFiliere_repositorie.save(niveauFilieres);
     }
-//    -------------------------------------------list of all niveau filiere-----------------------
-    public List<NiveauFilieres> readNivFil(){
-        List<NiveauFilieres> list =  niveauFiliere_repositorie.findAll();
-
-
-        List<StudentsClasse> classesS = classe_service.readAllClass();
-        List<NiveauFilieres> newClasses = new ArrayList<>();
-
-        for (NiveauFilieres nivFiliere : list) {
-            boolean hasClass = false;
-            for (StudentsClasse studentsClasse : classesS) {
-                if(nivFiliere.getIdFiliere().getId() == studentsClasse.getIdFiliere().getId()){
-                    hasClass = true;
-                    break;
-                }
-            }
-            if (!hasClass) {
-                newClasses.add(nivFiliere);  // Ajouter seulement si aucune association n'est trouvée
-            }
-        }
-        return newClasses;
-    }
-
-
 //----------------------------------------------------methode create filiere-----------------------------
     public Object create(Filiere filiere){
         Filiere filiereExist = filiere_repositorie.findByNomFiliere(filiere.getNomFiliere());

@@ -33,8 +33,4 @@ public class StudentsClasse {
     @ManyToOne
     private NiveauFilieres idFiliere;
 
-    // Liste des spécialités pour cette classe (vide si aucune spécialité)
-    @OneToMany(mappedBy = "idClasse", fetch = FetchType.EAGER)
-    @JsonManagedReference
-    private List<SousFilieres> specialites = new ArrayList<>();
 }

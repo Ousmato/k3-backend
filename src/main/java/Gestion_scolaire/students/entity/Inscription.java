@@ -34,19 +34,12 @@ public class Inscription {
 
     private boolean active = true;
 
+    private boolean totalPayer = false;
+
     private boolean payer = false;
 
     @NotNull(message = "Le numero de l'inscription est obligatoire")
     private String numeroInscrit;
-
-    // Lien Many-to-Many avec SousFilieres
-    @ManyToMany
-    @JoinTable(
-            name = "inscription_sous_filieres",
-            joinColumns = @JoinColumn(name = "inscription_id"),
-            inverseJoinColumns = @JoinColumn(name = "sous_filiere_id")
-    )
-    private List<SousFilieres> sousFilieres = new ArrayList<>();
 
 
 }

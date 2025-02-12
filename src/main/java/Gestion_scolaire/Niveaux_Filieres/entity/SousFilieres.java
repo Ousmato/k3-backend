@@ -26,7 +26,4 @@ public class SousFilieres {
     @JsonBackReference
     private StudentsClasse idClasse;
 
-    // Relation inverse pour les inscriptions
-    @ManyToMany(mappedBy = "sousFilieres")
-    private List<Inscription> inscriptions = new ArrayList<>();
 }

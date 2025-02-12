@@ -2,29 +2,23 @@ package Gestion_scolaire.Services;
 
 import Gestion_scolaire.Classes.dtos.ModuleDTO;
 import Gestion_scolaire.Classes.dtos.UeDTO;
-import Gestion_scolaire.Classes.entity.ClasseModule;
 import Gestion_scolaire.Classes.entity.Modules;
 import Gestion_scolaire.Classes.entity.UE;
-import Gestion_scolaire.Classes.services.Methods_shared;
+import Gestion_scolaire.Shareds.Shared_repositories;
+import Gestion_scolaire.Shareds.Shared_services;
 import Gestion_scolaire.Dto_classe.*;
 import Gestion_scolaire.Models.*;
 import Gestion_scolaire.Repositories.*;
-import Gestion_scolaire.SharedService.Shared_service;
+import Gestion_scolaire.Shareds.Shared_methods_service;
 import Gestion_scolaire.configuration.NoteFundException;
 import Gestion_scolaire.students.entity.Inscription;
 import Gestion_scolaire.students.entity.StudentSession;
-import Gestion_scolaire.students.repositories.Sessions_repositorie;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class Note_service {
@@ -32,35 +26,20 @@ public class Note_service {
     private Notes_repositorie notes_repositorie;
 
     @Autowired
-    private Moyenne_repositorie moyenne_repositorie;
+    private Shared_methods_service shared_methods_service;
 
     @Autowired
-    private Validator validator;
-
-//    @Autowired
-//    private Inscription_repositorie inscription_repositorie;
-//
-//    @Autowired
-//    private Modules_repositories modules_repositories;
-//
-//    @Autowired
-//    private Semestre_repositorie semestre_repositorie;
+    private Shared_services sharedservices;
 
     @Autowired
-    private ClasseModule_repositorie classeModule_repositorie;
+    private Shared_repositories shared_repositories;
 
     @Autowired
-    private Sessions_repositorie sessions_repositorie;
-
-    @Autowired
-    private Shared_service shared_service;
-
-    @Autowired
-    private  Methods_shared methods_shared;
-
+    private Common_service common_service;
 
 
     //    ------------------------------methode pour modifier la note d'un etudiant---------------------
+    @Transactional
     public Object update(Notes notes){
         Notes noteExist = notes_repositorie.findById(notes.getId());
         if (noteExist == null){
@@ -75,14 +54,17 @@ public class Note_service {
     }
 
     //mehode pour ajouter une note
-    public GetInputNoteInscritDTO addNote(AddNoteDTO dto) {
+    @Transactional
+    public Object addNote(AddNoteDTO dto) {
         // Récupérer les entités associées
-        System.out.println( "-------------la note a dto-------------------"+dto);
 
-        Modules module = methods_shared.getModules_service().getModule(dto.getIdModule());
-        Semestres semestre = methods_shared.getSemestre_service().getSemestre(dto.getIdSemestre());
-        Inscription inscription = methods_shared.getInscription_service().getInscription(dto.getIdInscription());
-
+        Modules module = sharedservices.getModules_service().getModule(dto.getIdModule());
+        Semestres semestre = sharedservices.getSemestre_service().getSemestre(dto.getIdSemestre());
+        Inscription inscription = sharedservices.getInscription_service().getInscription(dto.getIdInscription());
+        if (module.getIdUe().getNomUE().toLowerCase().contains("lib")){
+            // Traitement de la note (création ou mise à jour)
+           return addUeLibre(dto, module, inscription, semestre);
+        }
         // Convertir l'objet DTO en entité Notes
         Notes note = new Notes();
         note.setClasseNote(dto.getClasseNote());
@@ -92,16 +74,10 @@ public class Note_service {
         note.setIdSemestre(semestre);
         note.setIdInscription(inscription);
 
-        // Validation de l'entité Notes
-        System.out.println( "-------------le semestre-------------------"+ semestre);
-
-//        validateNote(note);
-
-        // Calcul de la note du module
         double noteModule = ((dto.getExamNote() * 2) + dto.getClasseNote()) / 3;
        noteModule = Math.round(noteModule * 100.0) / 100.0;
 
-        System.out.println( "-------------la note ponderer du module-------------------" + noteModule);
+//        System.out.println( "-------------la note ponderer du module-------------------" + noteModule);
 
         // Récupérer la note existante
         Notes noteExist = notes_repositorie.findStudentNoteByModuleAndSemestre(
@@ -114,7 +90,6 @@ public class Note_service {
         }
         System.out.println( "-------------la les ids-------------------" + dto.getIdSemestre() + dto.getIdModule()+ dto.getIdInscription());
 
-
         // Traitement de la note (création ou mise à jour)
         Notes savedNote =  saveNewNote(note, noteModule);
 
@@ -122,66 +97,36 @@ public class Note_service {
         return buildNoteDto(dto, savedNote);
     }
 
-
-
-    //methode pour appeler tout les module de la
-    public ArrayList<Modules> readAllByAllEmplois(long idClasse){
-//        Emplois emploisList = emplois_repositorie.getEmploisByDateFinAfterAndIdClasseId(LocalDate.now(), idClasse);
-        List<ClasseModule> classeModuleList = classeModule_repositorie.findByIdNiveauFiliereId(idClasse);
-        Set<Modules> modulesSet = new HashSet<>();
-
-            for (ClasseModule clm : classeModuleList){
-                UE ue = clm.getIdUE();
-            if (ue != null) {
-                List<Modules> toutModule = methods_shared.getModules_service().readByUe(ue.getId());
-                modulesSet.addAll(toutModule);
-
-            }
-
-        }
-        return new ArrayList<>(modulesSet);
-    }
-
     //list de notes de tous les etudiant pour le semestre
-    public Page<StudentsNotesDTO> listNotes(int page, int pageSize, long idClasse, long idSemestre, long idNivFiliere) {
+    public Page<StudentsNotesDTO> listNotes(int page, int pageSize, long idClasse, long idSemestre) {
+
         Pageable pageable = PageRequest.of(page, pageSize);
 
-       List<Long> validIds = getIdsOfStudents(idSemestre,idNivFiliere,idClasse);
+       List<Long> validIds = common_service.getIdsOfStudents(idSemestre,idClasse);
         List<StudentsNotesDTO> studentsNotesDTOList = new ArrayList<>();
 
-        System.out.println("----------les ids------------" + validIds);
         validIds.forEach(idInscription -> {
-            Inscription inscrit = methods_shared.getInscription_service().getById(idInscription);
+            Inscription inscrit = sharedservices.getInscription_service().getById(idInscription);
 
             if (inscrit != null) {
                 List<GetNoteDTO> noteDTOList = new ArrayList<>(getNotesByIdStudentAndIdSemestre(idInscription, idSemestre));
-
-                noteDTOList.forEach(note ->{
-
-                    System.out.println(" - Note ID: " + note.getIdNote() + ", Valeur: " + note.getMoyenUe()
-                            );
-                    note.getUes().getModules().forEach(module -> {
-                        System.out.println(" - Matière: "+ module.getNomModule());
-                    });
-                });
-                Moyenne myG = moyenne_repositorie.findByIdSemestreIdAndIdInscriptionId(idSemestre, idInscription);
-                if (myG == null) {
-                    System.out.println("myg de : "  + inscrit.getIdEtudiant().getNom());
-                    return;
-                }
+                noteDTOList.sort(Comparator.comparing(GetNoteDTO ->GetNoteDTO.getUes().getCode()));
                 StudentsNotesDTO studentsNotesDTO = new StudentsNotesDTO();
                 studentsNotesDTO.setNoteDTO(noteDTOList);
-                studentsNotesDTO.setMoyenGeneral(myG.getMoyenGenerale());
+                studentsNotesDTO.setMoyenGeneral(0);
+                studentsNotesDTO.setId(inscrit.getId());
                 studentsNotesDTO.setNom(inscrit.getIdEtudiant().getNom());
                 studentsNotesDTO.setPrenom(inscrit.getIdEtudiant().getPrenom());
                 studentsNotesDTO.setDate_naissance(inscrit.getIdEtudiant().getDateNaissance());
                 studentsNotesDTO.setLieuNaissance(inscrit.getIdEtudiant().getLieuNaissance());
+                String sexe = inscrit.getIdEtudiant().getSexe();
+                studentsNotesDTO.setSexe(Objects.equals(sexe, "FEMME") ? "F" : "M");
 
-                System.out.println("Ajout de l'étudiant: " + studentsNotesDTO.getNom() + " " + studentsNotesDTO.getPrenom());
+//                System.out.println("Ajout de l'étudiant: " + studentsNotesDTO.getNom() + " " + studentsNotesDTO.getPrenom());
 
                 studentsNotesDTOList.add(studentsNotesDTO);
 
-                System.out.println("Étudiant avec idInscription = " + idInscription + " a le bon nombre de notes.");
+//                System.out.println("Étudiant avec idInscription = " + idInscription + " a le bon nombre de notes.");
             } else {
                 // Gérer le cas où l'inscription est absente si nécessaire
                 throw new NoteFundException("Inscription non trouver");
@@ -193,194 +138,23 @@ public class Note_service {
         int end = Math.min(start + pageSize, studentsNotesDTOList.size());
         List<StudentsNotesDTO> paginatedList = studentsNotesDTOList.subList(start, end);
 
-        // Debug : Afficher la taille de la sous-liste paginée
-        System.out.println("Taille de la sous-liste paginée: " + paginatedList.size());
-        System.out.println("Plage d'index: " + start + " à " + end);
         return new PageImpl<>(paginatedList, pageable, studentsNotesDTOList.size());
     }
 
 
-    //methode pour appler les notes par id du module
-    public List<Notes> getNotesByIdModule(long idModule, long idSemestre){
-//        Semestres currentSemestre = semestre_repositorie.getCurrentSemestre(LocalDate.now());
-        List<Notes> notesList = notes_repositorie.getByIdSemestreIdAndIdModuleId(idSemestre, idModule);
-        if(!notesList.isEmpty()){
-            return notesList;
-        }
-        return new ArrayList<>();
-    }
-
-
-    //get ids of students have note for all modules
-    public List<Long> getIdsOfStudents(long idSemestre, long idNivFiliere, long idClasse) {
-        List<Modules> modulesList = methods_shared.getModules_service().allModulesOfClassByIdSemestre(idSemestre, idNivFiliere);
-        List<Notes> notes = notes_repositorie.getByIdSemestreIdAndIdClasseId(idSemestre, idClasse);
-
-        System.out.println("----------modules size--------------" + modulesList.size());
-
-        // Grouper les inscriptions par idEtudiant
-        Map<Long, List<Notes>> inscriptionsGroupedByStudent = notes.stream()
-                .collect(Collectors.groupingBy(note -> note.getIdInscription().getId()));
-
-        // Filtrer pour ne garder que les étudiants ayant un nombre de notes égal au nombre de modules
-
-        return inscriptionsGroupedByStudent.entrySet().stream()
-                .filter(entry -> entry.getValue().size() == modulesList.size())
-                .map(Map.Entry::getKey)
-                .toList();
-    }
-    //calculate note for student
-    @Transactional
-    public Object moyenOfStudent(long idStudent, long idSemestre) {
-    // Vérification de l'existence de l'étudiant
-    Inscription studentExist = methods_shared.getInscription_service().getInscription(idStudent);
-    Semestres semestreExist = methods_shared.getSemestre_service().getSemestre(idSemestre);
-
-    List<Long> studentsIdsHaveNotesForAllModules = getIdsOfStudents(idSemestre, studentExist.getIdClasse().getIdFiliere().getId(), studentExist.getIdClasse().getId());
-    if(!studentsIdsHaveNotesForAllModules.contains(idStudent)){
-        throw new NoteFundException("Impossible de calculer la moyenne l'étudiant ne possède pas des notes pour tous les modules");
-    }
-    // Récupération des ClasseModule associées
-    List<ClasseModule> classeWithModule = classeModule_repositorie.getAllByIdNiveauFiliereIdAndIdSemestreId(
-            studentExist.getIdClasse().getIdFiliere().getId(), idSemestre);
-
-    // Récupération des notes associées à l'étudiant
-    List<Notes> notesList = notes_repositorie.getByIdSemestreIdAndIdInscriptionId(idSemestre, idStudent);
-
-    List<NoteDTO> noteDTOList = new ArrayList<>();
-
-    // Parcours des ClasseModule (qui sont associées aux UEs)
-    for (ClasseModule classeModule : classeWithModule) {
-        UE ue = classeModule.getIdUE(); // On récupère l'UE associée
-
-        NoteDTO nDTO = new NoteDTO();
-        nDTO.setIdUe(ue.getId());
-        nDTO.setNomUE(ue.getNomUE());
-
-        // Récupération des modules associés à l'UE
-        List<Modules> modulesList = methods_shared.getModules_service().readByUe(ue.getId());
-        List<NoteModuleDTO> noteModuleDTOList = new ArrayList<>();
-
-        int totalCoefficients = 0;
-        double totalSumNoteModule = 0;
-        int CoefCuntNumber = 0;
-
-        // Pour chaque module, on cherche la note correspondante
-        for (Modules module : modulesList) {
-            CoefCuntNumber++;
-            Notes moduleNote = notesList.stream()
-                    .filter(note -> note.getIdModule().equals(module))
-                    .findFirst()
-                    .orElse(null);
-
-            // Si le module a une note, on l'ajoute au calcul
-            if (moduleNote != null) {
-                // Ajout à la somme pondérée des notes
-                totalSumNoteModule += moduleNote.getNoteModule();
-                totalCoefficients += module.getCoefficient();
-
-                NoteModuleDTO noteModuleDTO = new NoteModuleDTO();
-                noteModuleDTO.setNomModule(module.getNomModule());
-                noteModuleDTO.setIdModule(module.getId());
-                noteModuleDTO.setIdUe(ue.getId());
-                noteModuleDTO.setCoefficient(module.getCoefficient());
-                noteModuleDTO.setNoteModule( moduleNote.getNoteModule()); // Ajout de la note au DTO
-
-                // Ajout du module au DTO uniquement s'il a une note
-                noteModuleDTOList.add(noteModuleDTO);
-
-            }
-        }
-
-        // Si des modules avec des notes sont trouvés, on calcule la note de l'UE
-        if (!noteModuleDTOList.isEmpty()) {
-            nDTO.setModules(noteModuleDTOList);
-            nDTO.setCoefficientUe(totalCoefficients);
-            double noteUe = (totalSumNoteModule / CoefCuntNumber);
-            noteUe = Math.round(noteUe * 100.0) / 100.0;
-            double noteUeCoef = noteUe * totalCoefficients;
-            nDTO.setNoteUeCoefficient(noteUeCoef);
-            nDTO.setNoteUE(noteUe);
-        } else {
-            // Si aucun module avec des notes n'a été trouvé, on peut décider de ne pas ajouter cet UE
-            continue;
-        }
-
-        // Ajouter le DTO de l'UE à la liste des résultats
-        noteDTOList.add(nDTO);
-
-    }
-//    return noteDTOList;
-//    System.out.println("--------------ici je suis----------------------");
-   return calculateMoyen(noteDTOList, studentExist, semestreExist); // Retourner la liste de tous les NoteDTO
-}
-
-    // Méthode pour calculer la moyenne générale
-    public Object calculateMoyen(List<NoteDTO> dtos, Inscription inscription, Semestres semestre) {
-        if (dtos.isEmpty()) {
-            throw new NoteFundException("Aucune note trouvée pour ce calcul");
-        }
-
-        // Initialisation des variables pour le calcul
-        double totalMoyenUe = 0.0;
-        int totalCoefficients = 0;
-
-        // Parcours des UEs pour accumuler les données nécessaires
-        for (NoteDTO dto : dtos) {
-            totalMoyenUe += dto.getNoteUeCoefficient(); // Somme pondérée des notes
-            totalCoefficients += dto.getCoefficientUe();// Somme des coefficients
-
-        }
-
-        // Vérification des coefficients
-        if (totalCoefficients == 0) {
-            throw new RuntimeException("Les coefficients sont manquants, impossible de calculer la moyenne générale.");
-        }
-
-
-
-        // Calcul de la moyenne générale
-        double moyenneGenerale = totalMoyenUe / totalCoefficients;
-        moyenneGenerale = Math.round(moyenneGenerale * 100.0) / 100.0;// Arrondi à 2 décimales
-
-        Moyenne myExist = moyenne_repositorie.findByIdSemestreIdAndIdInscriptionId(semestre.getId(), inscription.getId());
-        if (myExist == null) {
-            // Création de l'objet Moyenne
-            Moyenne moyenne = new Moyenne();
-            moyenne.setMoyenGenerale(moyenneGenerale);
-            moyenne.setIdSemestre(semestre);
-            moyenne.setIdInscription(inscription);
-
-            // Sauvegarde dans le repository
-            moyenne_repositorie.save(moyenne);
-        }else {
-            myExist.setMoyenGenerale(moyenneGenerale);
-            moyenne_repositorie.save(myExist);
-        }
-
-        return DTO_response_string.fromMessage("Calcule effectué avec succée");
-    }
-
     //get note of student for relever
     public List<GetNoteDTO> getNotesByIdStudentAndIdSemestre(long idStudent, long idSemestre) {
         // Vérification de l'existence de l'étudiant
-        Inscription studentExist = methods_shared.getInscription_service().getInscription(idStudent);
+        Inscription studentExist = sharedservices.getInscription_service().getInscription(idStudent);
         if (studentExist == null) {
             throw new RuntimeException("L'étudiant n'existe pas");
         }
 
-        Semestres semestreExist = methods_shared.getSemestre_service().getSemestre(idSemestre);
+        Semestres semestreExist = sharedservices.getSemestre_service().getSemestre(idSemestre);
         if (semestreExist == null) {
             throw new NoteFundException("Le semestre est introuvable");
         }
 
-        Moyenne myG = moyenne_repositorie.findByIdSemestreIdAndIdInscriptionId(idSemestre, idStudent);
-
-        List<Long> studentIdsHaveNotesForAllModules = getIdsOfStudents(idSemestre, studentExist.getIdClasse().getIdFiliere().getId(), studentExist.getIdClasse().getId());
-        if ( !studentIdsHaveNotesForAllModules.contains(idStudent) || myG == null ) {
-            System.out.println("-------------------------" + idStudent);
-            return new ArrayList<>();
-        }
 
         List<Notes> notes = notes_repositorie.getByIdSemestreIdAndIdInscriptionId(idSemestre, idStudent);
         if (notes == null || notes.isEmpty()) {
@@ -392,7 +166,7 @@ public class Note_service {
         List<GetNoteDTO> result = new ArrayList<>();
 
         // Récupération des modules ayant des notes
-        List<Modules> modulesList = methods_shared.getModules_service().allModulesWithNotes(idStudent, idSemestre);
+        List<Modules> modulesList = sharedservices.getModules_service().allModulesWithNotes(idStudent, idSemestre);
 
         // Groupement des modules par UE
         Map<UE, List<Modules>> modulesByUe = new HashMap<>();
@@ -408,6 +182,8 @@ public class Note_service {
             // Création de l'objet GetNoteDTO pour chaque UE
             GetNoteDTO dto = new GetNoteDTO();
             UeDTO ueDTO = new UeDTO();
+            ueDTO.setId(ue.getId());
+            ueDTO.setCode(ue.getCodeUE());
             ueDTO.setNomUE(ue.getNomUE());
 
             List<ModuleDTO> moduleDTOList = new ArrayList<>();
@@ -436,7 +212,6 @@ public class Note_service {
             dto.setUes(ueDTO);
             dto.setCoefUe(somCoefUe);
             dto.setMoyenUe(noteUe);
-            dto.setMoyenGeneral(myG.getMoyenGenerale());
 
             result.add(dto);
         }
@@ -444,14 +219,6 @@ public class Note_service {
         return result;
     }
 
-
-//
-//    public void validateNote(Notes note) {
-//        Set<ConstraintViolation<Notes>> violations = validator.validate(note);
-//        if (!violations.isEmpty()) {
-//            throw new ConstraintViolationException(violations);
-//        }
-//    }
 
     private Notes saveNewNote(Notes note, double noteModule) {
         note.setNoteModule(noteModule);
@@ -469,8 +236,8 @@ public class Note_service {
         GetInputNoteInscritDTO noteDto = new GetInputNoteInscritDTO();
 
         // Récupération de la session et calcul des valeurs
-        double noteUe = shared_service.noteUe(dto.getIdModule(), dto.getIdSemestre(), savedNote.getIdInscription().getId());
-        StudentSession session = sessions_repositorie.findByIdInscritIdAndIdSemestreIdAndIdModuleId(dto.getIdInscription(), dto.getIdSemestre(), dto.getIdModule());
+        double noteUe = shared_methods_service.noteUe(savedNote.getIdModule().getIdUe().getId(), dto.getIdSemestre(), savedNote.getIdInscription().getId());
+        StudentSession session = shared_repositories.getSessions_repositorie().findByIdInscritIdAndIdSemestreIdAndIdModuleId(dto.getIdInscription(), dto.getIdSemestre(), dto.getIdModule());
 
         if (session == null) {
             noteDto.setSessionNote(0.0);
@@ -485,9 +252,92 @@ public class Note_service {
         noteDto.setExamNote(savedNote.getExamNote());
         noteDto.setClasseNote(savedNote.getClasseNote());
         noteDto.setNoteUe(noteUe);
-        noteDto.setValidate(noteUe > 10 ? "AD" : "AJ");
+        noteDto.setValidate(noteUe >= 10 ? "ADj" : "AJ");
 
         return noteDto;
     }
+
+    private Notes addUeLibre(AddNoteDTO dto, Modules module, Inscription inscription, Semestres semestre){
+        Notes note = new Notes();
+        note.setExamNote(dto.getClasseNote());
+        note.setExamNote(dto.getClasseNote());
+        note.setNoteModule(dto.getClasseNote());
+        note.setIdAdmin(dto.getIdAdmin());
+        note.setIdModule(module);
+        note.setIdSemestre(semestre);
+        note.setIdInscription(inscription);
+        return notes_repositorie.save(note);
+    }
+
+    public List<UeValidateDTO> getUeValideByStudentBySemestre(long idInscrit, long idClasse){
+        List<UeValidateDTO> ueValidateList = new ArrayList<>();
+
+        List<Semestres> semestres = sharedservices.getSemestre_service().getCurrenctSemestresByIdNivFil(idClasse);
+        for (Semestres semestre : semestres) {
+            double countUeValide = 0;
+            double countUeTotal = 0;
+            Moyenne moyenne = shared_repositories.getMoyenne_repositorie().findByIdSemestreIdAndIdInscriptionId(semestre.getId(), idInscrit);
+            List<GetNoteDTO> dtos = getNotesByIdStudentAndIdSemestre(idInscrit, semestre.getId());
+            UeValidateDTO ueValidateDTO = new UeValidateDTO();
+
+            for (GetNoteDTO dto : dtos) {
+                if (dto.getUes().getCode().contains("LIB")){
+                    continue;
+                }
+                countUeTotal++;
+//                System.out.println("------------la moyenne--------" + dto.getMoyenUe());
+
+                if (dto.getMoyenUe() >= 10){
+                    countUeValide++;
+                }
+
+            }
+            // Calcul du pourcentage des UE validées
+            double ueValidatedPercentage = countUeTotal > 0 ? (countUeValide / countUeTotal) * 100 : 0;
+
+//            System.out.println("------------les ues valider--------" + countUeValide);
+//            System.out.println("------------Moyenne--------" + moyenne.getMoyenGenerale());
+//
+//
+//            System.out.println("------------semestre--------" + semestre.getId());
+//            System.out.println("------------semestre--------" + semestre.getNomSemetre());
+//
+//            System.out.println("-------------id inscrit----------" + idInscrit);
+//
+//            System.out.println("-------UE Total---------" + countUeTotal);
+
+
+            // Remplir les données du DTO
+            ueValidateDTO.setNomSemestre(semestre.getNomSemetre());
+            ueValidateDTO.setPercentUeSemestre(Math.round(ueValidatedPercentage)); // Arrondi à 2 décimales
+            ueValidateDTO.setMoyenSemestre(moyenne != null ? moyenne.getMoyenGenerale() : 0.0);
+
+            // Ajouter le DTO à la liste
+            ueValidateList.add(ueValidateDTO);
+
+
+        }
+        return ueValidateList;
+    }
+
+    public double calculerPourcentageUeValide(List<GetNoteDTO> ueDtos) {
+        int totalUe = 0;
+        int ueValidees = 0;
+
+        // Parcourir les UE
+        for (GetNoteDTO ueDto : ueDtos) {
+            totalUe++; // Chaque UE est comptée
+            if (ueDto.getMoyenUe() >= 10) {
+                ueValidees++; // UE validée si la moyenne est >= 10
+            }
+        }
+
+        // Calculer le pourcentage
+        if (totalUe == 0) {
+            return 0.0; // Éviter la division par zéro
+        }
+        return (ueValidees / (double) totalUe) * 100;
+    }
+
 
 }

@@ -1,5 +1,6 @@
 package Gestion_scolaire.Classes.controllers;
 
+import Gestion_scolaire.Classes.dtos.StudentClasseDTO;
 import Gestion_scolaire.Niveaux_Filieres.entity.NiveauFilieres;
 import Gestion_scolaire.students.entity.StudentsClasse;
 import Gestion_scolaire.Classes.services.Classe_service;
@@ -24,10 +25,10 @@ public class Classe_controller {
     }
 
     //method get all class
-    @GetMapping("/list-class")
+    @GetMapping("/list-class/{idAdmin}")
     @Operation(summary = "Recuperer les classes encours")
-    public List<StudentsClasse> getAllClasse(){
-            return classe_service.readAllClass();
+    public List<StudentClasseDTO> getAllClasse(@PathVariable long idAdmin){
+            return classe_service.readAllClass(idAdmin);
 
     }
 
@@ -57,12 +58,6 @@ public class Classe_controller {
         return classe_service.cunt_class();
     }
 
-    @GetMapping("/get-all-archives-by-class-id/{idClasse}")
-    @Operation(summary = "Recupere les differents promotion d'une classe par son id")
-    public List<StudentsClasse> getClassesByClassId(@PathVariable long idClasse){
-        return classe_service.getAllArchivesById(idClasse);
-    }
-
     //add promotion classe
     @GetMapping("/add-promotion-classe/{idNivFiliere}/{idAnnee}")
     @Operation(summary = "Ajouter promotion a la nivfiliere (mention)")
@@ -84,25 +79,12 @@ public class Classe_controller {
     }
 
     //get all student classe
-    @GetMapping("/get-all-classe-by-id-annee/{idAnnee}")
+    @GetMapping("/get-all-classe-by-id-annee/{idAnnee}/{idAdmin}")
     @Operation(summary = "Recupere les classe par l'id de l'annee scolaire")
-    public List<StudentsClasse> readAllClassIdAnneeId(@PathVariable long idAnnee){
-        return classe_service.readAllClassIdAnneeId(idAnnee);
+    public List<StudentClasseDTO> readAllClassIdAnneeId(@PathVariable long idAnnee, @PathVariable long idAdmin){
+        return classe_service.readAllClassIdAnneeId(idAnnee, idAdmin);
     }
 
-    //get list of next class
-    @GetMapping("/get-all-next-classe-by-id/{idClasse}")
-    @Operation(summary = "Recupere les classes supperieurs par l'id de l'ancien classe")
-    public List<StudentsClasse> getPreviousClasseById(@PathVariable long idClasse){
-        return classe_service.getPreviousClasseById(idClasse);
-    }
-
-    //get current classe with ue
-//    @GetMapping("/current-classe-with-ue")
-//    @Operation(summary = "Recuperer la liste des classe qui on des UEs")
-//    public List<StudentsClasse> getCurrentClasse(){
-//        return classe_service.getAllCurrentClasseWithUe();
-//    }
 
     //get all classe for depot doc by type doc
     @GetMapping("classe-type-of-doc/{type}")

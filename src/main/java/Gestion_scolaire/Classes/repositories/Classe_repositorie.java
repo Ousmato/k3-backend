@@ -42,5 +42,8 @@ public interface Classe_repositorie extends JpaRepository<StudentsClasse, Long> 
     @Query("SELECT c  FROM StudentsClasse c WHERE YEAR (c.idAnneeScolaire.finAnnee ) < :year and c.idFiliere.id =:idClasse")
     List<StudentsClasse> getAllArchivesByIdClasse(@Param("year") int year, @Param("idClasse") long idClasse);
 
+    @Query("SELECT c from StudentsClasse c where YEAR (c.idAnneeScolaire.debutAnnee) =:year and c.idFiliere.idNiveau.nom =:nivName and c.idFiliere.idFiliere.nomFiliere =:filiere")
+    StudentsClasse getNextClass(@Param("year") int year, @Param("nivName") String nivName, @Param("filiere") String filiere);
+
     StudentsClasse getByIdAndIdFiliereIdNiveauId(long idClasse, long idFiliereIdNiveauId);
 }

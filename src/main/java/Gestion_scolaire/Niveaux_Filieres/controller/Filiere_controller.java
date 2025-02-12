@@ -26,13 +26,6 @@ public class Filiere_controller {
 
     }
 
-//    method pour lire la liste de niveau filiere---------------
-    @GetMapping("/list-mentions")
-    @Operation(summary = "Recuperer la liste des niveau et filiere associer")
-    public List<NiveauFilieres> liste(){
-       return filieres_service.readNivFil();
-    }
-
     //    --------------------------------------------
     @PutMapping("/update")
     @Operation(summary = "Modifier la filiere")

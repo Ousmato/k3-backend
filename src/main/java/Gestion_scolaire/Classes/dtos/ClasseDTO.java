@@ -14,8 +14,6 @@ public class ClasseDTO {
     public static ClasseDTO toClasseDTO(StudentsClasse classe) {
         ClasseDTO dto = new ClasseDTO();
         dto.setId(classe.getId());
-//        dto.setScolarite(classe.getScolarite());
-//        dto.setFermer(classe.isFermer());
         dto.setIdFiliere(NivauFilierDTO.toNivFiliereDTO(classe.getIdFiliere()));
         return dto;
     }

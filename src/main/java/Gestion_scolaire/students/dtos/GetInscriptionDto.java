@@ -1,6 +1,7 @@
 package Gestion_scolaire.students.dtos;
 
 import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Classes.dtos.StudentClasseDTO;
 import Gestion_scolaire.students.entity.Inscription;
 import Gestion_scolaire.students.entity.Students;
 import Gestion_scolaire.students.entity.StudentsClasse;
@@ -12,16 +13,13 @@ import java.time.LocalDate;
 public class GetInscriptionDto {
 
     private long id;
-    private StudentsClasse idClasse;
+    private StudentClasseDTO idClasse;
     private Admin idAdmin;
     private Student_DTO idEtudiant;
     private LocalDate date;
-
     private boolean active = true;
-
     private boolean payer = false;
-
-    private double scolarite = 0;
+    private boolean totalPaie = false;
 
     public static GetInscriptionDto toDto(Inscription inscription) {
         GetInscriptionDto dto = new GetInscriptionDto();
@@ -29,9 +27,8 @@ public class GetInscriptionDto {
         dto.setDate(inscription.getDate());
         dto.setActive(inscription.isActive());
         dto.setPayer(inscription.isPayer());
-//        dto.setScolarite(inscription.getScolarite());
-        dto.setIdClasse(inscription.getIdClasse());
+        dto.setTotalPaie(inscription.isTotalPayer());
+        dto.setIdClasse(StudentClasseDTO.toDto(inscription.getIdClasse()));
         return dto;
-
     }
 }

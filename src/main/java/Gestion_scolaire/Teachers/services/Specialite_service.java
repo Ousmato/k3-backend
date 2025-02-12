@@ -7,7 +7,7 @@ import Gestion_scolaire.Niveaux_Filieres.dtos.FiliereSpecialiteDto;
 import Gestion_scolaire.Niveaux_Filieres.entity.Filiere;
 import Gestion_scolaire.Niveaux_Filieres.repositories.Filiere_repositorie;
 import Gestion_scolaire.Niveaux_Filieres.services.FiliereSpecialite_service;
-import Gestion_scolaire.SharedService.Shared_service;
+import Gestion_scolaire.Shareds.Shared_methods_service;
 import Gestion_scolaire.Teachers.entity.Specialites;
 import Gestion_scolaire.Teachers.entity.Teacher_specialite;
 import Gestion_scolaire.Teachers.entity.Teachers;
@@ -43,7 +43,7 @@ public class Specialite_service {
     private FiliereSpecialite_service filiereSpecialite_service;
 
     @Autowired
-    private Shared_service shared_service;
+    private Shared_methods_service shared_methods_service;
 
     @Autowired
     private AdminRepositorie admin_repositorie;
@@ -169,7 +169,7 @@ public class Specialite_service {
 
         }
         String roleName = admin.getIdRole().getNom().replace("_", " ").toUpperCase();
-        String roleAbrivate = shared_service.abrevigateRoleName(roleName);
+        String roleAbrivate = shared_methods_service.abrevigateName(roleName);
         if(!roleAbrivate.equalsIgnoreCase("DER")){
             throw new NoteFundException("Autorisation refusée");
         }
