@@ -52,13 +52,13 @@ public class Roles_services {
         if (roleExist != null) {
             throw new NoteFundException("Le role exist dejà");
         }
-        Roles newRole = new Roles();
-        newRole.setNom(role.getNom().toUpperCase());
-        newRole.setTypeFiliere(role.getTypeFiliere());
+//
         Set<ConstraintViolation<Roles>> violations = validator.validate(role);
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
+
+        System.out.println("role-------------------" + role);
 
         Admin admin = admin_repositorie.getByIdAdministraAndActive(idAdmin, true);
         if (admin == null) {
@@ -71,7 +71,7 @@ public class Roles_services {
 
         role.setIdAdminDg(admin.getIdAdministra());
         role_repositorie.save(role);
-        return DTO_response_string.fromMessage("Ajout effectué avec succé");
+        return DTO_response_string.addMessage();
 
     }
 

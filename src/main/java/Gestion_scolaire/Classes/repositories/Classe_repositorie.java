@@ -38,6 +38,9 @@ public interface Classe_repositorie extends JpaRepository<StudentsClasse, Long> 
     @Query("SELECT c  FROM StudentsClasse c WHERE :currentDate BETWEEN c.idAnneeScolaire.debutAnnee and c.idAnneeScolaire.finAnnee")
     List<StudentsClasse> getClasseForCurrentYear(@Param("currentDate") LocalDate currentDate);
 
+    @Query("select st from StudentsClasse st join Inscription i on i.idClasse.id = st.id WHERE i.id =:idInscription and :currentDate BETWEEN st.idAnneeScolaire.debutAnnee and st.idAnneeScolaire.finAnnee ")
+    StudentsClasse findClassByCurrentYear(@Param("idInscription") long idInscription, @Param("currentDate") LocalDate currentDate);
+
 
     @Query("SELECT c  FROM StudentsClasse c WHERE YEAR (c.idAnneeScolaire.finAnnee ) < :year and c.idFiliere.id =:idClasse")
     List<StudentsClasse> getAllArchivesByIdClasse(@Param("year") int year, @Param("idClasse") long idClasse);

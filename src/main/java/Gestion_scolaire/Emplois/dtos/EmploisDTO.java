@@ -23,7 +23,7 @@ public class EmploisDTO {
         dto.setDateDebut(emplois.getDateDebut());
         dto.setDateFin(emplois.getDateFin());
         dto.setIdModule(ModuleDTO.toModuleDTO(emplois.getIdModule()));
-        dto.setIdClasse(ClasseDTO.toClasseDTO(emplois.getIdClasse()));
+//        dto.setIdClasse(ClasseDTO.toClasseDTO(emplois.getIdClasse()));
         return dto;
     }
 }

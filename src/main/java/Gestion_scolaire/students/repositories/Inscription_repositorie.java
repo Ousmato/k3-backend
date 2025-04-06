@@ -26,6 +26,9 @@ public interface Inscription_repositorie extends JpaRepository<Inscription, Long
 
     List<Inscription> findByIdClasseIdAnneeScolaireId(long anneeScolaireId);
 
+    @Query("select i from Inscription i WHERE :currentDate BETWEEN  i.idClasse.idAnneeScolaire.debutAnnee and i.idClasse.idAnneeScolaire.finAnnee and i.idEtudiant.idEtudiant =:idStudent")
+    Inscription getInscriptionByCurrentYearAndIdStudent(@Param("currentDate") LocalDate currentDate, @Param("idStudent") long idStudent);
+
     @Query("select count(*)  from Inscription i where i.idClasse.id =:idClasse")
     int cuntByIdClasse(@Param("idClasse") long idClasse);
 

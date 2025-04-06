@@ -8,6 +8,7 @@ import Gestion_scolaire.Services.InfoScool_service;
 import Gestion_scolaire.Classes.services.PromotionAutomaticAdd_service;
 import Gestion_scolaire.configuration.NoteFundException;
 import Gestion_scolaire.configuration.SecurityConfigs.JwtService;
+import Gestion_scolaire.students.entity.Students;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,22 +47,32 @@ public class Auth_controller {
     public LoginResponse login(@RequestBody LoginRequest loginRequest) {
         System.out.println("entre en methode" + loginRequest);
         Object userDetails = authServiceService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
-        System.out.println("es ce que tu es retourne "+ userDetails);
-        if (userDetails != null) {
-            ObjectMapper adminMapper = new ObjectMapper();
-            adminMapper.registerModule(new JavaTimeModule());
-            Admin admin = adminMapper.convertValue(userDetails, Admin.class);
-            String token = jwtService.generateToken(admin.getEmail());
-
-            String refreshToken = jwtService.generateRefreshToken(admin.getEmail());
-            adminService.addRefreshToken(admin, refreshToken);
-//            System.out.println("------------------token---------------" +token);
-//            System.out.println("------------------user---------------" +userDetails);
-
-            return new LoginResponse(userDetails, token, refreshToken);
-        } else {
-            throw  new NoteFundException("Address mail ou mot de passe est incorrect");
+        if (userDetails == null) {
+            throw new NoteFundException("Adresse mail ou mot de passe incorrect");
         }
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+
+        String token;
+        String refreshToken;
+        if (userDetails instanceof Admin) {
+            Admin admin = mapper.convertValue(userDetails, Admin.class);
+            token = jwtService.generateToken(admin.getEmail());
+            refreshToken = jwtService.generateRefreshToken(admin.getEmail());
+            adminService.addRefreshToken(admin, refreshToken);
+        } else if (userDetails instanceof Students) {
+            Students students = mapper.convertValue(userDetails, Students.class);
+            token = jwtService.generateToken(students.getEmail());
+            refreshToken = jwtService.generateRefreshToken(students.getEmail());
+            adminService.addRefreshTokenStudent(students, refreshToken);
+        } else {
+            throw new NoteFundException("Utilisateur non reconnu");
+        }
+
+        LoginResponse response = new LoginResponse(userDetails, token, refreshToken);
+        System.out.println("Réponse envoyée: " + response);  // <-- Vérifie ici si le JSON est correct
+        return response;
     }
 //    ----------------------------------------methode get admin
     @GetMapping("/read-info-school")

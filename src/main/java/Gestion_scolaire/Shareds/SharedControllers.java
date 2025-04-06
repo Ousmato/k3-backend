@@ -3,56 +3,59 @@ package Gestion_scolaire.Shareds;
 import Gestion_scolaire.Classes.services.Classe_service;
 import Gestion_scolaire.Classes.services.StudentGroupServices;
 import Gestion_scolaire.Classes.services.Ue_service;
+import Gestion_scolaire.Emplois.services.Jounee_service;
 import Gestion_scolaire.Niveaux_Filieres.services.SecondModulesService;
 import Gestion_scolaire.Services.*;
 import Gestion_scolaire.students.services.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Data
 @Component
+@AllArgsConstructor
 public class SharedControllers {
 
-    @Autowired
-    private SecondModulesService secondModulesService;
 
-    @Autowired
-    private StudentGroupServices studentGroupServices;
+    private final SecondModulesService secondModulesService;
 
-    @Autowired
-    private Ue_service ueService;
 
-    @Autowired
-    private Modules_service modulesService;
+    private final StudentGroupServices studentGroupServices;
 
-    @Autowired
-    private Classe_service classeService;
 
-    @Autowired
-    private Moyenne_service moyenne_service;
+    private  final Ue_service ueService;
 
-    @Autowired
-    private Note_service note_service;
 
-    @Autowired
-    private Common_service common_service;
+    private final Modules_service modulesService;
 
-    @Autowired
-    private Inscription_service inscription_service;
 
-    @Autowired
-    private Student_service student_service;
+    private  final Classe_service classeService;
 
-    @Autowired
-    private Doc_service doc_service;
 
-    @Autowired
-    private Groupe_service groupe_service;
+    private final Moyenne_service moyenne_service;
 
-    @Autowired
-    private Scolarite_service scolariteService;
 
-    @Autowired
-    private StudentStatistique_service studentStatistique_service;
+    private final Note_service note_service;
+
+
+    private final Common_service common_service;
+
+
+    private final Inscription_service inscription_service;
+
+
+    private final Student_service student_service;
+
+
+    private final Doc_service doc_service;
+
+
+    private final Groupe_service groupe_service;
+
+    private final Jounee_service jounee_service;
+
+    private final Scolarite_service scolariteService;
+
+    private final StudentStatistique_service studentStatistique_service;
 }

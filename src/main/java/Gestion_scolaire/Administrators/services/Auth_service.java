@@ -41,7 +41,8 @@ public class Auth_service {
                 authenticatedUser = teacher;
             } else {
                 Students student = students_repositorie.findByEmail(email);
-                if (student != null && passwordEncoder.matches(password, student.getPassword())) {
+                System.out.println("je suuis bien etudiant : " + student);
+                if (student != null) {
                     authenticatedUser = student;
                 }
             }

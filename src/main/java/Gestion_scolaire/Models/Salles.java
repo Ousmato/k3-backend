@@ -16,8 +16,6 @@ public class Salles {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
-
     @NotBlank(message = "Le champ ne doit pas être nul ou vide.\n")
     private String nom;
 

@@ -13,6 +13,7 @@ import Gestion_scolaire.Repositories.RefreshRepositorie;
 import Gestion_scolaire.Shareds.Shared_methods_service;
 import Gestion_scolaire.configuration.NoteFundException;
 import Gestion_scolaire.configuration.SecurityConfigs.AdminInfoDetails;
+import Gestion_scolaire.students.entity.Students;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
@@ -235,6 +236,22 @@ public class Admin_service implements UserDetailsService {
         }else {
             rft.setToken(refreshToken);
             rft.setAdmin(admin);
+            refreshRepositorie.save(rft);
+        }
+
+    }
+
+
+    public  void addRefreshTokenStudent(Students student, String refreshToken) {
+        RefreshToken rft = refreshRepositorie.findByAdminIdAdministra(student.getIdEtudiant());
+        if (rft == null) {
+            RefreshToken newRefreshToken = new RefreshToken();
+            newRefreshToken.setToken(refreshToken);
+            newRefreshToken.setStudents(student);
+            refreshRepositorie.save(newRefreshToken);
+        }else {
+            rft.setToken(refreshToken);
+            rft.setStudents(student);
             refreshRepositorie.save(rft);
         }
 

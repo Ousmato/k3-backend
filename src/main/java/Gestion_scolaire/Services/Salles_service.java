@@ -58,7 +58,7 @@ public class Salles_service {
             for (SallesDTO dtoJson : jsonDataService.readSalles()){
                 Salles salles = new Salles();
                 salles.setNom(dtoJson.getNom());
-                salles.setNombrePlace(dtoJson.getNombrePlaces());
+                salles.setNombrePlace(dtoJson.getNombrePlace());
                 sallesRepositorie.save(salles);
             }
             return getAllSalles();

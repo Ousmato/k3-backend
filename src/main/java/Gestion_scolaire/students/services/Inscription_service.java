@@ -235,4 +235,13 @@ public class Inscription_service {
         return DTO_response_string.addMessage();
     }
 
+    //recuperer les inscrits de la classe par id sans pagination
+    public List<Inscription> getAllInscritOfClasse(long idClasse){
+        List<Inscription> list = shared_repositories.getInscription_repositorie().findByIdClasse(idClasse);
+        if (list == null) {
+            return new ArrayList<>();
+        }
+        return list;
+    }
+
 }

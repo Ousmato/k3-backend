@@ -65,11 +65,11 @@ public class Inscription_controller {
 
 
 
-    @GetMapping("/subscribe-by-class-id/{idAnnee}/{idClasse}")
-    @Operation(summary = "Recuperer la liste des etudians inscrits par id de la classe")
-    public List<GetInscriptionDto> getStudentByClasse(@PathVariable long idAnnee, @PathVariable long idClasse){
-        return sharedControllers.getStudent_service().get_by_classId(idAnnee,idClasse);
-    }
+//    @GetMapping("/subscribe-by-class-id/{idAnnee}/{idClasse}")
+//    @Operation(summary = "Recuperer la liste des etudiants qui ont payer inscrits  par id de la classe ")
+//    public List<GetInscriptionDto> getStudentByClasse(@PathVariable long idAnnee, @PathVariable long idClasse){
+//        return sharedControllers.getStudent_service().get_by_classId(idAnnee,idClasse);
+//    }
 
     //get All Students By Group
     @GetMapping("/list-subscribe-by-group-id/{idGroup}/{idEmploi}")
@@ -78,10 +78,16 @@ public class Inscription_controller {
         return sharedControllers.getGroupe_service().getAllStudentsByGroupId(idGroup, idEmploi);
     }
 
-    @GetMapping("/list-subscribe-by-emploi-id/{idEmploi}")
-    @Operation(summary = "Recuperer la liste des etudians inscrits par id du emplois")
-    public List<Inscription> getAllByGroupes(@PathVariable long idEmploi){
-        return sharedControllers.getGroupe_service().getAllStudentsByGroupes(idEmploi);
+//    @GetMapping("/list-subscribe-by-emploi-id/{idEmploi}")
+//    @Operation(summary = "Recuperer la liste des etudians inscrits par id du emplois")
+//    public List<Inscription> getAllByGroupes(@PathVariable long idEmploi){
+//        return sharedControllers.getGroupe_service().getAllStudentsByGroupes(idEmploi);
+//    }
+
+    @GetMapping("/get-incrits-by-idClasse/{idClasse}")
+    @Operation(summary = "Recuperer les inscrits de la classe sans paginer")
+    public List<Inscription> getAllIncritsOfClasse( @PathVariable long idClasse){
+        return sharedControllers.getInscription_service().getAllInscritOfClasse(idClasse);
     }
 
     @GetMapping("/annuler-depot/{idInscription}")

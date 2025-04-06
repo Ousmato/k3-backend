@@ -34,7 +34,7 @@ public class ApplicationConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth ->auth.requestMatchers("/assets/**", "/js/**","/css/**","/webjars/**").permitAll());
+        http.authorizeHttpRequests(auth ->auth.requestMatchers("/images/**","/assets/**","/asse/**", "/js/**","/css/**","/webjars/**").permitAll());
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth

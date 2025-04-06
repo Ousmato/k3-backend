@@ -6,11 +6,13 @@ import Gestion_scolaire.Emplois.dtos.Journee_DTO;
 import Gestion_scolaire.Emplois.entity.Emplois;
 import Gestion_scolaire.Emplois.entity.Journee;
 import Gestion_scolaire.Services.Common_service;
+import Gestion_scolaire.Shareds.Shared_repositories;
 import Gestion_scolaire.Teachers.dtos.TeacherConfigJournDTO;
 import Gestion_scolaire.EnumClasse.Seance_type;
 import Gestion_scolaire.Models.*;
 import Gestion_scolaire.Emplois.repositorie.Emplois_repositorie;
 import Gestion_scolaire.Emplois.repositorie.Journee_repositorie;
+import Gestion_scolaire.Teachers.entity.Teachers;
 import Gestion_scolaire.students.repositories.StudentGroup_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
 import Gestion_scolaire.students.entity.Participant;
@@ -19,6 +21,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,22 +31,16 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class Jounee_service {
 
-    @Autowired
-    private Journee_repositorie journee_repositorie;
 
-    @Autowired
-    private Common_service common_service;
+    private final Shared_repositories shared_repositories;
 
-    @Autowired
-    private Validator validator;
 
-    @Autowired
-    private StudentGroup_repositorie studentGroup_repositorie;
+    private final Common_service common_service;
 
-    @Autowired
-    private Emplois_repositorie emplois_repositorie;
+    private final Validator validator;
 
     @Transactional
     public Object addJournee(List<Journee> journeeList) {
@@ -55,7 +52,7 @@ public class Jounee_service {
                 throw new ConstraintViolationException(constraintViolations);
             }
 
-            List<Journee> list = journee_repositorie.findByIdEmploisIdAndIdTeacherIdEnseignantAndSeanceType(
+            List<Journee> list = shared_repositories.getJournee_repositorie().findByIdEmploisIdAndIdTeacherIdEnseignantAndSeanceType(
                     j.getIdEmplois().getId(), j.getIdTeacher().getIdEnseignant(), j.getSeanceType());
             if (!list.isEmpty()){
                 for (Journee j2 : list) {
@@ -70,7 +67,7 @@ public class Jounee_service {
             common_service.validateSeance(j);
             System.out.println("--------apres validation------" );
 
-            Journee teacherCofig = journee_repositorie.findByIdTeacherIdEnseignantAndSeanceTypeAndDate(
+            Journee teacherCofig = shared_repositories.getJournee_repositorie().findByIdTeacherIdEnseignantAndSeanceTypeAndDate(
                     j.getIdTeacher().getIdEnseignant(),j.getSeanceType(), j.getDate());
             if(teacherCofig != null) {
                throw new NoteFundException("L'enseignant : %sest déjà programmer pour cette date".formatted(j.getIdTeacher().getNom()));
@@ -84,7 +81,7 @@ public class Jounee_service {
                 }
 
             }
-            Journee jourExist = journee_repositorie.getByHeureDebutAndHeureFinAndDateAndIdEmploisId(
+            Journee jourExist = shared_repositories.getJournee_repositorie().getByHeureDebutAndHeureFinAndDateAndIdEmploisId(
                      j.getHeureDebut(), j.getHeureFin(), j.getDate(), j.getIdEmplois().getId()
             );
 //            System.out.println("---------------------je suis la" + jourExist);
@@ -96,7 +93,7 @@ public class Jounee_service {
                 }
             }
 //            System.out.println("----------------------------"+j);
-            journee_repositorie.save(j);
+            shared_repositories.getJournee_repositorie().save(j);
 //            common_service.createPaieForConfig(saved);
             hasJour = true;
 
@@ -113,7 +110,7 @@ public class Jounee_service {
 
     public List<Journee_DTO> readByIdEmplois(long idEmplois) {
         // Récupérer l'emploi par ID
-        Emplois emploisExist = emplois_repositorie.findById(idEmplois);
+        Emplois emploisExist = shared_repositories.getEmplois_repositorie().findById(idEmplois);
 
         // Vérifier si l'emploi existe
         if (emploisExist == null) {
@@ -121,7 +118,7 @@ public class Jounee_service {
         }
 
         // Récupérer les séances associées à l'emploi
-        List<Journee> seancesList = journee_repositorie.findByIdEmploisId(emploisExist.getId());
+        List<Journee> seancesList = shared_repositories.getJournee_repositorie().findByIdEmploisId(emploisExist.getId());
 
         // Vérifier si la liste des séances n'est pas vide
         if (seancesList.isEmpty()) {
@@ -163,13 +160,13 @@ public class Jounee_service {
         boolean hasJour = false;
         for (Journee j : journees) {
 
-            List<Journee> journeeList = journee_repositorie.getByIdEmploisIdModuleId(j.getIdEmplois().getIdModule().getId());
+            List<Journee> journeeList = shared_repositories.getJournee_repositorie().getByIdEmploisIdModuleId(j.getIdEmplois().getIdModule().getId());
             if(journeeList.isEmpty()) {
                 throw new NoteFundException("Indisponible, aucune séance n'est programmer pour le moment");
             }
             common_service.validateSeance(j);
 
-            Journee jExist = journee_repositorie.getJourneesByDateAndHeureFinIsAfterAndIdEmploisId(j.getDate(),j.getHeureFin(),j.getIdEmplois().getId());
+            Journee jExist = shared_repositories.getJournee_repositorie().getJourneesByDateAndHeureFinIsAfterAndIdEmploisId(j.getDate(),j.getHeureFin(),j.getIdEmplois().getId());
             if (jExist != null) {
                 throw new NoteFundException("Un examen ne peut pas être planifié pendant un cours.");
 
@@ -186,7 +183,7 @@ public class Jounee_service {
 //                    }
 //                }
             }
-            Journee teacherCofig = journee_repositorie.findByIdTeacherIdEnseignantAndSeanceTypeAndDate(
+            Journee teacherCofig = shared_repositories.getJournee_repositorie().findByIdTeacherIdEnseignantAndSeanceTypeAndDate(
                     j.getIdTeacher().getIdEnseignant(),j.getSeanceType(), j.getDate());
             if(teacherCofig != null) {
                 throw new NoteFundException("L'enseignant : " +j.getIdTeacher().getNom() + "est déjà programmer pour cette date");
@@ -196,8 +193,7 @@ public class Jounee_service {
                 throw new NoteFundException("La salle : " + j.getIdSalle().getNom() + "est occupé");
             }
 
-            Journee saved = journee_repositorie.save(j);
-//            common_service.createPaieForConfig(saved);
+            Journee saved = shared_repositories.getJournee_repositorie().save(j);
             hasJour = true;
 
         }
@@ -212,11 +208,11 @@ public class Jounee_service {
     //--------------------------------
     public List<TeacherConfigJournDTO> getAllTeacherConfigByIdEmploi(long idEmplois) {
 
-        Emplois emploisExist = emplois_repositorie.findById(idEmplois);
+        Emplois emploisExist = shared_repositories.getEmplois_repositorie().findById(idEmplois);
         if(emploisExist == null) {
             return null;
         }
-        List<Journee> journeeList = journee_repositorie.findByIdEmploisId(idEmplois);
+        List<Journee> journeeList = shared_repositories.getJournee_repositorie().findByIdEmploisId(idEmplois);
 
         if (journeeList.isEmpty()) {
             return new ArrayList<>();
@@ -252,7 +248,7 @@ public class Jounee_service {
                     seanceTypesSet.add(seance.getSeanceType().toString());
 
                     // Récupérer toutes les séances liées à cet enseignant pour éviter les doublons
-                    List<Journee> list = journee_repositorie.findByIdEmploisIdAndIdTeacherIdEnseignant(idEmplois, seance.getIdTeacher().getIdEnseignant());
+                    List<Journee> list = shared_repositories.getJournee_repositorie().findByIdEmploisIdAndIdTeacherIdEnseignant(idEmplois, seance.getIdTeacher().getIdEnseignant());
                     for (Journee j : list) {
                         seanceTypesSet.add(j.getSeanceType().toString());
 
@@ -273,8 +269,64 @@ public class Jounee_service {
 
         }
 
-
         return new ArrayList<>();
+    }
+
+    //update journee
+    public Object updateJournee(Journee journee) {
+        // Vérifier si la journée existe
+        Journee jExist = shared_repositories.getJournee_repositorie().getById(journee.getId());
+        if (jExist == null) {
+            throw new NoteFundException("La séance est introuvable");
+        }
+        List<Salles> occuperForDate = common_service.salle_occuper(journee.getDate(), journee.getHeureDebut());
+        if(!occuperForDate.isEmpty()) {
+            for (Salles s : occuperForDate) {
+                if(s.equals(journee.getIdSalle())){
+                    throw new NoteFundException("La salle : " + journee.getIdSalle().getNom() + " est occupé ");
+                }
+            }
+
+        }
+        // Vérifier si l'enseignant existe
+        if (journee.getIdTeacher() != null) {
+            Teachers enseignant = shared_repositories.getTeacher_repositorie().findById(journee.getIdTeacher().getIdEnseignant()).orElse(null);
+            if (enseignant == null) {
+                throw new NoteFundException("L'enseignant spécifié n'existe pas");
+            }
+            jExist.setIdTeacher(enseignant); // Assigner l'enseignant trouvé
+        }
+
+        // Vérifier si la salle existe
+        if (journee.getIdSalle() != null) {
+            Salles salle = shared_repositories.getSalles_repositorie().findById(journee.getIdSalle().getId()).orElse(null);
+            if (salle == null) {
+                throw new NoteFundException("La salle spécifiée n'existe pas");
+            }
+            jExist.setIdSalle(salle); // Assigner la salle trouvée
+        }
+
+        // Mettre à jour les autres informations de la journée
+        jExist.setSeanceType(journee.getSeanceType());
+        jExist.setHeureDebut(journee.getHeureDebut());
+        jExist.setHeureFin(journee.getHeureFin());
+
+        // Sauvegarder l'entité journee mise à jour
+        shared_repositories.getJournee_repositorie().save(jExist);
+
+        // Retourner un message de succès
+        return DTO_response_string.updateMessage();
+    }
+
+    //deleted
+    public Object deletedJournee(long idJournee){
+        // Vérifier si la journée existe
+        Journee jExist = shared_repositories.getJournee_repositorie().getById(idJournee);
+        if (jExist == null) {
+            throw new NoteFundException("La séance est introuvable");
+        }
+        shared_repositories.getJournee_repositorie().delete(jExist);
+        return DTO_response_string.updateMessage();
     }
 
 }

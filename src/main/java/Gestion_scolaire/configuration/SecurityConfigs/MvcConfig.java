@@ -11,9 +11,9 @@ public class MvcConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         System.out.println("______________________addResourceHandlers+_________________________");
-        if (!registry.hasMappingForPattern("/assets/**")) {
-            registry.addResourceHandler("/assets/**")
-                    .addResourceLocations("/assets/");
-        }
+//        if (!registry.hasMappingForPattern("/assets/**")) {
+//            registry.addResourceHandler("/assets/**")
+//                    .addResourceLocations("/assets/");
+//        }
     }
 }
