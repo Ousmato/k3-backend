@@ -238,7 +238,7 @@ public class Moyenne_service {
             inscriptionNoteDTO.setDateNaissance(inscription.getIdEtudiant().getDateNaissance());
             inscriptionNoteDTO.setUeValidate(ueValidateDTOS);
             inscriptionNoteDTO.setIdClasse(inscription.getIdClasse());
-            inscriptionNoteDTO.setId(inscription.getIdEtudiant().getIdEtudiant());
+            inscriptionNoteDTO.setId(inscription.getIdEtudiant().getId());
             inscriptionNoteDTOList.add(inscriptionNoteDTO);
 
         }

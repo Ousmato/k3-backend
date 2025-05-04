@@ -2,12 +2,12 @@ package Gestion_scolaire.Administrators.controller;
 
 import Gestion_scolaire.Administrators.dtos.AdminDTO;
 import Gestion_scolaire.Administrators.dtos.AdminPostesDTO;
-import Gestion_scolaire.Administrators.entity.Poste;
-import Gestion_scolaire.Administrators.entity.Roles;
+import Gestion_scolaire.Administrators.entity.Postes;
 import Gestion_scolaire.Administrators.services.Roles_services;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
-import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
 import Gestion_scolaire.Administrators.services.Admin_service;
+import Gestion_scolaire.Models.UsersGrade;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,7 +38,7 @@ public class Admin_controller {
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        Admin a = objectMapper.readValue(adminString, Admin.class);
+        AdministrationUsers a = objectMapper.readValue(adminString, AdministrationUsers.class);
 
         // Vérifie si urlFile est null ou vide
         if (file == null || file.isEmpty()) {
@@ -57,7 +57,7 @@ public class Admin_controller {
     public List<AdminPostesDTO> list() {
         return roles_services.list_admin();
     }
-
+//
     @GetMapping("/administrateurs/{value}")
     @PreAuthorize("hasAuthority('ROLE_Admin')")
     @Operation(summary = "Recuperer les admins par etat")
@@ -100,13 +100,13 @@ public class Admin_controller {
     @PutMapping("/update-admin")
     @PreAuthorize("hasAuthority('ROLE_Admin')")
     @Operation(summary = "Modifier les information de l'admin")
-    public Object updateAdmin(@RequestBody AdminDTO admin) {
+    public Object updateAdmin(@RequestBody AdministrationUsers admin) {
         return adminService.updatAdmin(admin);
     }
 
     @PostMapping("/forgot-password")
     @Operation(summary = "Recuperer l'utilisateur par email pour reunitialiser")
-    public Admin forgotPassword(@RequestBody String email) {
+    public AdministrationUsers forgotPassword(@RequestBody String email) {
         return adminService.forgotPassword(email);
     }
 
@@ -122,42 +122,54 @@ public class Admin_controller {
 
     @GetMapping("List-roles/{idAdmin}")
     @Operation(summary = "Recuperer la liste des roles ")
-    public List<Roles> getAllRoles(@PathVariable long idAdmin) {
+    public List<Postes> getAllRoles(@PathVariable long idAdmin) {
         return roles_services.getAllRoles(idAdmin);
     }
 
-    @PostMapping("add-role/{idAdmin}")
+    @GetMapping("get-all-grades/{idAdmin}")
+    @Operation(summary = "Recuperer la liste des grades")
+    public List<UsersGrade> getAllUserGrades(@PathVariable long idAdmin) {
+        return roles_services.getAllGdrades(idAdmin);
+    }
+
+    @PostMapping("add-poste/{idAdmin}")
     @Operation(summary = "Ajouter un role")
-    public Object addRole(@RequestBody Roles role, @PathVariable long idAdmin) {
-        return roles_services.addRole(role, idAdmin);
+    public Object addPoste(@RequestBody Postes poste, @PathVariable long idAdmin) {
+        return roles_services.addPoste(poste, idAdmin);
     }
 
     @PutMapping("/update-role")
     @Operation(summary = "Modifier le role ")
     @PreAuthorize("hasAuthority('ROLE_Admin')")
-    public Object updateRole(@RequestBody Roles role) {
+    public Object updateRole(@RequestBody Postes role) {
         System.out.println("---------------------role controller :" + role);
         return roles_services.updateRole(role);
     }
 
-    @DeleteMapping("deleted-role/{idRole}")
-    @Operation(summary = "Suprimer un role par son id")
-    @PreAuthorize("hasAuthority('ROLE_Admin')")
-    public Object deleteRole(@PathVariable long idRole) {
-        return roles_services.deletedRole(idRole);
-    }
+//    @DeleteMapping("deleted-role/{idRole}")
+//    @Operation(summary = "Suprimer un role par son id")
+//    @PreAuthorize("hasAuthority('ROLE_Admin')")
+//    public Object deleteRole(@PathVariable long idRole) {
+//        return roles_services.deletedRole(idRole);
+//    }
+//
+//    @GetMapping("/add-poste/{idCurrentAdmin}/{idRole}")
+//    @Operation(summary = "Ajouter un poste pour un admin")
+//    @PreAuthorize("hasAuthority('ROLE_Admin')")
+//    public Object addPoste(@PathVariable long idCurrentAdmin, @PathVariable long idRole){
+//        return roles_services.Addposte(idCurrentAdmin, idRole);
+//    }
+//
+//    @GetMapping("/get-roles-of-post-by-idAdmin/{idAdmin}")
+//    @Operation(summary = "Recuperer les poste associer a l'admin par son id")
+//    public List<AdminPostesDTO> getAllPostes(@PathVariable long idAdmin) {
+//        return roles_services.getAllPoste(idAdmin);
+//    }
 
-    @GetMapping("/add-poste/{idCurrentAdmin}/{idRole}")
-    @Operation(summary = "Ajouter un poste pour un admin")
-    @PreAuthorize("hasAuthority('ROLE_Admin')")
-    public Object addPoste(@PathVariable long idCurrentAdmin, @PathVariable long idRole){
-        return roles_services.Addposte(idCurrentAdmin, idRole);
-    }
-
-    @GetMapping("/get-roles-of-post-by-idAdmin/{idAdmin}")
-    @Operation(summary = "Recuperer les poste associer a l'admin par son id")
-    public List<AdminPostesDTO> getAllPostes(@PathVariable long idAdmin) {
-        return roles_services.getAllPoste(idAdmin);
+    @PostMapping("add-grade/{idAdmin}")
+    @Operation(summary = "Ajouter un role")
+    public Object addGrade(@RequestBody UsersGrade grade, @PathVariable long idAdmin) {
+        return roles_services.addUserGrade(grade, idAdmin);
     }
 
 }

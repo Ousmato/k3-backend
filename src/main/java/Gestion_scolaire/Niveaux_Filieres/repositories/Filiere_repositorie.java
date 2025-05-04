@@ -1,5 +1,6 @@
 package Gestion_scolaire.Niveaux_Filieres.repositories;
 
+import Gestion_scolaire.EnumClasse.Facultes;
 import Gestion_scolaire.Niveaux_Filieres.entity.Filiere;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,5 +17,7 @@ public interface Filiere_repositorie extends JpaRepository<Filiere, Long> {
 
     @Query("select f from Filiere f inner JOIN StudentsClasse cl on cl.idFiliere.idFiliere.id = f.id where cl.idAnneeScolaire.id =:idAnnee")
     List<Filiere> getByIdAnnee(@Param("idAnnee") long idAnnee);
+
+    List<Filiere> findByFaculte(Facultes faculte);
 
 }

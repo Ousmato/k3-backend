@@ -46,7 +46,7 @@ public class Note_service {
             throw new RuntimeException("la note n'existe pas");
         }
         noteExist.setExamNote(notes.getExamNote());
-        noteExist.setIdAdmin(notes.getIdAdmin());
+        noteExist.setIdAdministrationUsers(notes.getIdAdministrationUsers());
         
         noteExist.setClasseNote(notes.getClasseNote());
         notes_repositorie.save(noteExist);
@@ -69,7 +69,7 @@ public class Note_service {
         Notes note = new Notes();
         note.setClasseNote(dto.getClasseNote());
         note.setExamNote(dto.getExamNote());
-        note.setIdAdmin(dto.getIdAdmin());
+        note.setIdAdministrationUsers(dto.getIdAdministrationUsers());
         note.setIdModule(module);
         note.setIdSemestre(semestre);
         note.setIdInscription(inscription);
@@ -228,7 +228,7 @@ public class Note_service {
     private Notes updateExistingNote(Notes noteExist, Notes note, double noteModule) {
         noteExist.setNoteModule(noteModule);
         noteExist.setExamNote(note.getExamNote());
-        noteExist.setIdAdmin(note.getIdAdmin());
+        noteExist.setIdAdministrationUsers(note.getIdAdministrationUsers());
         noteExist.setClasseNote(note.getClasseNote());
         return notes_repositorie.save(noteExist);
     }
@@ -262,7 +262,7 @@ public class Note_service {
         note.setExamNote(dto.getClasseNote());
         note.setExamNote(dto.getClasseNote());
         note.setNoteModule(dto.getClasseNote());
-        note.setIdAdmin(dto.getIdAdmin());
+        note.setIdAdministrationUsers(dto.getIdAdministrationUsers());
         note.setIdModule(module);
         note.setIdSemestre(semestre);
         note.setIdInscription(inscription);

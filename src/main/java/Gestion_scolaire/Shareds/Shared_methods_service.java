@@ -19,7 +19,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -220,7 +219,7 @@ public class Shared_methods_service {
     }
 
     public String getNumInscription (long idStudent){
-        List<Inscription> inscription = shared_repositories.getInscription_repositorie().findByIdEtudiantIdEtudiant(idStudent);
+        List<Inscription> inscription = shared_repositories.getInscription_repositorie().findByIdEtudiantId(idStudent);
         return inscription.getFirst().getNumeroInscrit();
     }
     public SousFiliereDTO getSousFilieresAndOurInscrits(long idSouFiliere){

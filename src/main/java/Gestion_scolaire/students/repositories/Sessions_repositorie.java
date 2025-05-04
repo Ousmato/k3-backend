@@ -9,6 +9,4 @@ public interface Sessions_repositorie extends JpaRepository<StudentSession, Long
 
     StudentSession findByIdInscritIdAndIdSemestreIdAndIdModuleId(long idInscrit, long idSemestre, long idModule);
 
-    StudentSession getByIdInscritIdAndIdSemestreIdAndIdModuleIdUeId(long idInscrit, long idSemestre, long idUe);
-
 }

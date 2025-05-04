@@ -1,6 +1,7 @@
 package Gestion_scolaire.Shareds;
 
 import Gestion_scolaire.Administrators.repositories.AdminRepositorie;
+import Gestion_scolaire.Administrators.repositories.Poste_repositorie;
 import Gestion_scolaire.Classes.repositories.Classe_repositorie;
 import Gestion_scolaire.Emplois.repositorie.Emplois_repositorie;
 import Gestion_scolaire.Emplois.repositorie.Journee_repositorie;
@@ -10,6 +11,7 @@ import Gestion_scolaire.Niveaux_Filieres.repositories.Niveau_repositorie;
 import Gestion_scolaire.Niveaux_Filieres.repositories.SousFilieres_repositorie;
 import Gestion_scolaire.Repositories.*;
 import Gestion_scolaire.Teachers.repositories.Specialite_repositorie;
+import Gestion_scolaire.Teachers.repositories.Surveillants_repositorie;
 import Gestion_scolaire.Teachers.repositories.Teacher_repositorie;
 import Gestion_scolaire.students.repositories.*;
 import lombok.Data;
@@ -87,8 +89,16 @@ public class Shared_repositories {
     
     private final InscriptionSousFiliere_repositorie inscriptionSousFiliere_repositorie;
 
-    
+    private final TranchementPaiement_repositorie tranchementPaiement_repositorie;
+
     private final Paiement_repositorie paiement_repositorie;
+
+    private final Poste_repositorie poste_repositorie;
+
+
+    private final RefreshRepositorie refreshRepositorie;
+
+    private final Surveillants_repositorie surveillants_repositorie;
 
 
 }

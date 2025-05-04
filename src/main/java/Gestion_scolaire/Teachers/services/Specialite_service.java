@@ -1,13 +1,10 @@
 package Gestion_scolaire.Teachers.services;
 
-import Gestion_scolaire.Administrators.entity.Admin;
-import Gestion_scolaire.Administrators.repositories.AdminRepositorie;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Niveaux_Filieres.dtos.FiliereSpecialiteDto;
 import Gestion_scolaire.Niveaux_Filieres.entity.Filiere;
 import Gestion_scolaire.Niveaux_Filieres.repositories.Filiere_repositorie;
 import Gestion_scolaire.Niveaux_Filieres.services.FiliereSpecialite_service;
-import Gestion_scolaire.Shareds.Shared_methods_service;
 import Gestion_scolaire.Teachers.entity.Specialites;
 import Gestion_scolaire.Teachers.entity.Teacher_specialite;
 import Gestion_scolaire.Teachers.entity.Teachers;
@@ -19,6 +16,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,30 +26,23 @@ import java.util.List;
 import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 public class Specialite_service {
 
-    @Autowired
-    private Specialite_repositorie specialite_repositorie;
 
-    @Autowired
-    private Teacher_repositorie teacher_repositorie;
+    private final Specialite_repositorie specialite_repositorie;
+
+    private final Teacher_repositorie teacher_repositorie;
 
     @Autowired
     private Validator validator;
 
-    @Autowired
-    private FiliereSpecialite_service filiereSpecialite_service;
 
-    @Autowired
-    private Shared_methods_service shared_methods_service;
+    private final FiliereSpecialite_service filiereSpecialite_service;
 
-    @Autowired
-    private AdminRepositorie admin_repositorie;
+    private final TeacherSpecialite_repositorie teacherSpecialite_repositorie;
 
-    @Autowired
-    private TeacherSpecialite_repositorie teacherSpecialite_repositorie;
-    @Autowired
-    private Filiere_repositorie filiere_repositorie;
+    private final Filiere_repositorie filiere_repositorie;
 
     @Transactional
     public Object addSpecialite(Specialites specialite, List<Filiere> filieres) {
@@ -67,7 +58,7 @@ public class Specialite_service {
             throw new NoteFundException("La spécialité avec ce nom existe déjà");
         }
 
-        validateRole(specialite);
+//        validateRole(specialite);
       Specialites specialiteSaved =  specialite_repositorie.save(specialite);
         for (Filiere filiere : filieres) {
             filiereSpecialite_service.addFiliereSpecialiste(filiere.getId(), specialiteSaved.getId());
@@ -85,10 +76,10 @@ public class Specialite_service {
         if(spl == null){
             throw new NoteFundException("La spécialité est introuvable");
         }
-       Admin admin = validateRole(spl);
+//       AdministrationUsers administrationUsers = validateRole(spl);
 
         spl.setNom(specialite.getNom());
-        spl.setIdAdmin(admin);
+//        spl.setIdAdministrationUsers(administrationUsers);
         specialite_repositorie.save(spl);
         return DTO_response_string.updateMessage();
 
@@ -96,13 +87,13 @@ public class Specialite_service {
 
     @Transactional
     public Object addSpecialiteForTeacher(long idTeacher, List<Specialites> specialites) {
-        Teachers teacher = teacher_repositorie.findByIdEnseignantAndActive(idTeacher, true);
+        Teachers teacher = teacher_repositorie.findByIdAndActive(idTeacher, true);
         if(teacher == null){
             throw new NoteFundException("L'enseignant est introuvable");
         }
         System.out.println("------------------"+specialites);
         for (Specialites specialite : specialites) {
-            Teacher_specialite tspecialites = teacherSpecialite_repositorie.getByIdSpecialiteIdAndIdTeacherIdEnseignant(specialite.getId(),idTeacher);
+            Teacher_specialite tspecialites = teacherSpecialite_repositorie.getByIdSpecialiteIdAndIdTeacherId(specialite.getId(),idTeacher);
             if(tspecialites != null){
                 continue;
             }
@@ -113,7 +104,7 @@ public class Specialite_service {
 
     public void addTeacherSpecialite(Teachers teacher, Specialites specialite) {
 
-        Teachers teach = teacher_repositorie.findByIdEnseignant(teacher.getIdEnseignant());
+        Teachers teach = teacher_repositorie.findById(teacher.getId());
         if(teach == null){
             throw new NoteFundException("L'enseignant est introuvable");
         }
@@ -162,19 +153,19 @@ public class Specialite_service {
 
          return specialitesList;
     }
-    private Admin validateRole(Specialites specialite) {
-        Admin admin = admin_repositorie.getByIdAdministraAndActive(specialite.getIdAdmin().getIdAdministra(), true);
-        if(admin == null){
-            throw new NoteFundException("L'admin est introuvable");
-
-        }
-        String roleName = admin.getIdRole().getNom().replace("_", " ").toUpperCase();
-        String roleAbrivate = shared_methods_service.abrevigateName(roleName);
-        if(!roleAbrivate.equalsIgnoreCase("DER")){
-            throw new NoteFundException("Autorisation refusée");
-        }
-        return admin;
-    }
+//    private AdministrationUsers validateRole(Specialites specialite) {
+//        AdministrationUsers administrationUsers = admin_repositorie.getByIdAdministraAndActive(specialite.getIdAdministrationUsers().getIdAdministra(), true);
+//        if(administrationUsers == null){
+//            throw new NoteFundException("L'admin est introuvable");
+//
+//        }
+//        String roleName = administrationUsers.getIdRole().getNom().replace("_", " ").toUpperCase();
+//        String roleAbrivate = shared_methods_service.abrevigateName(roleName);
+//        if(!roleAbrivate.equalsIgnoreCase("DER")){
+//            throw new NoteFundException("Autorisation refusée");
+//        }
+//        return administrationUsers;
+//    }
 
 
 }

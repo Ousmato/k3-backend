@@ -1,6 +1,7 @@
 package Gestion_scolaire.Emplois.entity;
 
 import Gestion_scolaire.EnumClasse.Seance_type;
+import Gestion_scolaire.Models.Personne;
 import Gestion_scolaire.Models.Salles;
 import Gestion_scolaire.Teachers.entity.Teachers;
 import Gestion_scolaire.students.entity.Participant;
@@ -38,9 +39,9 @@ public class Journee {
     @ManyToOne
     private Emplois idEmplois;
 
-    @NotNull(message = "Choisir au moins un enseignant")
+    @NotNull(message = "Choisir au moins une personne")
     @ManyToOne
-    private Teachers idTeacher;
+    private Personne intervenant;
 
     @NotNull(message = "Choisir au moins un type : CM; TD")
     @Enumerated(EnumType.STRING)

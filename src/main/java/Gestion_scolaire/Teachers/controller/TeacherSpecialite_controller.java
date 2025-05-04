@@ -2,7 +2,9 @@ package Gestion_scolaire.Teachers.controller;
 
 import Gestion_scolaire.Niveaux_Filieres.dtos.FiliereSpecialiteDto;
 import Gestion_scolaire.Niveaux_Filieres.entity.Filiere;
+import Gestion_scolaire.Teachers.dtos.SimpleTeacherDto;
 import Gestion_scolaire.Teachers.entity.Specialites;
+import Gestion_scolaire.Teachers.entity.Teachers;
 import Gestion_scolaire.Teachers.services.Specialite_service;
 import Gestion_scolaire.Teachers.services.Teachers_service;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -65,4 +67,6 @@ public class TeacherSpecialite_controller {
     public List<Specialites> getAllSpecialitesByIdTeacher(@PathVariable int idTeacher) {
         return specialite_service.getAllSpecialiteNotAssociatedInByIdTeacher(idTeacher);
     }
+
+
 }

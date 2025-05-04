@@ -1,6 +1,7 @@
 package Gestion_scolaire.configuration.SecurityConfigs;
 
-import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
+import Gestion_scolaire.Administrators.entity.Postes;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,14 +9,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 public class AdminInfoDetails implements UserDetails {
 
-    private final Admin admin;
+    private final AdministrationUsers administrationUsers;
 
 
-    public AdminInfoDetails(Admin admin) {
-        this.admin = admin;
+
+    public AdminInfoDetails(AdministrationUsers admin) {
+        this.administrationUsers = admin;
     }
 
     @Override
@@ -23,10 +26,10 @@ public class AdminInfoDetails implements UserDetails {
         List<GrantedAuthority> authorities = new ArrayList<>();
 
         // Vérifiez que `admin` et son rôle ne sont pas nulls
-        if (admin != null && admin.getIdRole() != null) {
-            String roleName = admin.getIdRole().getNom();
+        if (administrationUsers != null && administrationUsers.getIdPoste() != null) {
+            String roleName = administrationUsers.getIdPoste().getNom();
 
-            if (!"Admin".equalsIgnoreCase(roleName)) {
+            if (!"SUPER_ADMIN".equalsIgnoreCase(roleName)) {
                 // Créer une abréviation basée sur les mots du nom du rôle
                 String[] words = roleName.split(" ");
                 StringBuilder abbreviation = new StringBuilder();
@@ -54,12 +57,12 @@ public class AdminInfoDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return admin.getPassword();
+        return administrationUsers.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return admin.getEmail();
+        return administrationUsers.getEmail();
     }
 
     @Override
@@ -79,7 +82,7 @@ public class AdminInfoDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return admin.isActive();
+        return administrationUsers.isActive();
     }
 
 

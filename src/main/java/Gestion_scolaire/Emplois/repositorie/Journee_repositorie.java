@@ -21,34 +21,33 @@ public interface Journee_repositorie extends JpaRepository<Journee, Long> {
 
     Journee getById(long idJournee);
 
-    List<Journee> getAllBySeanceType(Seance_type type);
 
-    Journee findByDateAndIdEmploisIdAndIdTeacherIdEnseignantAndHeureFin(LocalDate date, long idEmplois, long idTeacher, LocalTime heureFin);
+    Journee findByDateAndIdEmploisIdAndIntervenantIdAndHeureFin(LocalDate date, long idEmplois, long idTeacher, LocalTime heureFin);
 
 
-    List<Journee> findAllByIdInAndIdTeacherIdEnseignantIn(Collection<Long> idSeance_id, Collection<Long> idTeacher_idEnseignant);
+    List<Journee> findAllByIdInAndIntervenantIdIn(Collection<Long> idSeance_id, Collection<Long> idTeacher_idEnseignant);
 
     Journee getByHeureDebutAndHeureFinAndDateAndIdEmploisId(LocalTime heureDebut, LocalTime heureFin, LocalDate date, long idEmploi);
 
-    Journee findByIdTeacherIdEnseignantAndSeanceTypeAndDate( long idTeacherId, Seance_type seanceType, LocalDate date);
+    Journee findByIntervenantIdAndSeanceTypeAndDate( long idTeacherId, Seance_type seanceType, LocalDate date);
 
     @Query("SELECT j FROM Journee j WHERE (j.seanceType = :exam OR j.seanceType = :session) AND j.idEmplois.dateFin > :currentDate")
     List<Journee> findBySeanceTypeAndDate(@Param("exam") Seance_type exam, @Param("session") Seance_type session, @Param("currentDate") LocalDate currentDate);
 
     Journee getByHeureDebutAndHeureFinAndId(LocalTime heureDebut, LocalTime heureFin, long Id);
 
-    @Query("SELECT j FROM Journee j WHERE j.idTeacher.idEnseignant = :idTeacher AND j.idEmplois.dateFin > :currentDate")
+    @Query("SELECT j FROM Journee j WHERE j.intervenant.id = :idTeacher AND j.idEmplois.dateFin > :currentDate")
     List<Journee> findAll_ByIdTeacher(@Param("idTeacher") long idTeacher, @Param("currentDate") LocalDate currentDate);
 
 
-    List<Journee> findByIdEmploisIdAndIdTeacherIdEnseignant(long idEmplois, long idTeacher);
+    List<Journee> findByIdEmploisIdAndIntervenantId(long idEmplois, long idTeacher);
 
-    List<Journee> findByIdEmploisIdAndIdTeacherIdEnseignantAndSeanceType(long idEmplois, long idTeacher, Seance_type seanceType);
-    List<Journee>  getAllByDateAndIdTeacherIdEnseignant(LocalDate date, long idTeacher);
+    List<Journee> findByIdEmploisIdAndIntervenantIdAndSeanceType(long idEmplois, long idTeacher, Seance_type seanceType);
+//    List<Journee>  getAllByDateAndIdTeacherIdEnseignant(LocalDate date, long idTeacher);
 
     List<Journee> getByIdEmploisIdModuleId(long idModule);
 
-    @Query("SELECT distinct  j from Journee  j where j.idTeacher.idEnseignant =:idTeacher and j.idEmplois.idClasse.idAnneeScolaire.id =:idPromotion")
+    @Query("SELECT distinct  j from Journee  j where j.intervenant.id =:idTeacher and j.idEmplois.idClasse.idAnneeScolaire.id =:idPromotion")
     List<Journee> allJourneesOfTeacherByPromotion(@Param("idTeacher") long idTeacher, @Param("idPromotion") long idPromotion);
 
     @Query("SELECT j FROM Journee j WHERE j.idSalle.id = :idSalle AND j.date = :currentDate AND j.heureDebut <= :hActuel AND j.heureFin >= :hActuel")
@@ -56,4 +55,9 @@ public interface Journee_repositorie extends JpaRepository<Journee, Long> {
 
     @Query("SELECT j FROM Journee j WHERE j.idSalle.id = :idSalle AND j.date = :currentDate")
     List<Journee> getJoureeActif(@Param("idSalle") long idSalle, @Param("currentDate") LocalDate currentDate);
+
+    @Query("select j from Journee j where  j.seanceType =:exam and j.idEmplois.dateDebut > current_date ")
+    List<Journee> currentJourneWithouExam(@Param("exam") Seance_type exam);
+
+    List<Journee> findByIntervenantIdAndDate(long idTeacherId, LocalDate date);
 }

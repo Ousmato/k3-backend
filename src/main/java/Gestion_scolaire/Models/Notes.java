@@ -1,17 +1,12 @@
 package Gestion_scolaire.Models;
 
-import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
 import Gestion_scolaire.Classes.entity.Modules;
 import Gestion_scolaire.students.entity.Inscription;
 import jakarta.persistence.*;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Validator;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-
-import java.util.Set;
 
 @Data
 @Entity
@@ -46,6 +41,6 @@ public class Notes {
 
     @NotNull(message = "L'administrateur est obligatoire")
     @ManyToOne
-    private Admin idAdmin;
+    private AdministrationUsers idAdministrationUsers;
 
 }

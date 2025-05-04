@@ -7,13 +7,13 @@ import lombok.Data;
 public class SallesDTO {
     private long id;
     private String nom;
-    private int nombrePlace;
+    private int nombrePlaces;
 
     public static SallesDTO toSallesDTO(Salles salles) {
         SallesDTO sallesDTO = new SallesDTO();
         sallesDTO.setId(salles.getId());
         sallesDTO.setNom(salles.getNom());
-        sallesDTO.setNombrePlace(salles.getNombrePlace());
+        sallesDTO.setNombrePlaces(salles.getNombrePlace());
         return sallesDTO;
     }
 }

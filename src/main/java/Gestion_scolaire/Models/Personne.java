@@ -1,28 +1,24 @@
 package Gestion_scolaire.Models;
 
-import Gestion_scolaire.students.entity.Students;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
 
-@MappedSuperclass
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @Data
-public abstract class UsersAbstract {
+public abstract class Personne {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
     @NotBlank(message = "L'adresse email est obligatoire.\n")
     @Email(message = "L'adresse email doit être valide.\n")
     private String email;
 
     @NotNull
     private boolean active = true;
-
-    @NotNull(message = "Mot de passe est obligatoire")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*#?&^_-]).{8,}$",
-            message = "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un symbole.")
-    private String password;
 
     @NotBlank(message = "Le champ nom ne doit pas être nul ou vide.\n")
     @Size(min = 2, max = 30, message = "Le champ nom doit contenir entre 3 et 20 caractères.\n")
@@ -41,6 +37,18 @@ public abstract class UsersAbstract {
     @NotBlank(message = "Le champ nom ne doit pas être nul ou vide.\n")
     @Size(min = 3, max = 20, message = "Le champ sexe doit contenir entre 3 et 20 caractères.\n")
     private String sexe;
+
+    //    @NotBlank(message = "Le champ matricule ne doit pas être nul ou vide.\n")
+//    @Pattern(regexp = "^(?=.*[a-zA-Z])[a-zA-Z0-9]+$", message = "Le matricule doit contenir des lettres et des chiffres, et ne doit pas être composé uniquement de chiffres.")
+    private String matricule;
+
+    @ManyToOne
+    private UsersGrade usersGrade;
+
+
+    private String nomBanque;
+
+    private String  compteBanque;
 
 
 

@@ -1,6 +1,6 @@
 package Gestion_scolaire.Models;
 
-import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
 import Gestion_scolaire.students.entity.Students;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -15,7 +15,7 @@ public class RefreshToken {
     private String token = "";
 
     @OneToOne
-    private Admin admin;
+    private AdministrationUsers administrationUsers;
 
     @OneToOne
     private Students students;

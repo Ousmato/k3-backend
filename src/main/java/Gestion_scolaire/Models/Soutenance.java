@@ -1,6 +1,6 @@
 package Gestion_scolaire.Models;
 
-import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
 import Gestion_scolaire.students.entity.StudentDoc;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -40,7 +40,7 @@ public class Soutenance {
 
     @NotNull
     @ManyToOne
-    private Admin idAdmin;
+    private AdministrationUsers idAdministrationUsers;
 
 
 

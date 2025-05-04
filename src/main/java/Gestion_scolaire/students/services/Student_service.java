@@ -1,6 +1,6 @@
 package Gestion_scolaire.students.services;
 
-import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
 import Gestion_scolaire.Dto_classe.*;
 import Gestion_scolaire.Niveaux_Filieres.entity.SousFilieres;
 import Gestion_scolaire.Shareds.Shared_methods_service;
@@ -17,6 +17,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,22 +29,18 @@ import java.time.LocalDate;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class Student_service {
 
-    @Autowired
-    private Shared_repositories shared_repositories;
+    private final Shared_repositories shared_repositories;
 
-    @Autowired
-    private Validator validator;
+    private  final Validator validator;
 
-    @Autowired
-    private Shared_methods_service shared_methods_service;
+    private final Shared_methods_service shared_methods_service;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final  PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private Gestion_scolaire.Services.fileManagers fileManagers;
+    private final Gestion_scolaire.Services.fileManagers fileManagers;
 
     String adminEmail = "ousmatotoure98@gmail.com";
     //    -----------------------------------------------------------------------------------
@@ -64,7 +61,7 @@ public class Student_service {
 //            throw new NoteFundException("Le matricule n'est pas valide");
 //        }
 
-        Students studentExist = shared_repositories.getStudents_repositorie().findByIdEtudiant(inscriptionExist.getIdEtudiant().getIdEtudiant());
+        Students studentExist = shared_repositories.getStudents_repositorie().findById(inscriptionExist.getIdEtudiant().getId());
         if (studentExist == null) {
             throw new NoteFundException("L'étudiant n'existe pas");
         }
@@ -81,7 +78,7 @@ public class Student_service {
         }
 
 
-        inscriptionExist.setIdAdmin(inscrit.getIdAdmin());
+        inscriptionExist.setIdAdministrationUsers(inscrit.getIdAdministrationUsers());
 //        inscriptionExist.setIdClasse(inscrit.getIdClasse());
         shared_repositories.getInscription_repositorie().save(inscriptionExist);
 
@@ -112,7 +109,7 @@ public class Student_service {
 
     // methode pour desactiver un etudiant
     public Object desable(long id) {
-        Students studentsExist = shared_repositories.getStudents_repositorie().findByIdEtudiant(id);
+        Students studentsExist = shared_repositories.getStudents_repositorie().findById(id);
         if (studentsExist != null) {
             studentsExist.setActive(!studentsExist.isActive());
             shared_repositories.getStudents_repositorie().save(studentsExist);
@@ -140,7 +137,7 @@ public class Student_service {
 
     //    --------------------------------------------------methode appeler un etudiant par id----------------------
     public Students studenById(long id) {
-        Students studentsExist = shared_repositories.getStudents_repositorie().findByIdEtudiant(id);
+        Students studentsExist = shared_repositories.getStudents_repositorie().findById(id);
         if (studentsExist != null) {
             return studentsExist;
         } else {
@@ -178,13 +175,13 @@ public class Student_service {
         dto.setUpdateDate(date);
 
         Inscription studentInscrit = shared_repositories.getInscription_repositorie().findById(dto.getId());
-        Admin admin = shared_repositories.getAdminRepositorie().getByIdAdministraAndActive(idAdmin, true);
+        AdministrationUsers administrationUsers = shared_repositories.getAdminRepositorie().getByIdAndActive(idAdmin, true);
 
         if (studentInscrit == null) {
             throw new NoteFundException("Student does not exist");
         }
 
-        if (admin == null) {
+        if (administrationUsers == null) {
             throw new NoteFundException("Admin not found or inactive");
         }
         double seuilScolaire = shared_methods_service.getSeuilScolarite(studentInscrit.getIdEtudiant().getStatus());
@@ -215,7 +212,7 @@ public class Student_service {
         // Sauvegarde de l'inscription et du paiement
         studentInscrit.setPayer(true);
         newPaie.setIdInscription(studentInscrit);
-        newPaie.setIdAdmin(admin);
+        newPaie.setIdAdministrationUsers(administrationUsers);
         shared_repositories.getPaiement_repositorie().save(newPaie);
         Double sumTotal = shared_repositories.getPaiement_repositorie().sumMontant(dto.getId());
 
@@ -438,7 +435,7 @@ public class Student_service {
                 StudentsClasse SavedClasse =  shared_repositories.getClasse_repositorie().save(classe);
 
                 Inscription newInscription = new Inscription();
-                newInscription.setIdAdmin(inscrit.getIdAdmin());
+                newInscription.setIdAdministrationUsers(inscrit.getIdAdministrationUsers());
                 newInscription.setDate(dateInscription);
                 newInscription.setIdClasse(SavedClasse);
                 newInscription.setIdEtudiant(savedStudent);

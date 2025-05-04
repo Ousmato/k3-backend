@@ -1,6 +1,6 @@
 package Gestion_scolaire.students.services;
 
-import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
 import Gestion_scolaire.Models.AnneeScolaire;
 import Gestion_scolaire.Niveaux_Filieres.entity.Filiere;
 import Gestion_scolaire.Shareds.Shared_methods_service;
@@ -11,7 +11,6 @@ import Gestion_scolaire.students.dtos.FiliereStudentDTO;
 import Gestion_scolaire.students.dtos.StatistiqueDTO;
 import Gestion_scolaire.students.dtos.StatusInscritDTO;
 import Gestion_scolaire.students.entity.Inscription;
-import Gestion_scolaire.students.enumClass.TypeStatusDeserializer;
 import Gestion_scolaire.students.enumClass.Type_status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,8 +30,8 @@ public class StudentStatistique_service {
     private Shared_methods_service shared_methods_service;
 
     public StatistiqueDTO getCurrentYearStatistique(long idAdmin){
-        Admin admin = shared_repositories.getAdminRepositorie().getByIdAdministraAndActive(idAdmin, true);
-        if (admin == null){
+        AdministrationUsers administrationUsers = shared_repositories.getAdminRepositorie().getByIdAndActive(idAdmin, true);
+        if (administrationUsers == null){
             throw new NoteFundException("L'admin est introuvable");
         }
         LocalDate date = LocalDate.now();
@@ -42,8 +41,8 @@ public class StudentStatistique_service {
     }
 
     public StatistiqueDTO getStatistiqueByIdAnnee(long idAnne, long idAdmin){
-        Admin admin = shared_repositories.getAdminRepositorie().getByIdAdministraAndActive(idAdmin, true);
-        if (admin == null){
+        AdministrationUsers administrationUsers = shared_repositories.getAdminRepositorie().getByIdAndActive(idAdmin, true);
+        if (administrationUsers == null){
             throw new NoteFundException("L'admin est introuvable");
         }
         StatistiqueDTO statistiqueDTO = new StatistiqueDTO();
@@ -121,8 +120,8 @@ public class StudentStatistique_service {
     }
 
     public List<FiliereStudentDTO> getStudentByFilieresAndPaye(long idFiliere, long idAdmin, long idAnnee, boolean isPaye) {
-        Admin admin = shared_repositories.getAdminRepositorie().getByIdAdministraAndActive(idAdmin, true);
-        if (admin == null){
+        AdministrationUsers administrationUsers = shared_repositories.getAdminRepositorie().getByIdAndActive(idAdmin, true);
+        if (administrationUsers == null){
             throw new NoteFundException("L'admin est introuvable");
         }
         List<FiliereStudentDTO> dtoList = new ArrayList<>();
@@ -133,8 +132,8 @@ public class StudentStatistique_service {
 
     //get student inscrit by status and paye and total paye
     public List<FiliereStudentDTO> getStudentByStatusAndPaye(String status, long idAdmin, long idAnnee, long isPaye) {
-        Admin admin = shared_repositories.getAdminRepositorie().getByIdAdministraAndActive(idAdmin, true);
-        if (admin == null){
+        AdministrationUsers administrationUsers = shared_repositories.getAdminRepositorie().getByIdAndActive(idAdmin, true);
+        if (administrationUsers == null){
             throw new NoteFundException("L'admin est introuvable");
         }
 

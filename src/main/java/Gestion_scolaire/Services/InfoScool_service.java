@@ -117,7 +117,7 @@ public class InfoScool_service {
 
         // Vérification que la période est inférieure ou égale à 1 an
         Period period = Period.between(anneeScolaire.getDebutAnnee(), anneeScolaire.getFinAnnee());
-        System.out.println("---------periode----------" + period);
+        //System.out.println("---------periode----------" + period);
         if (period.getYears() < 1 || (period.getYears() == 1 && period.getMonths() == 0 && period.getDays() == 0)) {
             throw new NoteFundException("L'année scolaire doit être d'au moins 1 an.");
         }

@@ -40,8 +40,6 @@ public class Commom_methods {
     private Validator validator;
 
     public Teachers validateTeacher(Teachers teacher) {
-        teacher.setPassword("Tes@123");
-        teacher.setPassword(passwordEncoder.encode(teacher.getPassword()));
         Set<ConstraintViolation<Teachers>> violations = validator.validate(teacher);
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
@@ -54,19 +52,8 @@ public class Commom_methods {
     }
 
     public String transformDate(LocalDate startDate, LocalDate endDate) {
-        // Définir un format pour la date
-        DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MMMM", Locale.FRENCH);
-        DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("d", Locale.FRENCH);
-        DateTimeFormatter yearFormatter = DateTimeFormatter.ofPattern("yyyy", Locale.FRENCH);
-
-        // Extraire le jour, le mois et l'année
-        String startDay = startDate.format(dayFormatter);  // Jour de début
-        String endDay = endDate.format(dayFormatter);      // Jour de fin
-        String month = startDate.format(monthFormatter);   // Mois en toutes lettres
-        String year = startDate.format(yearFormatter);     // Année
-
-        // Retourner le format désiré
-        return "Du " + startDay + " au " + endDay + " " + month + " " + year;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.FRENCH);
+        return "Semaine du " + startDate.format(formatter) + " au " + endDate.format(formatter);
     }
 
 

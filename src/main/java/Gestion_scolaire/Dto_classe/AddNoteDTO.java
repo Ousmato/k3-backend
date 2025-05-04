@@ -1,6 +1,6 @@
 package Gestion_scolaire.Dto_classe;
 
-import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
 import Gestion_scolaire.Models.Notes;
 import lombok.Data;
 
@@ -9,7 +9,7 @@ public class AddNoteDTO {
     private  long idModule;
     private  long idInscription;
     private  long idSemestre;
-    private Admin idAdmin;
+    private AdministrationUsers idAdministrationUsers;
     private  double examNote;
     private  double classeNote;
 
@@ -21,7 +21,7 @@ public class AddNoteDTO {
         dto.setIdModule(note.getIdModule().getId());
         dto.setIdInscription(note.getIdInscription().getId());
         dto.setIdSemestre(note.getIdSemestre().getId());
-        dto.setIdAdmin(note.getIdAdmin());
+        dto.setIdAdministrationUsers(note.getIdAdministrationUsers());
         return dto;
     }
 
@@ -30,7 +30,7 @@ public class AddNoteDTO {
         Notes note = new Notes();
         note.setClasseNote(dto.getClasseNote());
         note.setExamNote(dto.getExamNote());
-        note.setIdAdmin(dto.getIdAdmin());
+        note.setIdAdministrationUsers(dto.getIdAdministrationUsers());
         return note;
     }
 }

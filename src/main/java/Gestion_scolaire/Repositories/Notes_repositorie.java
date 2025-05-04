@@ -10,9 +10,8 @@ import java.util.List;
 
 @Repository
 public interface Notes_repositorie extends JpaRepository<Notes, Long> {
-    Notes findByIdInscriptionIdEtudiantIdEtudiantAndIdModuleIdAndIdSemestreId(long idStudent, long idModule, long idSemestre);
 
-    List<Notes> findByIdInscriptionIdEtudiantIdEtudiantAndIdSemestreId(long idStudent, long idSemestre);
+    List<Notes> findByIdInscriptionIdAndIdSemestreId(long idStudent, long idSemestre);
 
 //    @Query(value = "SELECT SUM(n.coefficient) FROM Notes n WHERE n.idStudents.idEtudiant = :idStudent", nativeQuery = true)
 //    int findTotalCoefByIdStudent(@Param("idStudent") long idStudent);

@@ -38,7 +38,7 @@ public class ApplicationConfiguration {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/Auth/login", "/Auth/refresh-token").permitAll()
+                        .requestMatchers("/Auth/login", "/Auth/refresh-token", "/api-student/**").permitAll()
                         .requestMatchers("/index.html","/").permitAll()
                         .anyRequest().authenticated()
                 )

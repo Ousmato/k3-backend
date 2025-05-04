@@ -1,6 +1,6 @@
 package Gestion_scolaire.Classes.entity;
 
-import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
 import Gestion_scolaire.Models.Semestres;
 import Gestion_scolaire.students.entity.StudentsClasse;
 import jakarta.persistence.*;
@@ -28,7 +28,7 @@ public class UE {
 
     @NotNull(message = "L'admin est obligatoire")
     @ManyToOne
-    private Admin idAdmin;
+    private AdministrationUsers idAdministrationUsers;
 
     @NotNull(message = "La classe est obligatoire")
     @ManyToOne

@@ -113,8 +113,8 @@ public class Common_service {
         if(duration.toHours() > 10){
             throw new NoteFundException("Invalide la durée maximum est 10 hours");
         }
-        Journee jourExist = shared_repositories.getJournee_repositorie().findByDateAndIdEmploisIdAndIdTeacherIdEnseignantAndHeureFin(
-                seances.getDate(), seances.getIdEmplois().getId(), seances.getIdTeacher().getIdEnseignant(), seances.getHeureFin());
+        Journee jourExist = shared_repositories.getJournee_repositorie().findByDateAndIdEmploisIdAndIntervenantIdAndHeureFin(
+                seances.getDate(), seances.getIdEmplois().getId(), seances.getIntervenant().getId(), seances.getHeureFin());
         if(jourExist != null){
             throw new NoteFundException("Une seance existe déjà pour cette date : "  +  jourExist.getDate());
         }

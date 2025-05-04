@@ -1,6 +1,6 @@
 package Gestion_scolaire.MailSender;
 
-import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
 import Gestion_scolaire.students.entity.Students;
 import Gestion_scolaire.Teachers.entity.Teachers;
 import Gestion_scolaire.Repositories.PendingEmailRepository;
@@ -79,13 +79,13 @@ public class MessaSender {
 
     }
 
-    public String messageAdmin(Admin admin, String password){
-        return  ", Vous êtes invité à vous connecter à votre compte avec votre adresse email : %s et votre mot de passe : %s".formatted(admin.getEmail(), password);
+    public String messageAdmin(AdministrationUsers administrationUsers, String password){
+        return  ", Vous êtes invité à vous connecter à votre compte avec votre adresse email : %s et votre mot de passe : %s".formatted(administrationUsers.getEmail(), password);
 
     }
 
-    public String messageForFictifAccunt(Admin admin, String password) {
-        return "Bonjour Monsieur %s %s,\n\nUn collègue essaie actuellement de se connecter à votre compte. L'autorisez-vous ?\nCode de confirmation : %s\n\nSi vous n'êtes pas à l'origine de cette tentative, veuillez ignorer ce message.".formatted(admin.getNom(), admin.getPrenom(), password);
+    public String messageForFictifAccunt(AdministrationUsers administrationUsers, String password) {
+        return "Bonjour Monsieur %s %s,\n\nUn collègue essaie actuellement de se connecter à votre compte. L'autorisez-vous ?\nCode de confirmation : %s\n\nSi vous n'êtes pas à l'origine de cette tentative, veuillez ignorer ce message.".formatted(administrationUsers.getNom(), administrationUsers.getPrenom(), password);
     }
 
 

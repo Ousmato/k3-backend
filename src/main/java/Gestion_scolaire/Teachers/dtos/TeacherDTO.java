@@ -1,6 +1,7 @@
 package Gestion_scolaire.Teachers.dtos;
 
 import Gestion_scolaire.Emplois.dtos.TeacherEmploiDTO;
+import Gestion_scolaire.Models.Personne;
 import Gestion_scolaire.Teachers.entity.Specialites;
 import Gestion_scolaire.Teachers.enumClasse.Teachers_status;
 import Gestion_scolaire.Teachers.entity.Teachers;
@@ -25,20 +26,25 @@ public class TeacherDTO {
     private long idEnseignant;
     private Teachers_status status;
     private List<Specialites> specialitesList;
-    private List<TeacherEmploiDTO> teacherEmploiList;
+    private List<TeacherSemaineDTO> semaines;;
 
-    public static TeacherDTO toTeacherDTO(Teachers teacher) {
-        TeacherDTO dto = new TeacherDTO();
-        dto.setEmail(teacher.getEmail());
-        dto.setDiplome(teacher.getDiplome().toString());
-        dto.setNom(teacher.getNom());
-        dto.setPrenom(teacher.getPrenom());
-        dto.setTelephone(teacher.getTelephone());
-        dto.setUrlPhoto(teacher.getUrlPhoto());
-        dto.setSexe(teacher.getSexe());
-        dto.setIdEnseignant(teacher.getIdEnseignant());
-        dto.setStatus(teacher.getStatus());
-        dto.setDesable(teacher.isActive());
-        return dto;
+    public static TeacherDTO toTeacherDTO(Personne personne) {
+        if (personne instanceof Teachers teacher) {
+            TeacherDTO dto = new TeacherDTO();
+            dto.setEmail(teacher.getEmail());
+            dto.setDiplome(teacher.getDiplome().toString());
+            dto.setNom(teacher.getNom());
+            dto.setPrenom(teacher.getPrenom());
+            dto.setTelephone(teacher.getTelephone());
+            dto.setUrlPhoto(teacher.getUrlPhoto());
+            dto.setSexe(teacher.getSexe());
+            dto.setIdEnseignant(teacher.getId());
+            dto.setStatus(teacher.getStatus());
+            dto.setDesable(teacher.isActive());
+            return dto;
+        }else {
+            return null;
+        }
+
     }
 }

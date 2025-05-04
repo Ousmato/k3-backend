@@ -6,6 +6,7 @@ import Gestion_scolaire.Dto_classe.SallesDTO;
 import Gestion_scolaire.Models.Salles;
 import Gestion_scolaire.Repositories.Salles_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,16 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class Salles_service {
-    
-    @Autowired
-    private Salles_repositorie sallesRepositorie;
 
-    @Autowired
-    private Common_service common_service;
+    private final Salles_repositorie sallesRepositorie;
 
-    @Autowired
-    private JsonDataService jsonDataService;
+    private final Common_service common_service;
+
+    private final JsonDataService jsonDataService;
     
 //    -------------------------liste des salles
     public List<Salles> getAllSalles_non_occuper() {
@@ -58,7 +57,7 @@ public class Salles_service {
             for (SallesDTO dtoJson : jsonDataService.readSalles()){
                 Salles salles = new Salles();
                 salles.setNom(dtoJson.getNom());
-                salles.setNombrePlace(dtoJson.getNombrePlace());
+                salles.setNombrePlace(dtoJson.getNombrePlaces());
                 sallesRepositorie.save(salles);
             }
             return getAllSalles();

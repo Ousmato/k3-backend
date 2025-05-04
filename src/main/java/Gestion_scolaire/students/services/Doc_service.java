@@ -1,6 +1,6 @@
 package Gestion_scolaire.students.services;
 
-import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
 import Gestion_scolaire.Administrators.repositories.AdminRepositorie;
 import Gestion_scolaire.Dto_classe.*;
 import Gestion_scolaire.EnumClasse.DocType;
@@ -104,7 +104,7 @@ public class Doc_service {
                 if(docExist.getIdDocument().isDeleted()){
                     System.out.println("j suis de dans---------------------------" + docExist);
                     docExist.getIdDocument().setDeleted(false);
-                    docExist.setIdAdmin(dto.getIdAdmin());
+                    docExist.setIdAdministrationUsers(dto.getIdAdministrationUsers());
                     docExist.getIdDocument().setDate(dto.getIdDocument().getDate());
                     docExist.getIdDocument().setIdEncadrant(dto.getIdDocument().getIdEncadrant());
                     doc_repositorie.save(docExist.getIdDocument());
@@ -121,7 +121,7 @@ public class Doc_service {
 
               StudentDoc newStudentDoc = new StudentDoc();
               newStudentDoc.setIdDocument(docSaved);
-              newStudentDoc.setIdAdmin(dto.getIdAdmin());
+              newStudentDoc.setIdAdministrationUsers(dto.getIdAdministrationUsers());
               newStudentDoc.setIdInscription(inscription);
             studentDoc_repositorie.save(addStudentDoc(newStudentDoc, docSaved));
           }
@@ -275,26 +275,26 @@ public class Doc_service {
         }
 
         Soutenance stn =  soutenance_repositorie.findByIdDocId(docExist.getId());
-        Admin admin = adminRepositorie.findByIdAdministra(dto.getSoutenance().getIdAdmin());
+        AdministrationUsers administrationUsers = adminRepositorie.findById(dto.getSoutenance().getIdAdmin());
 
         if(stn != null){
             stn.setHeureDebut(dto.getSoutenance().getHeureDebut());
             stn.setHeureFin(dto.getSoutenance().getHeureFin());
             stn.setDate(dto.getSoutenance().getDate());
-            stn.setIdAdmin(admin);
+            stn.setIdAdministrationUsers(administrationUsers);
             stn.setIdSalle(dto.getSoutenance().getIdSalle());
             stn.getIdDoc().getIdDocument().setProgrammer(true);
             soutenance_repositorie.save(stn);
             return DTO_response_string.fromMessage("Ajout éffectué avec succès");
 
         }
-        Soutenance saved = soutenance_repositorie.save(getSoutenance(dto.getSoutenance(), docExist, admin));
+        Soutenance saved = soutenance_repositorie.save(getSoutenance(dto.getSoutenance(), docExist, administrationUsers));
 
         for (JuryDto jr: dto.getJurys()){
 
             Jury jury = new Jury();
-            Teachers teacherExist = teacher_repositorie.findByIdEnseignant(jr.getIdTeacher());
-            jury.setIdTeacher(teacherExist);
+            Teachers teacherExist = teacher_repositorie.findById(jr.getIdTeacher());
+            jury.setEncadrant(teacherExist);
             jury.setIdSoutenance(saved);
             jury.setRole(jr.getRole());
             jury_repositorie.save(jury);
@@ -320,7 +320,7 @@ public class Doc_service {
 //        return newSouenance;
 //    }
 
-    public Soutenance getSoutenance(SoutenanceDTO dto, StudentDoc docExist, Admin admin) {
+    public Soutenance getSoutenance(SoutenanceDTO dto, StudentDoc docExist, AdministrationUsers administrationUsers) {
 
         Set<ConstraintViolation<SoutenanceDTO>> violations = validator.validate(dto);
         if(!violations.isEmpty()){
@@ -333,7 +333,7 @@ public class Doc_service {
         soutenance.setIdDoc(docExist);
         soutenance.setDate(dto.getDate());
         soutenance.setHeureDebut(dto.getHeureDebut());
-        soutenance.setIdAdmin(admin);
+        soutenance.setIdAdministrationUsers(administrationUsers);
         soutenance.setHeureFin(dto.getHeureFin());
         soutenance.setIdSalle(dto.getIdSalle());
         return soutenance;
@@ -371,7 +371,7 @@ public class Doc_service {
                         JuryDto dto = new JuryDto();
                         dto.setId(jury.getId());
                         dto.setRole(jury.getRole());
-                        dto.setTeachers(jury.getIdTeacher());
+                        dto.setTeachers(jury.getEncadrant());
                     return dto;
                     }).collect(Collectors.toList());
 

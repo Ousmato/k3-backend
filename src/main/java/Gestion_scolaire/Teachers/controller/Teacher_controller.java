@@ -1,6 +1,7 @@
 package Gestion_scolaire.Teachers.controller;
 
 import Gestion_scolaire.Emplois.services.Emplois_service;
+import Gestion_scolaire.Teachers.dtos.SimpleTeacherDto;
 import Gestion_scolaire.Teachers.dtos.TeacherDTO;
 import Gestion_scolaire.Teachers.entity.Teachers;
 import Gestion_scolaire.Teachers.services.Teachers_service;
@@ -25,10 +26,10 @@ public class Teacher_controller {
     private Emplois_service emplois_service;
     
 
-    @PostMapping("/add")
+    @PostMapping("/add/{idAdmimn}")
     @Operation(summary = "Ajouter un enseignant")
-    private Object addTeacher( @RequestBody Teachers teacher) {
-        return teachers_service.add(teacher);
+    private Object addTeacher( @RequestBody Teachers teacher, @PathVariable long idAdmimn) {
+        return teachers_service.add(teacher, idAdmimn);
 
     }
 
@@ -111,4 +112,9 @@ public class Teacher_controller {
         return emplois_service.allEmploiOfTeacherOfCurrentYear(idTeacher);
     }
 
+    @GetMapping("get-all-teachers-have-emplois-by-idAnnee-and-idSemestre/{idAnnee}/{idSemestre}")
+    @Operation(summary = "Recuperer tous les enseignants qui ont des emplois pour l'annee")
+    public List<SimpleTeacherDto> allTeachersHaveEmploisByIdAnnee(@PathVariable long idAnnee, @PathVariable long idSemestre) {
+        return emplois_service.allTeachersHaveEmploisByIdAnnee(idAnnee, idSemestre);
+    }
 }

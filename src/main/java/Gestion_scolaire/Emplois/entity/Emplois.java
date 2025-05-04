@@ -1,6 +1,6 @@
 package Gestion_scolaire.Emplois.entity;
 
-import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
 import Gestion_scolaire.Classes.entity.Modules;
 import Gestion_scolaire.Models.Semestres;
 import Gestion_scolaire.students.entity.StudentsClasse;
@@ -38,9 +38,10 @@ public class Emplois {
 
     private boolean valid = false;
 
+
     @NotNull(message = "Le champ ne doit pas être nul ou vide.\n")
     @ManyToOne
-    private Admin idAdmin;
+    private AdministrationUsers idAdministrationUsers;
 
 
 }

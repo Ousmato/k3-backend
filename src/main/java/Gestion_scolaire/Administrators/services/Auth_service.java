@@ -1,6 +1,6 @@
 package Gestion_scolaire.Administrators.services;
 
-import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
 import Gestion_scolaire.students.entity.Students;
 import Gestion_scolaire.Teachers.entity.Teachers;
 import Gestion_scolaire.Administrators.repositories.AdminRepositorie;
@@ -29,24 +29,25 @@ public class Auth_service {
         Object authenticatedUser = null;
 //        System.out.println("-------------------------------" +email);
         System.out.println(password);
-        Admin admin = adminRepositorie.findByEmailAndActive(email, true);
-        System.out.println(admin);
+        AdministrationUsers administrationUsers = adminRepositorie.findByEmailAndActive(email, true);
+        System.out.println(administrationUsers);
 //        System.out.println(passwordEncoder.matches(password, admin.getPassword())+"auth----------------------------");
 
-        if (admin != null && passwordEncoder.matches(password, admin.getPassword())) {
-            authenticatedUser = admin;
-        } else {
-            Teachers teacher = teacher_repositorie.findByEmail(email);
-            if (teacher != null && passwordEncoder.matches(password, teacher.getPassword())) {
-                authenticatedUser = teacher;
-            } else {
+        if (administrationUsers != null && passwordEncoder.matches(password, administrationUsers.getPassword())) {
+            authenticatedUser = administrationUsers;
+        }
+        else {
+//            Teachers teacher = teacher_repositorie.findByEmail(email);
+//            if (teacher != null && passwordEncoder.matches(password, teacher.getPassword())) {
+//                authenticatedUser = teacher;
+//            } else {
                 Students student = students_repositorie.findByEmail(email);
                 System.out.println("je suuis bien etudiant : " + student);
                 if (student != null) {
                     authenticatedUser = student;
                 }
             }
-        }
+//        }
 
         return authenticatedUser;
     }

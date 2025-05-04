@@ -1,6 +1,6 @@
 package Gestion_scolaire.configuration.SecurityConfigs;
 
-import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
 import Gestion_scolaire.Models.RefreshToken;
 import Gestion_scolaire.Administrators.services.Admin_service;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -44,7 +44,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         System.out.println("Path: " + path);
 
         // Ignorer la validation JWT pour les endpoints spécifiques
-        if (path.startsWith("/Auth/login") || path.startsWith("/Auth/refresh-token") || path.startsWith("/static/") || path.startsWith("/assets/") || path.startsWith("/js/")) {
+        if (path.startsWith("/Auth/login") || path.startsWith("/Auth/refresh-token") || path.startsWith("/api-student/") || path.startsWith("/static/") || path.startsWith("/assets/") || path.startsWith("/js/")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -60,9 +60,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         try {
             username = jwtService.extractUsername(token);
 
-            Admin admin = adminService.getByEmail(username);
+            AdministrationUsers administrationUsers = adminService.getByEmail(username);
 
-            RefreshToken refreshToken = adminService.getRefresh(admin.getIdAdministra());
+            RefreshToken refreshToken = adminService.getRefresh(administrationUsers.getId());
             System.out.println("__________________________________________Token expired____________________________________" + refreshToken.getToken());
 
 
@@ -70,9 +70,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         } catch (ExpiredJwtException e) {
 
             String email = jwtService.getUsernameFromExpiredToken(token);
-            Admin adminExpired = adminService.getByEmail(email);
+            AdministrationUsers administrationUsersExpired = adminService.getByEmail(email);
 
-            RefreshToken refreshTokenError = adminService.getRefresh(adminExpired.getIdAdministra());
+            RefreshToken refreshTokenError = adminService.getRefresh(administrationUsersExpired.getId());
 
             if(jwtService.isTokenExpired(refreshTokenError.getToken())) {
                throw new BadCredentialsException("Bad credentials");

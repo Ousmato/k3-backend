@@ -4,6 +4,7 @@ import Gestion_scolaire.Classes.dtos.StudentGroupDto;
 import Gestion_scolaire.Dto_classe.SallesDTO;
 import Gestion_scolaire.EnumClasse.Seance_type;
 import Gestion_scolaire.Emplois.entity.Journee;
+import Gestion_scolaire.Models.Personne;
 import Gestion_scolaire.Teachers.dtos.TeacherDTO;
 import Gestion_scolaire.students.entity.Participant;
 import Gestion_scolaire.students.entity.StudentGroupe;
@@ -39,7 +40,7 @@ public class Journee_DTO {
         dto.setSeanceType(seance.getSeanceType());
         dto.setIdParticipant(seance.getIdParticipant());
         dto.setIdEmplois(EmploisDTO.toEmploisDTO(seance.getIdEmplois()));
-        dto.setIdTeacher(TeacherDTO.toTeacherDTO(seance.getIdTeacher()));
+        dto.setIdTeacher(TeacherDTO.toTeacherDTO(seance.getIntervenant()));
         return dto;
     }
 }

@@ -1,74 +1,88 @@
 [
   {
-    "name" : "Eaux Environnement et Energies Renouvelable",
-    "sous" :[
-      {
-        "sname": "Eaux et Environnement"
-      },
-      {
-        "sname": "Energies Renouvelable"
-      }
-
+    "name": "Agroéconomie", "faculte": "FAMA"
+  },
+  {
+    "name": "Vulgarisation Agricole", "faculte": "FAMA"
+  },
+  {
+    "name": "Hydraulique Agricole", "faculte": "FAMA" },
+  {
+    "name": "Génie Rural", "faculte": "FAMA"
+  },
+  {
+    "name": "Production et Santé Animale", "faculte": "FAMA"
+  },
+  {
+    "name": "Ressources Halieutiques et Aquacoles", "faculte": "FAMA"
+  },
+  {
+    "name": "Technologie Alimentaire", "faculte": "FAMA"
+  },
+  {
+    "name": "Agriculture Vivrière et Durable", "faculte": "FAMA"
+  },
+  {
+    "name": "Eaux Environnement et Énergies Renouvelables",
+    "faculte": "IUFP",
+    "sous": [
+      { "sname": "Eaux et Environnement" },
+      { "sname": "Énergies Renouvelables" }
     ]
   },
   {
-    "name" : "Comptabilité Finance et Audit",
-    "sous" :[
-      {
-        "sname": "Comptabilité Finance"
-      },
-      {
-        "sname": "Banque Assurance"
-      },
-      {
-        "sname": "Audit"
-      }
+    "name": "Comptabilité Finance et Audit",
+    "faculte": "IUFP",
+    "sous": [
+      { "sname": "Comptabilité Finance" },
+      { "sname": "Banque Assurance" },
+      { "sname": "Audit" }
     ]
   },
   {
-    "name" : "Assistant de Gestion",
-    "sous" :[
-      {
-        "sname": "Generaliste"
-      },
-      {
-        "sname": "Collectivité Territoriale"
-      }
-
-    ]
-  },
-
-  {
-    "name" : "Genie Informatique",
-    "sous" :[
-      {
-        "sname": "Administration Système et Réseau"
-      },
-      {
-        "sname": "Developpement"
-      }
-
+    "name": "Assistant de Gestion",
+    "faculte": "IUFP",
+    "sous": [
+      { "sname": "Généraliste" },
+      { "sname": "Collectivité Territoriale" }
     ]
   },
   {
-    "name" : "Hotellerie et Tourisme",
-    "sous" :[
-      {
-        "sname": "Hotellerie"
-      },
-      {
-        "sname": "Tourisme"
-      }
-
+    "name": "Génie Informatique",
+    "faculte": "IUFP",
+    "sous": [
+      { "sname": "Administration Système et Réseau" },
+      { "sname": "Développement" }
     ]
   },
   {
-    "name" : "Machinisme Agricole"
+    "name": "Hôtellerie et Tourisme",
+    "faculte": "IUFP",
+    "sous": [
+      { "sname": "Hôtellerie" },
+      { "sname": "Tourisme" }
+    ]
   },
   {
-    "name" : "Agro Business"
-  },
+    "name": "Machinisme Agricole", "faculte": "IUFP" },
   {
-    "name" : "Marketing et Communication"
-  }
+    "name": "Agro-Business", "faculte": "IUFP" },
+  {
+    "name": "Marketing et Communication", "faculte": "IUFP" },
+  {
+    "name": "Aménagement du Territoire", "faculte": "FASSO" },
+  {
+    "name": "Communication des Organisations", "faculte": "FASSO" },
+  {
+    "name": "Décentralisation  et Développement  Local", "faculte": "FASSO" },
+
+  {
+    "name": "Sociologie", "faculte": "FASSO" },
+  {
+    "name": "Génie Civil", "faculte": "FAGES" },
+  {
+    "name": "Génie Électrique", "faculte": "FAGES" },
+  {
+    "name": "Génie Mécanique", "faculte": "FAGES" }
+
 ]

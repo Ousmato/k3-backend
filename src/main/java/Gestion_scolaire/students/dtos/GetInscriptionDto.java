@@ -1,10 +1,8 @@
 package Gestion_scolaire.students.dtos;
 
-import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
 import Gestion_scolaire.Classes.dtos.StudentClasseDTO;
 import Gestion_scolaire.students.entity.Inscription;
-import Gestion_scolaire.students.entity.Students;
-import Gestion_scolaire.students.entity.StudentsClasse;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -14,7 +12,7 @@ public class GetInscriptionDto {
 
     private long id;
     private StudentClasseDTO idClasse;
-    private Admin idAdmin;
+    private AdministrationUsers idAdministrationUsers;
     private Student_DTO idEtudiant;
     private LocalDate date;
     private boolean active = true;

@@ -1,6 +1,5 @@
 package Gestion_scolaire.students.repositories;
 
-import Gestion_scolaire.students.entity.Students;
 import Gestion_scolaire.students.enumClass.Type_status;
 import Gestion_scolaire.students.entity.Inscription;
 import org.springframework.data.domain.Page;
@@ -21,12 +20,12 @@ public interface Inscription_repositorie extends JpaRepository<Inscription, Long
 
     Inscription getByIdAndIdClasseId(long id, long classeId);
 
-    List<Inscription> findByIdEtudiantIdEtudiant(long etudiantId);
+    List<Inscription> findByIdEtudiantId(long etudiantId);
 
 
     List<Inscription> findByIdClasseIdAnneeScolaireId(long anneeScolaireId);
 
-    @Query("select i from Inscription i WHERE :currentDate BETWEEN  i.idClasse.idAnneeScolaire.debutAnnee and i.idClasse.idAnneeScolaire.finAnnee and i.idEtudiant.idEtudiant =:idStudent")
+    @Query("select i from Inscription i WHERE :currentDate BETWEEN  i.idClasse.idAnneeScolaire.debutAnnee and i.idClasse.idAnneeScolaire.finAnnee and i.idEtudiant.id =:idStudent")
     Inscription getInscriptionByCurrentYearAndIdStudent(@Param("currentDate") LocalDate currentDate, @Param("idStudent") long idStudent);
 
     @Query("select count(*)  from Inscription i where i.idClasse.id =:idClasse")

@@ -1,19 +1,15 @@
 package Gestion_scolaire.students.dtos;
 
-import Gestion_scolaire.Administrators.entity.Admin;
-import Gestion_scolaire.students.entity.Inscription;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
 import Gestion_scolaire.students.entity.Students;
 import Gestion_scolaire.students.entity.StudentsClasse;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-
-import java.time.LocalDate;
 
 @Data
 public class InscriptionDTO {
     private long id;
     private StudentsClasse idClasse;
-    private Admin idAdmin;
+    private AdministrationUsers idAdministrationUsers;
     private Students idEtudiant;
 //    private LocalDate date;
 //

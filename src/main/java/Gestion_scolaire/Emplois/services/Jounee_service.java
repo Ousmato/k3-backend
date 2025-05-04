@@ -1,6 +1,5 @@
 package Gestion_scolaire.Emplois.services;
 
-import Gestion_scolaire.Classes.dtos.StudentGroupDto;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Emplois.dtos.Journee_DTO;
 import Gestion_scolaire.Emplois.entity.Emplois;
@@ -10,19 +9,14 @@ import Gestion_scolaire.Shareds.Shared_repositories;
 import Gestion_scolaire.Teachers.dtos.TeacherConfigJournDTO;
 import Gestion_scolaire.EnumClasse.Seance_type;
 import Gestion_scolaire.Models.*;
-import Gestion_scolaire.Emplois.repositorie.Emplois_repositorie;
-import Gestion_scolaire.Emplois.repositorie.Journee_repositorie;
 import Gestion_scolaire.Teachers.entity.Teachers;
-import Gestion_scolaire.students.repositories.StudentGroup_repositorie;
 import Gestion_scolaire.configuration.NoteFundException;
 import Gestion_scolaire.students.entity.Participant;
-import Gestion_scolaire.students.entity.StudentGroupe;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -52,14 +46,14 @@ public class Jounee_service {
                 throw new ConstraintViolationException(constraintViolations);
             }
 
-            List<Journee> list = shared_repositories.getJournee_repositorie().findByIdEmploisIdAndIdTeacherIdEnseignantAndSeanceType(
-                    j.getIdEmplois().getId(), j.getIdTeacher().getIdEnseignant(), j.getSeanceType());
+            List<Journee> list = shared_repositories.getJournee_repositorie().findByIdEmploisIdAndIntervenantIdAndSeanceType(
+                    j.getIdEmplois().getId(), j.getIntervenant().getId(), j.getSeanceType());
             if (!list.isEmpty()){
                 for (Journee j2 : list) {
 
                     if (!j2.getIdSalle().equals(j.getIdSalle())) {
                         throw new NoteFundException("Impossible d'enregistrer deux salles différentes pour les séances de type %s pour l'enseignant %s"
-                                .formatted(j.getSeanceType().toString().toUpperCase(), j.getIdTeacher().getNom()));
+                                .formatted(j.getSeanceType().toString().toUpperCase(), j.getIntervenant().getNom()));
                     }
 
                 }
@@ -67,11 +61,23 @@ public class Jounee_service {
             common_service.validateSeance(j);
             System.out.println("--------apres validation------" );
 
-            Journee teacherCofig = shared_repositories.getJournee_repositorie().findByIdTeacherIdEnseignantAndSeanceTypeAndDate(
-                    j.getIdTeacher().getIdEnseignant(),j.getSeanceType(), j.getDate());
-            if(teacherCofig != null) {
-               throw new NoteFundException("L'enseignant : %sest déjà programmer pour cette date".formatted(j.getIdTeacher().getNom()));
+            List<Journee> existingJours = shared_repositories.getJournee_repositorie()
+                    .findByIntervenantIdAndDate(j.getIntervenant().getId(), j.getDate());
+
+            for (Journee existing : existingJours) {
+                if (j.getHeureDebut().isBefore(existing.getHeureFin()) &&
+                        j.getHeureFin().isAfter(existing.getHeureDebut())) {
+                    throw new NoteFundException("Conflit : l’enseignant %s est déjà programmé de %s à %s le %s."
+                        .formatted(
+                                j.getIntervenant().getNom(),
+                                existing.getHeureDebut(),
+                                existing.getHeureFin(),
+                                j.getDate()
+                        )
+                    );
+                }
             }
+
             List<Salles> occuperForDate = common_service.salle_occuper(j.getDate(), j.getHeureDebut());
             if(!occuperForDate.isEmpty()) {
                 for (Salles s : occuperForDate) {
@@ -84,7 +90,6 @@ public class Jounee_service {
             Journee jourExist = shared_repositories.getJournee_repositorie().getByHeureDebutAndHeureFinAndDateAndIdEmploisId(
                      j.getHeureDebut(), j.getHeureFin(), j.getDate(), j.getIdEmplois().getId()
             );
-//            System.out.println("---------------------je suis la" + jourExist);
 
             if(jourExist !=null) {
 
@@ -92,15 +97,13 @@ public class Jounee_service {
                     throw new NoteFundException("L'heure de fin de la séance se trouve dans l'intervalle d'une autre séance existante.");
                 }
             }
-//            System.out.println("----------------------------"+j);
             shared_repositories.getJournee_repositorie().save(j);
-//            common_service.createPaieForConfig(saved);
             hasJour = true;
 
         }
 
         if (hasJour) {
-            return DTO_response_string.fromMessage("Ajout effectué avec succès");
+            return DTO_response_string.addMessage();
         } else {
             throw new NoteFundException("Une configuration existante a été trouvée");
         }
@@ -183,10 +186,10 @@ public class Jounee_service {
 //                    }
 //                }
             }
-            Journee teacherCofig = shared_repositories.getJournee_repositorie().findByIdTeacherIdEnseignantAndSeanceTypeAndDate(
-                    j.getIdTeacher().getIdEnseignant(),j.getSeanceType(), j.getDate());
+            Journee teacherCofig = shared_repositories.getJournee_repositorie().findByIntervenantIdAndSeanceTypeAndDate(
+                    j.getIntervenant().getId(),j.getSeanceType(), j.getDate());
             if(teacherCofig != null) {
-                throw new NoteFundException("L'enseignant : " +j.getIdTeacher().getNom() + "est déjà programmer pour cette date");
+                throw new NoteFundException("L'enseignant : " +j.getIntervenant().getNom() + "est déjà programmer pour cette date");
             }
             List<Salles> occuperForDate = common_service.salle_occuper_toDay(j.getDate());
             if(!occuperForDate.isEmpty()) {
@@ -227,9 +230,9 @@ public class Jounee_service {
             for (Journee seance : journeeList){
                 if(!seance.getSeanceType().equals(Seance_type.examen)) {
                     TeacherConfigJournDTO dto = new TeacherConfigJournDTO();
-                    dto.setId(seance.getIdTeacher().getIdEnseignant());
-                    dto.setNom(seance.getIdTeacher().getNom());
-                    dto.setPrenom(seance.getIdTeacher().getPrenom());
+                    dto.setId(seance.getIntervenant().getId());
+                    dto.setNom(seance.getIntervenant().getNom());
+                    dto.setPrenom(seance.getIntervenant().getPrenom());
                     dto.setSalle(seance.getIdSalle().getNom());
 
                     Participant participant = seance.getIdParticipant();
@@ -248,7 +251,7 @@ public class Jounee_service {
                     seanceTypesSet.add(seance.getSeanceType().toString());
 
                     // Récupérer toutes les séances liées à cet enseignant pour éviter les doublons
-                    List<Journee> list = shared_repositories.getJournee_repositorie().findByIdEmploisIdAndIdTeacherIdEnseignant(idEmplois, seance.getIdTeacher().getIdEnseignant());
+                    List<Journee> list = shared_repositories.getJournee_repositorie().findByIdEmploisIdAndIntervenantId(idEmplois, seance.getIntervenant().getId());
                     for (Journee j : list) {
                         seanceTypesSet.add(j.getSeanceType().toString());
 
@@ -289,12 +292,12 @@ public class Jounee_service {
 
         }
         // Vérifier si l'enseignant existe
-        if (journee.getIdTeacher() != null) {
-            Teachers enseignant = shared_repositories.getTeacher_repositorie().findById(journee.getIdTeacher().getIdEnseignant()).orElse(null);
+        if (journee.getIntervenant() != null) {
+            Teachers enseignant = shared_repositories.getTeacher_repositorie().findById(journee.getIntervenant().getId()).orElse(null);
             if (enseignant == null) {
                 throw new NoteFundException("L'enseignant spécifié n'existe pas");
             }
-            jExist.setIdTeacher(enseignant); // Assigner l'enseignant trouvé
+            jExist.setIntervenant(enseignant); // Assigner l'enseignant trouvé
         }
 
         // Vérifier si la salle existe

@@ -1,12 +1,13 @@
 package Gestion_scolaire.students.services;
 
-import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Shareds.Shared_methods_service;
 import Gestion_scolaire.Shareds.Shared_repositories;
 import Gestion_scolaire.configuration.NoteFundException;
 import Gestion_scolaire.students.dtos.DTO_scolarite;
 import Gestion_scolaire.students.entity.Paiement;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,13 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class Scolarite_service {
 
-    @Autowired
-    private Shared_repositories shared_repositories;
+    private final Shared_repositories shared_repositories;
 
-    @Autowired
-    private Shared_methods_service shared_methods_service;
+
+    private final Shared_methods_service shared_methods_service;
 
     public List<Paiement> getListPaiementByIdInscrit(long idInscrit) {
         List<Paiement> paiementList = shared_repositories.getPaiement_repositorie().findByIdInscriptionId(idInscrit);
@@ -36,8 +37,8 @@ public class Scolarite_service {
         if (paiement == null) {
             throw new NoteFundException("Ce paiement est introuvable");
         }
-        Admin admin = shared_repositories.getAdminRepositorie().getByIdAdministraAndActive(idAdmin, true);
-        if (admin == null) {
+        AdministrationUsers administrationUsers = shared_repositories.getAdminRepositorie().getByIdAndActive(idAdmin, true);
+        if (administrationUsers == null) {
             throw new NoteFundException("Cet admin est introuvable");
         }
         Double seuil = shared_methods_service.getSeuilScolarite(dto.getType());
@@ -47,7 +48,7 @@ public class Scolarite_service {
         }
         paiement.setUpdateDate(LocalDate.now());
         paiement.setMontant(dto.getPayer());
-        paiement.setIdAdmin(admin);
+        paiement.setIdAdministrationUsers(administrationUsers);
         shared_repositories.getPaiement_repositorie().save(paiement);
         return DTO_response_string.updateMessage();
 

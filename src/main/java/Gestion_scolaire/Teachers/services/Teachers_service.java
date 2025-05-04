@@ -1,6 +1,6 @@
 package Gestion_scolaire.Teachers.services;
 
-import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.Shareds.Shared_methods_service;
 import Gestion_scolaire.Shareds.Shared_repositories;
@@ -36,28 +36,29 @@ public class Teachers_service {
     @Autowired
     private Shared_repositories shared_repositories;
 
-    public Object add(Teachers teacher){
+    public Object add(Teachers teacher, long idAdmin){
         Teachers teach = commom_methods.validateTeacher(teacher);
         System.out.println("---------------------------------je suis quand meme la---------------");
-        Admin admin = shared_repositories.getAdminRepositorie().findByIdAdministra(teach.getAdmin().getIdAdministra());
-        if (admin == null){
+        AdministrationUsers administrationUsers = shared_repositories.getAdminRepositorie().findById(idAdmin);
+
+        if (administrationUsers == null){
             throw new NoteFundException("L'admin est introuvable");
         }
-        String roleName = admin.getIdRole().getNom();
+        String roleName = administrationUsers.getIdPoste().getNom();
         String roleAbrevigate = shared_methods_service.abrevigateName(roleName);
         if (!roleAbrevigate.equalsIgnoreCase("DER")){
             throw new NoteFundException("Autorisation refusée");
         }
-        teach.setAdmin(admin);
-        String pasEncode = passwordEncoder.encode(teach.getPassword());
-        teach.setPassword(pasEncode);
+//        teach.set(administrationUsers);
+//        String pasEncode = passwordEncoder.encode(teach.getPassword());
+//        teach.setPassword(pasEncode);
         shared_repositories.getTeacher_repositorie().save(teach);
         return DTO_response_string.addMessage();
     }
 
     //method pour desactiver un enseignant
     public Object desactive(long id){
-        Teachers teachersExist = shared_repositories.getTeacher_repositorie().findByIdEnseignant(id);
+        Teachers teachersExist = shared_repositories.getTeacher_repositorie().findById(id);
         if (teachersExist != null){
             teachersExist.setActive(!teachersExist.isActive());
             shared_repositories.getTeacher_repositorie().save(teachersExist);
@@ -73,16 +74,16 @@ public class Teachers_service {
 
     //methode pour modifier
     public Object update(Teachers t) throws IOException {
-        Teachers teachersExist = shared_repositories.getTeacher_repositorie().findByIdEnseignantAndActive(t.getIdEnseignant(),true);
+        Teachers teachersExist = shared_repositories.getTeacher_repositorie().findByIdAndActive(t.getId(),true);
         if(teachersExist != null){
             //           ------------------------- cas ou l'image ne pas changer--------------
             shared_methods_service.updateIfNotEmpty(t.getNom(), teachersExist::setNom);
             shared_methods_service.updateIfNotEmpty(t.getPrenom(), teachersExist::setPrenom);
             shared_methods_service.updateIfNotEmpty(t.getEmail(), teachersExist::setEmail);
             shared_methods_service.updateIfNotEmpty(t.getSexe(), teachersExist::setSexe);
-            shared_methods_service.updateIfNotEmpty(t.getPassword(), teachersExist::setPassword);
+//            shared_methods_service.updateIfNotEmpty(t.getPassword(), teachersExist::setPassword);
             shared_methods_service.updateIfNotEmpty(t.getDateNaissance(), teachersExist::setDateNaissance);
-            shared_methods_service.updateIfNotEmpty(t.getGrade(), teachersExist::setGrade);
+//            shared_methods_service.updateIfNotEmpty(t.getGrade(), teachersExist::setGrade);
 
             // Mise à jour conditionnelle pour les champs potentiellement nulls
             if (t.getDiplome() != null) {
@@ -123,14 +124,14 @@ public class Teachers_service {
 
     //mehod pour appeler un enseignant
     public Teachers teachById(long id){
-        return shared_repositories.getTeacher_repositorie().findByIdEnseignant(id);
+        return shared_repositories.getTeacher_repositorie().findById(id);
     }
 
     //    ----------------------------------- method pour appeler laliste de presences------------------------------
 
     public Object importTeachers(List<Teachers> list, long idAdmin){
-        Admin admin = shared_repositories.getAdminRepositorie().findByIdAdministra(idAdmin);
-        if (admin == null){
+        AdministrationUsers administrationUsers = shared_repositories.getAdminRepositorie().findById(idAdmin);
+        if (administrationUsers == null){
             throw new NoteFundException("L'admin est introuvable");
         }
         if(list == null || list.isEmpty()){
@@ -138,8 +139,8 @@ public class Teachers_service {
         }
         for (Teachers teacher : list){
 
-            teacher.setAdmin(admin);
-            add(teacher);
+//            teacher.setAdministrationUsers(administrationUsers);
+            add(teacher, idAdmin);
         }
         return DTO_response_string.addMessage();
     }
@@ -168,7 +169,7 @@ public class Teachers_service {
             TeacherDTO dto = TeacherDTO.toTeacherDTO(teacher);
 
             // Récupérer les spécialités associées à cet enseignant (optimisation possible)
-            List<Specialites> specialites = shared_repositories.getSpecialite_repositorie().findAllByIdTeacher(teacher.getIdEnseignant());
+            List<Specialites> specialites = shared_repositories.getSpecialite_repositorie().findAllByIdTeacher(teacher.getId());
             if(specialites.isEmpty()){
                 dto.setSpecialitesList(new ArrayList<>());
             }

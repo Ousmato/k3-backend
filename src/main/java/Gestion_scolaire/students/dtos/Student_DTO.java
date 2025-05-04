@@ -41,7 +41,7 @@ public class Student_DTO {
         dto.setTelephone(student.getTelephone());
         dto.setUrlPhoto(student.getUrlPhoto());
         dto.setSexe(student.getSexe());
-        dto.setIdEtudiant(student.getIdEtudiant());
+        dto.setIdEtudiant(student.getId());
         dto.setNom(student.getNom());
         dto.setPrenom(student.getPrenom());
         dto.setEmail(student.getEmail());

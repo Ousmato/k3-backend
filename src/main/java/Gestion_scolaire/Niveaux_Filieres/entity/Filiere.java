@@ -1,8 +1,10 @@
 package Gestion_scolaire.Niveaux_Filieres.entity;
 
+import Gestion_scolaire.EnumClasse.Facultes;
 import Gestion_scolaire.EnumClasse.TypeFiliere;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -21,5 +23,9 @@ public class Filiere {
 
     @Enumerated(EnumType.STRING)
     private TypeFiliere typeFiliere;
+
+    @NotNull(message = "La faculté est obligatoire")
+    @Enumerated(EnumType.STRING)
+    private Facultes faculte;
 
 }

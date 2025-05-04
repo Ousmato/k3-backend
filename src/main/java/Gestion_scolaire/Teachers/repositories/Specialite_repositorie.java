@@ -14,7 +14,7 @@ public interface Specialite_repositorie extends JpaRepository<Specialites, Long>
 
     Specialites findById(long id);
 
-    @Query("SELECT DISTINCT s from Specialites s inner join Teacher_specialite ts on ts.idSpecialite.id = s.id where ts.idTeacher.idEnseignant =:idTeacher")
+    @Query("SELECT DISTINCT s from Specialites s inner join Teacher_specialite ts on ts.idSpecialite.id = s.id where ts.idTeacher.id =:idTeacher")
     List<Specialites> findAllByIdTeacher(@Param("idTeacher") long idTeacher);
 
     @Query("select distinct  s From Specialites s inner JOIN Filiere_specialite fs on fs.idSpecialite.id =s.id where fs.idFiliere.id =:idFiliere")

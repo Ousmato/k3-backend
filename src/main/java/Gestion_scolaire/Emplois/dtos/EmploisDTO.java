@@ -4,6 +4,8 @@ import Gestion_scolaire.Classes.dtos.ClasseDTO;
 import Gestion_scolaire.Classes.dtos.ModuleDTO;
 import Gestion_scolaire.Emplois.entity.Emplois;
 import Gestion_scolaire.Models.Semestres;
+import Gestion_scolaire.Teachers.dtos.TeacherDTO;
+import Gestion_scolaire.Teachers.entity.Teachers;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -16,6 +18,7 @@ public class EmploisDTO {
     private ModuleDTO idModule;
     private Semestres idSemestre;
     private ClasseDTO idClasse;
+    private Teachers idTeacher;
 
     public static EmploisDTO toEmploisDTO(Emplois emplois){
         EmploisDTO dto = new EmploisDTO();

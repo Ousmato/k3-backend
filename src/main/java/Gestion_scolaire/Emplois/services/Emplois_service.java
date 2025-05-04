@@ -1,54 +1,42 @@
 package Gestion_scolaire.Emplois.services;
 
-import Gestion_scolaire.Administrators.entity.Admin;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
+import Gestion_scolaire.Emplois.dtos.DtoEmploiByWeeks;
+import Gestion_scolaire.Emplois.dtos.EmploiListForDtoEmploiWeek;
 import Gestion_scolaire.Emplois.dtos.TeacherEmploiDTO;
 import Gestion_scolaire.Emplois.entity.Emplois;
 import Gestion_scolaire.Emplois.entity.Journee;
 import Gestion_scolaire.Emplois.repositorie.Emplois_repositorie;
-import Gestion_scolaire.Emplois.repositorie.Journee_repositorie;
 import Gestion_scolaire.EnumClasse.Seance_type;
-import Gestion_scolaire.EnumClasse.TypeFiliere;
 import Gestion_scolaire.Models.AnneeScolaire;
-import Gestion_scolaire.Repositories.AnneeScolaire_repositorie;
 import Gestion_scolaire.Shareds.Shared_methods_service;
 import Gestion_scolaire.Shareds.Shared_repositories;
+import Gestion_scolaire.Teachers.dtos.SimpleTeacherDto;
 import Gestion_scolaire.Teachers.dtos.TeacherDTO;
+import Gestion_scolaire.Teachers.dtos.TeacherSemaineDTO;
 import Gestion_scolaire.Teachers.dtos.TeacherVolHoraireDTO;
 import Gestion_scolaire.Teachers.entity.Teachers;
-import Gestion_scolaire.Teachers.repositories.Teacher_repositorie;
 import Gestion_scolaire.Teachers.services.Commom_methods;
 import Gestion_scolaire.configuration.NoteFundException;
-import jakarta.validation.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class Emplois_service {
 
-//    @Autowired
-//    private Emplois_repositorie emplois_repositorie;
-//    @Autowired
-//    private Validator validator;
-//
-//    @Autowired
-//    private AnneeScolaire_repositorie anneeScolaire_repositorie;
-//
-//    @Autowired
-//    private Journee_repositorie journee_repositorie;
-//
-    @Autowired
-    private Shared_repositories shared_repositories;
+    private final Shared_repositories shared_repositories;
 
-    @Autowired
-    private Commom_methods commom_methods;
+    private  final Commom_methods commom_methods;
 
-    @Autowired
-    private Shared_methods_service shared_methods_service;
-    
+    private final Shared_methods_service shared_methods_service;
+    private final Emplois_repositorie emplois_repositorie;
+
     public Object add(Emplois emplois) {
 //        Set<ConstraintViolation<Emplois>> violation = validator.validate(emplois);
 //        if (!violation.isEmpty()) {
@@ -86,6 +74,7 @@ public class Emplois_service {
         if (dateFin.isBefore(dateDebut)) {
             throw new NoteFundException("La date de fin ne peut pas être avant la date de début.");
         }
+
 
         // Si toutes les vérifications sont passées, enregistrez l'emploi
         shared_repositories.getEmplois_repositorie().save(emplois);
@@ -148,9 +137,9 @@ public class Emplois_service {
         throw new RuntimeException("Auccune correspondance");
     }
 //    ----------------------methode pour verifier l'existence des seances sur l'emplois du temps
-//    public boolean hasSeances(long idEmplois){
-//        return seance_repositorie.existsByIdEmploisId(idEmplois);
-//    }
+    public boolean hasSeances(long idEmplois){
+        return shared_repositories.getJournee_repositorie().existsByIdEmploisId(idEmplois);
+    }
 //    -------------------------------method to validate emplois
     public boolean validated(long idEmplois){
         Emplois emploiExist =shared_repositories.getEmplois_repositorie().findById(idEmplois);
@@ -181,104 +170,213 @@ public class Emplois_service {
     }
 //    ------------------------------get emplois active with seances
 
-    public List<Emplois> listEmploisActifOfAllClasses(long idAdmin){
-        Admin admin = shared_repositories.getAdminRepositorie().getByIdAdministraAndActive(idAdmin, true);
-
-        List<Emplois> emplois = shared_repositories.getEmplois_repositorie().findAllEmploisActif(LocalDate.now());
-        if (emplois.isEmpty()){
-            return  new ArrayList<>();
-        }
-        if(admin != null && admin.getIdRole().getTypeFiliere().equals(TypeFiliere.GESTIONS)){
-            return emplois.stream().filter(emploi ->
-                    emploi.getIdClasse().getIdFiliere().getIdFiliere().getTypeFiliere().equals(TypeFiliere.GESTIONS) ).toList();
-        }else if (admin != null &&  admin.getIdRole().getTypeFiliere().equals(TypeFiliere.SCIENTIFIQUES)){
-            return emplois.stream().filter(emploi ->
-                    emploi.getIdClasse().getIdFiliere().getIdFiliere().getTypeFiliere().equals(TypeFiliere.SCIENTIFIQUES) ).toList();
-        }else {
-            return emplois;
-        }
-
-
-    }
+//    public List<Emplois> listEmploisActifOfAllClasses(long idAdmin){
+//        AdministrationUsers administrationUsers = shared_repositories.getAdminRepositorie().getByIdAdministraAndActive(idAdmin, true);
+//
+//        List<Emplois> emplois = shared_repositories.getEmplois_repositorie().findAllEmploisActif(LocalDate.now());
+//        if (emplois.isEmpty()){
+//            return  new ArrayList<>();
+//        }
+//        if(administrationUsers != null && administrationUsers.getIdRole().getTypeFiliere().equals(TypeFiliere.GESTIONS)){
+//            return emplois.stream().filter(emploi ->
+//                    emploi.getIdClasse().getIdFiliere().getIdFiliere().getTypeFiliere().equals(TypeFiliere.GESTIONS) ).toList();
+//        }else if (administrationUsers != null &&  administrationUsers.getIdRole().getTypeFiliere().equals(TypeFiliere.SCIENTIFIQUES)){
+//            return emplois.stream().filter(emploi ->
+//                    emploi.getIdClasse().getIdFiliere().getIdFiliere().getTypeFiliere().equals(TypeFiliere.SCIENTIFIQUES) ).toList();
+//        }else {
+//            return emplois;
+//        }
+//
+//
+//    }
 
     public TeacherDTO allEmploisOfTeacherByIdAnnee(long idAnnee, long idTeacher) {
-        List<Emplois> emplois = shared_repositories.getEmplois_repositorie().getAllEmploiByOfTeacherAndIdAnnee(idAnnee, idTeacher);
-        Teachers teacher = shared_repositories.getTeacher_repositorie().findByIdEnseignantAndActive(idTeacher, true);
-        if (teacher == null){
+        // Récupérer les emplois et le prof
+        List<Emplois> emplois = shared_repositories.getEmplois_repositorie()
+                .getAllEmploiByOfTeacherAndIdAnnee(idAnnee, idTeacher);
+
+        Teachers teacher = shared_repositories.getTeacher_repositorie()
+                .findByIdAndActive(idTeacher, true);
+
+        if (teacher == null) {
             return null;
         }
-        TeacherDTO teacherDTO = new TeacherDTO();
 
+        // Init du DTO enseignant
+        TeacherDTO teacherDTO = new TeacherDTO();
         teacherDTO.setNom(teacher.getNom());
         teacherDTO.setPrenom(teacher.getPrenom());
-        teacherDTO.setDiplome(teacher.getDiplome().toString());
-        teacherDTO.setDateNaissance(teacher.getDateNaissance());
-        teacherDTO.setDateNaissance(teacherDTO.getDateNaissance());
-        teacherDTO.setStatus(teacher.getStatus());
 
-        List<TeacherEmploiDTO> listEmplois = new ArrayList<>();
-        // Récupérer toutes les journées d'un enseignant et d'une année scolaire en une seule requête
-        List<Journee> journees = shared_repositories.getJournee_repositorie().allJourneesOfTeacherByPromotion(idTeacher, idAnnee);
+        // Map pour regrouper les emplois par semaine
+        Map<String, List<TeacherEmploiDTO>> emploisParSemaine = new HashMap<>();
         int totalHeures = 0;
-        for (Emplois emp : emplois) {
-            TeacherEmploiDTO emploiDTO = new TeacherEmploiDTO();
 
-            emploiDTO.setSemaines(commom_methods.transformDate(emp.getDateDebut(), emp.getDateFin()));
+        // Toutes les journées de l'année pour le prof
+        List<Journee> journees = shared_repositories.getJournee_repositorie()
+                .allJourneesOfTeacherByPromotion(idTeacher, idAnnee);
+
+        for (Emplois emp : emplois) {
+            // Format semaine (corrigé)
+            String semaineKey = commom_methods.transformDate(emp.getDateDebut(), emp.getDateFin());
+
+            // Préparer le DTO emploi
+            TeacherEmploiDTO emploiDTO = new TeacherEmploiDTO();
+            emploiDTO.setNomModule(emp.getIdModule().getNomModule());
             emploiDTO.setFiliere(emp.getIdClasse().getIdFiliere().getIdFiliere().getNomFiliere());
-            emploiDTO.setNiveau(shared_methods_service.abregNiveauName(emp.getIdClasse().getIdFiliere().getIdNiveau().getNom()));
+            emploiDTO.setNiveau(shared_methods_service.abregNiveauName(
+                    emp.getIdClasse().getIdFiliere().getIdNiveau().getNom()
+            ));
             emploiDTO.setSemestre(emp.getIdSemestre().getNomSemetre());
 
-            emploiDTO.setNomModule(emp.getIdModule().getNomModule());
-
+            // Associer les journées à cet emploi (corrigé avec equals)
             List<Journee> associatedJournees = journees.stream()
-                    .filter(j -> j.getIdEmplois().getId() == emp.getId()).toList();
+                    .filter(j -> Objects.equals(j.getIdEmplois().getId(), emp.getId()))
+                    .toList();
+
+            List<TeacherVolHoraireDTO> volHoraires = new ArrayList<>();
 
             if (!associatedJournees.isEmpty()) {
-                // Liste des volumes horaires pour l'emploi
-                List<TeacherVolHoraireDTO> volHoraires = new ArrayList<>();
-
-                // Filtrer les journées par type de séance CM
+                // CM
                 List<Journee> cmJournees = associatedJournees.stream()
-                        .filter(journee -> journee.getSeanceType().equals(Seance_type.cm))
+                        .filter(j -> j.getSeanceType().equals(Seance_type.cm))
                         .toList();
+
                 if (!cmJournees.isEmpty()) {
                     TeacherVolHoraireDTO cmDTO = new TeacherVolHoraireDTO();
                     cmDTO.setTypeCours("CM");
-                    cmDTO.setVolumeHoraire(emp.getIdModule().getVolHCM()); // Volume horaire CM du module
+                    cmDTO.setVolumeHoraire(emp.getIdModule().getVolHCM());
                     volHoraires.add(cmDTO);
                     totalHeures += emp.getIdModule().getVolHCM();
                 }
 
-                // Filtrer les journées par type de séance TD
+                // TD
                 List<Journee> tdJournees = associatedJournees.stream()
-                        .filter(journee -> journee.getSeanceType().equals(Seance_type.td))
+                        .filter(j -> j.getSeanceType().equals(Seance_type.td))
                         .toList();
+
                 if (!tdJournees.isEmpty()) {
+                    int vlHTD = commom_methods.getVolHoraire(tdJournees);
                     TeacherVolHoraireDTO tdDTO = new TeacherVolHoraireDTO();
                     tdDTO.setTypeCours("TD");
-                    int vlHTD = commom_methods.getVolHoraire(tdJournees); // Calculer le volume horaire TD
                     tdDTO.setVolumeHoraire(vlHTD);
                     volHoraires.add(tdDTO);
                     totalHeures += vlHTD;
                 }
 
-                // Ajouter la liste des volumes horaires au DTO de l'emploi
                 emploiDTO.setVolHoraires(volHoraires);
-
             }
 
-            listEmplois.add(emploiDTO);
-            teacherDTO.setHeureTotal(totalHeures);
-//            System.out.println("-----------------------nombre total : " + teacherDTO.getHeureTotal());
-
-            teacherDTO.setTeacherEmploiList(listEmplois );
+            // Ajouter à la semaine correspondante
+            emploisParSemaine.computeIfAbsent(semaineKey, k -> new ArrayList<>()).add(emploiDTO);
         }
+
+        // Convertir la Map en Liste de semaines
+        List<TeacherSemaineDTO> semaines = emploisParSemaine.entrySet().stream()
+                .map(entry -> {
+                    TeacherSemaineDTO semaineDTO = new TeacherSemaineDTO();
+                    semaineDTO.setPeriode(entry.getKey());
+                    semaineDTO.setEmplois(entry.getValue());
+                    return semaineDTO;
+                })
+                .toList();
+
+        teacherDTO.setHeureTotal(totalHeures);
+        teacherDTO.setSemaines(semaines);
+
         return teacherDTO;
     }
+
 
     public TeacherDTO allEmploiOfTeacherOfCurrentYear(long idTeacher){
         AnneeScolaire currentYear = shared_repositories.getAnneeScolaire_repositorie().findCurrentYear(LocalDate.now());
         return allEmploisOfTeacherByIdAnnee(currentYear.getId(), idTeacher);
 
     }
+
+    public List<Emplois> currentEmploiWithoutExamWithSeance(){
+         List<Emplois> emploisList = shared_repositories.getEmplois_repositorie().findEmploisActifWithouExam(Seance_type.examen);
+         if(emploisList.isEmpty()){
+             return new ArrayList<>();
+         }
+
+         return emploisList;
+
+    }
+
+    public List<DtoEmploiByWeeks> currentEmploiHaveJourne(String value) {
+        List<Emplois> emploisList = new ArrayList<>();
+        if (value.equalsIgnoreCase("Default")){
+            emploisList = shared_repositories
+                    .getEmplois_repositorie()
+                    .findEmploisWithAtLeastOneJournee();
+        }else {
+            emploisList = shared_repositories
+                    .getEmplois_repositorie()
+                    .findEmploisWithoutJournee();
+        }
+
+
+        if (emploisList.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // Grouper les Emplois par semaine (lundi de la semaine)
+        Map<LocalDate, List<Emplois>> groupedByWeek = emploisList.stream()
+                .collect(Collectors.groupingBy(e -> e.getDateDebut().with(DayOfWeek.MONDAY)));
+
+        List<DtoEmploiByWeeks> result = new ArrayList<>();
+
+        for (Map.Entry<LocalDate, List<Emplois>> entry : groupedByWeek.entrySet()) {
+            LocalDate weekStart = entry.getKey();
+            LocalDate weekEnd = weekStart.plusDays(5); // Lundi à Samedi
+
+
+            List<EmploiListForDtoEmploiWeek> emploisDTOs = new ArrayList<>();
+
+            for (Emplois emploi : entry.getValue()) {
+                List<Teachers> teachers = shared_repositories
+                        .getTeacher_repositorie()
+                        .getPrincipalProf(emploi.getId(), Seance_type.cm);
+
+                EmploiListForDtoEmploiWeek dto = EmploiListForDtoEmploiWeek.toDto(emploi);
+
+                if (!teachers.isEmpty()) {
+                    dto.setNomTeacher(teachers.getFirst().getNom() + " " + teachers.getFirst().getPrenom()); // Prof principal (CM)
+                } else {
+                    dto.setNomTeacher(null); // Aucun prof principal trouvé
+                }
+
+                emploisDTOs.add(dto);
+            }
+
+            DtoEmploiByWeeks weekDto = new DtoEmploiByWeeks();
+            weekDto.setWeekStart(weekStart);
+            weekDto.setWeekEnd(weekEnd);
+            weekDto.setEmplois(emploisDTOs);
+            LocalDate today = LocalDate.now();
+
+            if (!today.isBefore(weekStart) && !today.isAfter(weekEnd)) {
+                weekDto.setStatus("En cours");
+            } else if (today.isAfter(weekEnd)) {
+                weekDto.setStatus("Dépassé");
+            } else {
+                weekDto.setStatus("En Attente");
+            }
+
+            result.add(weekDto);
+        }
+
+        result.sort(Comparator.comparing(DtoEmploiByWeeks::getWeekEnd).reversed());
+        return result;
+    }
+
+    public List<SimpleTeacherDto> allTeachersHaveEmploisByIdAnnee(long idAnnee, long idSemestre) {
+        return shared_repositories.getTeacher_repositorie()
+                .geAllTeacherHaveJournees(idAnnee, idSemestre).stream()
+                .map(SimpleTeacherDto::toDto)
+                .sorted(Comparator.comparing(SimpleTeacherDto::getNom))
+                .toList();
+    }
+
+
 }

@@ -1,14 +1,17 @@
 package Gestion_scolaire.Administrators.repositories;
 
-import Gestion_scolaire.Administrators.entity.Poste;
+import Gestion_scolaire.Administrators.entity.Postes;
+import Gestion_scolaire.EnumClasse.TypeFiliere;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.w3c.dom.stylesheets.LinkStyle;
-
-import java.util.List;
 
 @Repository
-public interface Poste_repositorie extends JpaRepository<Poste, Long> {
+public interface Poste_repositorie extends JpaRepository<Postes, Long> {
 
-    List<Poste> findByCurrentAdminIdAdministra(long idAdmin);
+    Postes findByNomAndTypeFiliere(String name, TypeFiliere typeFiliere);
+
+    Postes findById(long id);
+
+    Postes findByNom(String nom);
+
 }

@@ -1,8 +1,8 @@
 package Gestion_scolaire.Classes.services;
 
-import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
+import Gestion_scolaire.Administrators.entity.Postes;
 import Gestion_scolaire.Classes.dtos.StudentClasseDTO;
-import Gestion_scolaire.Classes.repositories.Classe_repositorie;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
 import Gestion_scolaire.EnumClasse.TypeFiliere;
 import Gestion_scolaire.Models.*;
@@ -10,33 +10,25 @@ import Gestion_scolaire.Niveaux_Filieres.entity.Filiere;
 import Gestion_scolaire.Niveaux_Filieres.entity.Niveau;
 import Gestion_scolaire.Niveaux_Filieres.entity.NiveauFilieres;
 import Gestion_scolaire.Niveaux_Filieres.entity.SousFilieres;
-import Gestion_scolaire.Niveaux_Filieres.repositories.Filiere_repositorie;
-import Gestion_scolaire.Niveaux_Filieres.repositories.NiveauFiliere_repositorie;
-import Gestion_scolaire.Niveaux_Filieres.repositories.Niveau_repositorie;
-import Gestion_scolaire.Repositories.*;
 import Gestion_scolaire.Shareds.Shared_methods_service;
 import Gestion_scolaire.Shareds.Shared_repositories;
 import Gestion_scolaire.configuration.NoteFundException;
 import Gestion_scolaire.students.entity.Inscription;
 import Gestion_scolaire.students.entity.StudentsClasse;
-import Gestion_scolaire.students.repositories.Inscription_repositorie;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class Classe_service {
 
-    @Autowired
-    private Shared_repositories shared_repositories;
+    private final Shared_repositories shared_repositories;
 
-    @Autowired
-    private Shared_methods_service shared_methods_service;
+
+    private final Shared_methods_service shared_methods_service;
 
 //    ------------------------------------------------------------------------------------------
 
@@ -82,51 +74,54 @@ public class Classe_service {
     }
 
     //---------------------------------------------------------------------------
-    public List<StudentClasseDTO> readAllClassIdAnneeId(long idAnnee, long idAdmin){
-        Admin admin = shared_repositories.getAdminRepositorie().getByIdAdministraAndActive(idAdmin, true);
+    public List<StudentClasseDTO> readAllClassIdAnneeId(long idAnnee, long idAdmin) {
+        AdministrationUsers administrationUsers = shared_repositories.getAdminRepositorie().getByIdAndActive(idAdmin, true);
         List<StudentsClasse> classes = shared_repositories.getClasse_repositorie().findByIdAnneeScolaireId(idAnnee);
         List<StudentClasseDTO> classeList = new ArrayList<>();
-        TypeFiliere typeFiliere = admin.getIdRole().getTypeFiliere();
-//        System.out.println("-------------admin " + admin);
-        if (typeFiliere != null && typeFiliere.equals(TypeFiliere.GESTIONS) || Objects.equals(typeFiliere, TypeFiliere.SCIENTIFIQUES)) {
-            // Filtrer les classes en fonction du type de filière de l'admin
+
+        Set<Long> addedClasseIds = new HashSet<>(); // pour éviter les doublons
+
+        boolean hasFiliereType = false;
+
+            TypeFiliere typeFiliere = administrationUsers.getIdPoste().getTypeFiliere();
+            if (typeFiliere != null) {
+                hasFiliereType = true;
+                for (StudentsClasse cl : classes) {
+                    TypeFiliere classeFiliereType = cl.getIdFiliere().getIdFiliere().getTypeFiliere();
+                    if (classeFiliereType.equals(typeFiliere) && !addedClasseIds.contains(cl.getId())) {
+                        int effectifs = shared_repositories.getInscription_repositorie().cuntByIdClasse(cl.getId());
+                        StudentClasseDTO classDTO = StudentClasseDTO.toDto(cl);
+                        classDTO.setEffectifs(effectifs);
+                        classeList.add(classDTO);
+                        addedClasseIds.add(cl.getId());
+                    }
+                }
+            }
+//        }
+
+        // Si aucun des postes n'a de typeFiliere => on retourne toutes les classes
+        if (!hasFiliereType) {
             for (StudentsClasse cl : classes) {
-                int effectifs =0;
-                StudentClasseDTO classDTO = StudentClasseDTO.toDto(cl);
-                // Compter le nombre d'inscriptions pour chaque classe
-                effectifs = shared_repositories.getInscription_repositorie().cuntByIdClasse(cl.getId());
-                classDTO.setEffectifs(effectifs);
-//                System.out.println("---efectif de " + cl.getIdFiliere().getIdNiveau().getNom() +"_ "+ effectifs);
-                // Si l'admin a un rôle avec la filière "GESTIONS", on ajoute la classe correspondante
-                if (typeFiliere.equals(TypeFiliere.GESTIONS) && cl.getIdFiliere().getIdFiliere().getTypeFiliere().equals(TypeFiliere.GESTIONS)) {
-
+                if (!addedClasseIds.contains(cl.getId())) {
+                    int effectifs = shared_repositories.getInscription_repositorie().cuntByIdClasse(cl.getId());
+                    StudentClasseDTO classDTO = StudentClasseDTO.toDto(cl);
+                    classDTO.setEffectifs(effectifs);
+                    List<SousFilieres> specialiteFilieres = shared_repositories.getSousFilieres_repositorie().findByIdClasseId(cl.getId());
+                    classDTO.setSpecialites(specialiteFilieres);
                     classeList.add(classDTO);
-                }
-                // Si l'admin a un rôle avec la filière "SCIENTIFIQUES", on ajoute la classe correspondante
-                else if (typeFiliere.equals(TypeFiliere.SCIENTIFIQUES) && cl.getIdFiliere().getIdFiliere().getTypeFiliere().equals(TypeFiliere.SCIENTIFIQUES)) {
-                    cl.setEffectifs(effectifs);
-                    classeList.add(classDTO);
+                    addedClasseIds.add(cl.getId());
                 }
             }
-            return classeList;
-        }else {
-            for (StudentsClasse cl :classes) {
-                int effectifs = shared_repositories.getInscription_repositorie().cuntByIdClasse(cl.getId());
-
-                StudentClasseDTO classDTO = StudentClasseDTO.toDto(cl);
-                List<SousFilieres> specialiteFilieres = shared_repositories.getSousFilieres_repositorie().findByIdClasseId(cl.getId());
-                classDTO.setSpecialites(specialiteFilieres);
-                classDTO.setEffectifs(effectifs);
-                classeList.add(classDTO);
-            }
-            return classeList;
         }
+
+        return classeList;
     }
 
 
 
 
-//    ----------------------------------cunt number of class
+
+    //    ----------------------------------cunt number of class
     public int cunt_class(){
         LocalDate today = LocalDate.now();
         return shared_repositories.getClasse_repositorie().countAllByFermer(today.getYear(), false);
@@ -188,7 +183,7 @@ public class Classe_service {
         if(anneExist == null){
             throw new NoteFundException("La promotion n'existe pas");
         }
-        System.out.println( "----------------------------------------" + anneExist);
+        //System.out.println( "----------------------------------------" + anneExist);
         NiveauFilieres nivFilieweExist = shared_repositories.getNiveauFiliere_repositorie().findById(nivFiliere);
         if(nivFilieweExist == null){
             throw new NoteFundException("La mention n'existe pas");

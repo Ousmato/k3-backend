@@ -11,25 +11,23 @@ import Gestion_scolaire.students.entity.StudentSession;
 import Gestion_scolaire.students.entity.StudentsClasse;
 import Gestion_scolaire.students.repositories.Inscription_repositorie;
 import Gestion_scolaire.students.repositories.Sessions_repositorie;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class StudentSession_service {
 
-    @Autowired
-    private Sessions_repositorie sessions_repositorie;
+    private final Sessions_repositorie sessions_repositorie;
 
-    @Autowired
-    private Inscription_repositorie inscription_repositorie;
+    private final Inscription_repositorie inscription_repositorie;
 
-    @Autowired
-    private Semestre_repositorie semestre_repositorie;
+    private final Semestre_repositorie semestre_repositorie;
 
-    @Autowired
-    private Modules_repositories modules_repositories;
+    private final Modules_repositories modules_repositories;
 
     public Object addSessionNote(long idInscrit, long idSemestre, long idModule,  double note ){
         System.out.println("-------------" + note);

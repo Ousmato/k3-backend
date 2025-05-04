@@ -5,8 +5,10 @@ import Gestion_scolaire.Emplois.entity.Emplois;
 import Gestion_scolaire.Emplois.repositorie.Emplois_repositorie;
 import Gestion_scolaire.Models.*;
 import Gestion_scolaire.Repositories.*;
+import Gestion_scolaire.Shareds.Shared_repositories;
 import Gestion_scolaire.configuration.NoteFundException;
 import jakarta.validation.Validator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,22 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class Semestre_service {
-    @Autowired
-    private Semestre_repositorie semestre_repositorie;
-
-    @Autowired
-    private Emplois_repositorie emplois_repositorie;
-
-    @Autowired
-    private Validator validator;
-
-    @Autowired
-    private Classe_repositorie classe_repositorie;
-
-    @Autowired
-    private Ue_repositorie ue_repositorie;
-
+    private final Shared_repositories shared_repositories;
 
     public void add_semestre() throws NoteFundException {
         String[] nomsSemestres = {
@@ -40,19 +29,19 @@ public class Semestre_service {
         for (String nomsSemestre : nomsSemestres) {
             Semestres semestre = new Semestres();
             semestre.setNomSemetre(nomsSemestre);
-            semestre_repositorie.save(semestre);
+            shared_repositories.getSemestre_repositorie().save(semestre);
 
         }
     }
 
     public Semestres getSemestreByNom(String nom){
-        return semestre_repositorie.findByNomSemetre(nom);
+        return shared_repositories.getSemestre_repositorie().findByNomSemetre(nom);
     }
 
 
     //    --------------------------------------get all semestres---------------------------
     public List<Semestres> getAll(){
-        List<Semestres> semestresList = semestre_repositorie.findAll();
+        List<Semestres> semestresList = shared_repositories.getSemestre_repositorie().findAll();
         if (semestresList.isEmpty()){
             return new ArrayList<>();
         }
@@ -61,7 +50,7 @@ public class Semestre_service {
 
     //-----------get semestre by idClasse
     public Semestres semestre_classe_id(long id){
-        Emplois em = emplois_repositorie.findByIdClasseId(id);
+        Emplois em = shared_repositories.getEmplois_repositorie().findByIdClasseId(id);
         if (em == null){
             return null;
         }
@@ -69,7 +58,7 @@ public class Semestre_service {
     }
 //    --------------------------------
     public List<Semestres> getCurrenctSemestresByIdNivFil(long idClasse){
-       List<Semestres> semestresList = semestre_repositorie.getByIdClasse(idClasse);
+       List<Semestres> semestresList = shared_repositories.getSemestre_repositorie().getByIdClasse(idClasse);
        if (semestresList.isEmpty()){
            return new ArrayList<>();
        }
@@ -77,7 +66,7 @@ public class Semestre_service {
     }
 
     public Semestres getSemestre(long id) {
-        Semestres semestre = semestre_repositorie.findById(id);
+        Semestres semestre = shared_repositories.getSemestre_repositorie().findById(id);
         if (semestre == null) {
             throw new RuntimeException("le semestre n'existe pas");
         }

@@ -1,6 +1,6 @@
 package Gestion_scolaire.students.dtos;
 
-import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
 import Gestion_scolaire.students.entity.Documents;
 import Gestion_scolaire.students.entity.Inscription;
 import Gestion_scolaire.students.entity.StudentDoc;
@@ -12,7 +12,7 @@ import java.util.List;
 public class DocDTO {
     private Documents idDocument;
     private long id;
-    private Admin idAdmin;
+    private AdministrationUsers idAdministrationUsers;
     private String telephone;
     private List<Inscription> idInscription;
     private String nom;
@@ -25,7 +25,7 @@ public class DocDTO {
         DocDTO docDTO = new DocDTO();
         docDTO.setFiliere(doc.getIdInscription().getIdClasse().getIdFiliere().getIdFiliere().getNomFiliere());
         docDTO.setIdDocument(doc.getIdDocument());
-        docDTO.setIdAdmin(doc.getIdAdmin());
+        docDTO.setIdAdministrationUsers(doc.getIdAdministrationUsers());
         docDTO.setId(doc.getId());
         docDTO.setNom(doc.getIdInscription().getIdEtudiant().getNom());
         docDTO.setPrenom(doc.getIdInscription().getIdEtudiant().getPrenom());

@@ -1,206 +1,225 @@
 package Gestion_scolaire.Administrators.services;
 
 import Gestion_scolaire.Administrators.dtos.AdminPostesDTO;
-import Gestion_scolaire.Administrators.entity.Admin;
-import Gestion_scolaire.Administrators.entity.Poste;
-import Gestion_scolaire.Administrators.entity.Roles;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
+import Gestion_scolaire.Administrators.entity.Postes;
 import Gestion_scolaire.Administrators.repositories.AdminRepositorie;
 import Gestion_scolaire.Administrators.repositories.Poste_repositorie;
-import Gestion_scolaire.Administrators.repositories.Role_repositorie;
 
+import Gestion_scolaire.Administrators.repositories.UserGrade_repositorie;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
+import Gestion_scolaire.EnumClasse.RoleTypes;
 import Gestion_scolaire.MailSender.MessaSender;
-import Gestion_scolaire.MailSender.PendingEmail;
+import Gestion_scolaire.Models.UsersGrade;
 import Gestion_scolaire.Shareds.Shared_methods_service;
+import Gestion_scolaire.Shareds.Shared_repositories;
 import Gestion_scolaire.configuration.NoteFundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class Roles_services {
 
-    @Autowired
-    private Role_repositorie role_repositorie;
+    private  final UserGrade_repositorie userGrade_repositorie;
 
-    @Autowired
-    private AdminRepositorie admin_repositorie;
+    private final Poste_repositorie poste_repositorie;
 
-    @Autowired
-    private Validator validator;
-
-    @Autowired
-    private MessaSender messages;
-
-    @Autowired
-    private Shared_methods_service sharedService;
+    private final AdminRepositorie admin_repositorie;
 
 
-    @Autowired
-    private Poste_repositorie poste_repositorie;
+    private final Validator validator;
+
+
+    private final MessaSender messages;
+
+
+    private final Shared_methods_service sharedService;
+
+
 
     String schoolEmail = "ousmatotoure98@gmail.com";
 
 
-    public Object addRole(Roles role, long idAdmin) {
-        Roles roleExist = role_repositorie.findByNomAndTypeFiliere(role.getNom(), role.getTypeFiliere());
+    public Object addPoste(Postes poste, long idAdmin) {
+        Postes roleExist = poste_repositorie.findByNomAndTypeFiliere(poste.getNom(), poste.getTypeFiliere());
         if (roleExist != null) {
-            throw new NoteFundException("Le role exist dejà");
+            throw new NoteFundException("Le poste exist dejà");
         }
 //
-        Set<ConstraintViolation<Roles>> violations = validator.validate(role);
+        Set<ConstraintViolation<Postes>> violations = validator.validate(poste);
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
 
-        System.out.println("role-------------------" + role);
+        System.out.println("role-------------------" + poste);
 
-        Admin admin = admin_repositorie.getByIdAdministraAndActive(idAdmin, true);
-        if (admin == null) {
+        AdministrationUsers administrationUsers = admin_repositorie.getByIdAndActive(idAdmin, true);
+        if (administrationUsers == null) {
             throw new NoteFundException("L'admin n'existe pas");
         }
-        String nomRole = sharedService.abrevigateName(admin.getIdRole().getNom());
-        if(!sharedService.abrevigateName(admin.getIdRole().getNom()).equalsIgnoreCase(nomRole)){
+        String nomRole = sharedService.abrevigateName(administrationUsers.getIdPoste().getNom());
+    if(!sharedService.abrevigateName(administrationUsers.getIdPoste().getNom()).equalsIgnoreCase(nomRole) && !administrationUsers.getIdPoste().getRoleType().equals(RoleTypes.SUPER_ADMIN)){
             throw new NoteFundException("Vous n'êtes pas autorisé");
         }
 
-        role.setIdAdminDg(admin.getIdAdministra());
-        role_repositorie.save(role);
+        //role.setIdAdminDg(administrationUsers.getIdAdministra());
+        poste_repositorie.save(poste);
         return DTO_response_string.addMessage();
 
     }
 
-    public Poste switchAccunt(Poste poste, long idAdmin) {
-        Set<ConstraintViolation<Poste>> violations = validator.validate(poste);
+    public Object addUserGrade(UsersGrade grade, long idAdmin) {
+        UsersGrade gradExist = userGrade_repositorie.findByLibelle(grade.getLibelle());
+        if (gradExist != null) {
+            throw new NoteFundException("Le poste exist dejà");
+        }
+
+        Set<ConstraintViolation<UsersGrade>> violations = validator.validate(grade);
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
         }
-        Admin admin = admin_repositorie.getByIdAdministraAndActive(idAdmin, true);
-        if (admin == null) {
+
+        System.out.println("grade-------------------" + grade);
+
+        AdministrationUsers administrationUsers = admin_repositorie.getByIdAndActive(idAdmin, true);
+        if (administrationUsers == null) {
             throw new NoteFundException("L'admin n'existe pas");
         }
+        String nomRole = sharedService.abrevigateName(administrationUsers.getIdPoste().getNom());
+        if(!sharedService.abrevigateName(administrationUsers.getIdPoste().getNom()).equalsIgnoreCase(nomRole) && !administrationUsers.getIdPoste().getRoleType().equals(RoleTypes.SUPER_ADMIN)){
+            throw new NoteFundException("Vous n'êtes pas autorisé");
+        }
 
-
-        String token = String.format("%06d", new Random().nextInt(10000));
-
-        PendingEmail emailPend = new PendingEmail();
-
-        emailPend.setToSend(admin.getEmail());
-        emailPend.setFromAdmin(schoolEmail);
-        emailPend.setBody(messages.messageForFictifAccunt(admin, token));
-        emailPend.setSubject("Autorisation du sous compte" + admin.getIdRole().getNom().toUpperCase());
-        messages.sendSimpleMail(emailPend);
-
-        Poste newPoste = new Poste();
-        newPoste.setDefaultAdmin(poste.getDefaultAdmin());
-        newPoste.setCurrentAdmin(admin);
-        newPoste.setDateTime(LocalDateTime.now());
-        newPoste.setOtp(token);
-
-       return poste_repositorie.save(newPoste);
+        //role.setIdAdminDg(administrationUsers.getIdAdministra());
+        userGrade_repositorie.save(grade);
+        return DTO_response_string.addMessage();
 
     }
 
-    public List<Roles> getAllRoles(long idAdmin){
-        Admin admin = admin_repositorie.getByIdAdministraAndActive(idAdmin, true);
-        if (admin == null) {
+//    public Postes switchAccunt(Postes postes, long idAdmin) {
+//        Set<ConstraintViolation<Postes>> violations = validator.validate(postes);
+//        if (!violations.isEmpty()) {
+//            throw new ConstraintViolationException(violations);
+//        }
+//        AdministrationUsers administrationUsers = admin_repositorie.getByIdAndActive(idAdmin, true);
+//        Postes postAdmin =
+//        if (administrationUsers == null) {
+//            throw new NoteFundException("L'admin n'existe pas");
+//        }
+//
+//
+//        String token = String.format("%06d", new Random().nextInt(10000));
+//
+//        PendingEmail emailPend = new PendingEmail();
+//
+//        emailPend.setToSend(administrationUsers.getEmail());
+//        emailPend.setFromAdmin(schoolEmail);
+//        emailPend.setBody(messages.messageForFictifAccunt(administrationUsers, token));
+//        emailPend.setSubject("Autorisation du sous compte" + administrationUsers.getIdRole().getNom().toUpperCase());
+//        messages.sendSimpleMail(emailPend);
+//
+//        Postes newPostes = new Postes();
+//        newPostes.setDefaultAdmin(postes.getDefaultAdmin());
+//        newPostes.setCurrentAdmin(administrationUsers);
+//        newPostes.setDateTime(LocalDateTime.now());
+//        newPostes.setOtp(token);
+//
+//       return poste_repositorie.save(newPostes);
+//
+//    }
+
+
+    public List<Postes> getAllRoles(long idAdmin){
+        AdministrationUsers administrationUsers = admin_repositorie.getByIdAndActive(idAdmin, true);
+        if (administrationUsers == null) {
             throw new NoteFundException("L'admin n'existe pas");
         }
-        if(role_repositorie.findAll().isEmpty()){
-            return new ArrayList<>();
+        if(!poste_repositorie.findAll().isEmpty() && administrationUsers.getIdPoste().getRoleType().equals(RoleTypes.SUPER_ADMIN)){
+            return poste_repositorie.findAll();
         }
-        return role_repositorie.findAll();
+        return new ArrayList<>();
     }
 
-    public Object updateRole(Roles role) {
+    public List<UsersGrade> getAllGdrades(long idAdmin){
+        AdministrationUsers administrationUsers = admin_repositorie.getByIdAndActive(idAdmin, true);
+        if (administrationUsers == null) {
+            throw new NoteFundException("L'admin n'existe pas");
+        }
+        if(!userGrade_repositorie.findAll().isEmpty() && administrationUsers.getIdPoste().getRoleType().equals(RoleTypes.SUPER_ADMIN)){
+            return userGrade_repositorie.findAll();
+            
+        }
+        return new ArrayList<>();
+    }
+
+    public Object updateRole(Postes role) {
         if (role.getTypeFiliere() == null) {
             throw new NoteFundException("Le type de filière est obligatoire et ne peut pas être null");
         }
 
-        Roles roleExist = role_repositorie.findById(role.getId());
+        Postes roleExist = poste_repositorie.findById(role.getId());
         if(roleExist == null){
             throw new NoteFundException("Le role n'existe pas");
         }
 
         roleExist.setNom(role.getNom().toUpperCase());
-        roleExist.setIdAdminDg(role.getIdAdminDg());
         roleExist.setTypeFiliere(role.getTypeFiliere());
         System.out.println("------------role ----------: " + role);
-        role_repositorie.save(roleExist);
+        poste_repositorie.save(roleExist);
         return DTO_response_string.fromMessage("Mises à jour effectuée avec succés");
     }
 
-    public Object deletedRole(long idRole){
-        Roles roleExist = role_repositorie.findById(idRole);
+//    public Object deletedRole(long idRole){
+//        Roles roleExist = role_repositorie.findById(idRole);
+//
+//        if (roleExist == null) {
+//            throw new NoteFundException("Le rôle avec l'ID " + idRole + " n'existe pas.");
+//        }
+//
+//        // Vérifie si le rôle est associé à un administrateur
+//        boolean isRoleAssignedToAdmin = role_repositorie.isRoleAssignedToAdmin(idRole);
+//
+//        if (isRoleAssignedToAdmin) {
+//            throw new NoteFundException("Impossible, le rôle est déjà associé à un admin.");
+//        }
+//
+//        // Si le rôle n'est pas associé à un admin, on peut le supprimer
+//        role_repositorie.delete(roleExist);
+//
+//        return DTO_response_string.fromMessage("Rôle supprimé avec succès");
+//    }
 
-        if (roleExist == null) {
-            throw new NoteFundException("Le rôle avec l'ID " + idRole + " n'existe pas.");
-        }
+//    public Object Addposte(long idCurrentAdmin, long idRole){
+//        AdministrationUsers defaultAdministrationUsers = admin_repositorie.findByIdRoleIdAndActive(idRole, true);
+//        if(defaultAdministrationUsers == null){
+//            throw new NoteFundException("L'admin par défaut ne correspond pas");
+//        }
+//        System.out.println("---------------------------------------"+ defaultAdministrationUsers.getIdRole());
+//        AdministrationUsers currentAdministrationUsers = admin_repositorie.getByIdAdministraAndActive(idCurrentAdmin, true);
+//        if(currentAdministrationUsers == null){
+//            throw new NoteFundException("L'admin courent ne correspond pas ");
+//        }
+//
+//        Postes newPostes = new Postes();
+//        newPostes.setDefaultAdmin(defaultAdministrationUsers);
+//        newPostes.setCurrentAdmin(currentAdministrationUsers);
+//        newPostes.setDateTime(LocalDateTime.now());
+//
+//        Set<ConstraintViolation<Postes>> violations = validator.validate(newPostes);
+//        if (!violations.isEmpty()) {
+//            throw new ConstraintViolationException(violations);
+//        }
+//        poste_repositorie.save(newPostes);
+//        return DTO_response_string.fromMessage("Ajout effectué avec succés");
+//    }
 
-        // Vérifie si le rôle est associé à un administrateur
-        boolean isRoleAssignedToAdmin = role_repositorie.isRoleAssignedToAdmin(idRole);
 
-        if (isRoleAssignedToAdmin) {
-            throw new NoteFundException("Impossible, le rôle est déjà associé à un admin.");
-        }
-
-        // Si le rôle n'est pas associé à un admin, on peut le supprimer
-        role_repositorie.delete(roleExist);
-
-        return DTO_response_string.fromMessage("Rôle supprimé avec succès");
-    }
-
-    public Object Addposte(long idCurrentAdmin, long idRole){
-        Admin defaultAdmin = admin_repositorie.findByIdRoleIdAndActive(idRole, true);
-        if(defaultAdmin == null){
-            throw new NoteFundException("L'admin par défaut ne correspond pas");
-        }
-        System.out.println("---------------------------------------"+defaultAdmin.getIdRole());
-        Admin currentAdmin = admin_repositorie.getByIdAdministraAndActive(idCurrentAdmin, true);
-        if(currentAdmin == null){
-            throw new NoteFundException("L'admin courent ne correspond pas ");
-        }
-
-        Poste newPoste = new Poste();
-        newPoste.setDefaultAdmin(defaultAdmin);
-        newPoste.setCurrentAdmin(currentAdmin);
-        newPoste.setDateTime(LocalDateTime.now());
-
-        Set<ConstraintViolation<Poste>> violations = validator.validate(newPoste);
-        if (!violations.isEmpty()) {
-            throw new ConstraintViolationException(violations);
-        }
-        poste_repositorie.save(newPoste);
-        return DTO_response_string.fromMessage("Ajout effectué avec succés");
-    }
-
-    public List<AdminPostesDTO> getAllPoste(long idAdmin){
-        List<Poste> postList = poste_repositorie.findByCurrentAdminIdAdministra(idAdmin);
-
-        if(postList.isEmpty()){
-            return new ArrayList<>();
-        }
-        return  postList.stream().map(p->{
-            // Créer une nouvelle instance de AdminPostesDTO à chaque itération
-            AdminPostesDTO posteDTO = new AdminPostesDTO();
-
-            // Définir l'admin pour le poste actuel
-            posteDTO.setAdmin(p.getCurrentAdmin());
-
-            // Créer une liste des noms de rôles pour cet admin et l'assigner
-            List<String> roleNames = new ArrayList<>();
-            roleNames.add(p.getDefaultAdmin().getIdRole().getNom());
-            System.out.println("---------------------------------------"+roleNames);
-            posteDTO.setRoleNames(roleNames);
-            return posteDTO;
-        }).toList();
-
-    }
 
     public List<AdminPostesDTO> list_admin() {
         // Récupérer tous les admins actifs
@@ -208,25 +227,25 @@ public class Roles_services {
     }
 
     public List<AdminPostesDTO> getAllPostByEtat(boolean etat){
-        List<Admin> list = admin_repositorie.findAllByActive(etat);
+        List<AdministrationUsers> list = admin_repositorie.getAdminByActive(etat);
 
         List<AdminPostesDTO> listPostes = new ArrayList<>();
 
         // Pour chaque admin, récupérer ses postes
-        for (Admin admin : list) {
+        for (AdministrationUsers administrationUsers : list) {
             AdminPostesDTO posteDTO = new AdminPostesDTO();
-            posteDTO.setAdmin(admin);
+            posteDTO.setAdmin(administrationUsers);
 
             // Récupérer les postes associés à cet admin
-            List<Poste> postList = poste_repositorie.findByCurrentAdminIdAdministra(admin.getIdAdministra());
+            //List<Postes> postList = poste_repositorie.findByIdAdministrationUsersId(administrationUsers.getId());
 
             // Créer une liste pour accumuler les noms de rôles
             List<String> roleNames = new ArrayList<>();
 
             // Ajouter les rôles de chaque poste à la liste
-            postList.forEach(lp -> {
-                roleNames.add(lp.getDefaultAdmin().getIdRole().getNom());
-            });
+//            postList.forEach(lp -> {
+//                roleNames.add(lp.getDefaultAdmin().getIdRole().getNom());
+//            });
 
             // Assigner la liste complète des rôles au DTO
             posteDTO.setRoleNames(roleNames);

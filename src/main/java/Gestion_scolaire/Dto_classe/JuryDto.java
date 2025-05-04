@@ -1,6 +1,7 @@
 package Gestion_scolaire.Dto_classe;
 
 import Gestion_scolaire.Models.Jury;
+import Gestion_scolaire.Models.Personne;
 import Gestion_scolaire.Teachers.entity.Teachers;
 import lombok.Data;
 
@@ -10,7 +11,7 @@ public class JuryDto {
     private long id;
     private String role;
     private long idTeacher;
-    private Teachers teachers;
+    private Personne teachers;
 //    private
 
     public static JuryDto toJury(Jury jury){

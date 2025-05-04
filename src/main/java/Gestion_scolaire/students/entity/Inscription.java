@@ -1,14 +1,11 @@
 package Gestion_scolaire.students.entity;
 
-import Gestion_scolaire.Administrators.entity.Admin;
-import Gestion_scolaire.Niveaux_Filieres.entity.SousFilieres;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Data
@@ -28,7 +25,7 @@ public class Inscription {
 
     @NotNull(message = "L'administrateur est invalide")
     @ManyToOne
-    private Admin idAdmin;
+    private AdministrationUsers idAdministrationUsers;
 
     private LocalDate date = LocalDate.now();
 

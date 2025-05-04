@@ -1,6 +1,6 @@
 package Gestion_scolaire.Administrators.controller;
 
-import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
 import Gestion_scolaire.Administrators.services.Auth_service;
 import Gestion_scolaire.Models.*;
 import Gestion_scolaire.Administrators.services.Admin_service;
@@ -14,6 +14,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.transaction.Transactional;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,22 +26,18 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/Auth")
+@RequiredArgsConstructor
 public class Auth_controller {
 
-    @Autowired
-    private Auth_service authServiceService;
+    private  final Auth_service authServiceService;
 
-    @Autowired
-    private Admin_service adminService;
+    private final Admin_service adminService;
 
-    @Autowired
-    private JwtService jwtService;
+    private final JwtService jwtService;
 
-    @Autowired
-    private InfoScool_service infoScool_service;
+    private final InfoScool_service infoScool_service;
 
-    @Autowired
-    private PromotionAutomaticAdd_service promotionAutomaticAdd_service;
+    private final PromotionAutomaticAdd_service promotionAutomaticAdd_service;
 
     @Transactional
     @PostMapping("/login")
@@ -56,11 +53,11 @@ public class Auth_controller {
 
         String token;
         String refreshToken;
-        if (userDetails instanceof Admin) {
-            Admin admin = mapper.convertValue(userDetails, Admin.class);
-            token = jwtService.generateToken(admin.getEmail());
-            refreshToken = jwtService.generateRefreshToken(admin.getEmail());
-            adminService.addRefreshToken(admin, refreshToken);
+        if (userDetails instanceof AdministrationUsers) {
+            AdministrationUsers administrationUsers = mapper.convertValue(userDetails, AdministrationUsers.class);
+            token = jwtService.generateToken(administrationUsers.getEmail());
+            refreshToken = jwtService.generateRefreshToken(administrationUsers.getEmail());
+            adminService.addRefreshToken(administrationUsers, refreshToken);
         } else if (userDetails instanceof Students) {
             Students students = mapper.convertValue(userDetails, Students.class);
             token = jwtService.generateToken(students.getEmail());
@@ -71,26 +68,24 @@ public class Auth_controller {
         }
 
         LoginResponse response = new LoginResponse(userDetails, token, refreshToken);
-        System.out.println("Réponse envoyée: " + response);  // <-- Vérifie ici si le JSON est correct
+        System.out.println("Réponse envoyée: " + response);
         return response;
     }
-//    ----------------------------------------methode get admin
+    //methode get admin
     @GetMapping("/read-info-school")
     public InfoSchool getInfo(){
 
          return  infoScool_service.getInfo();
     }
 
-//    ----------------------------------methode update
+    //methode update
     @PutMapping("/update")
     public Object update(
             @RequestParam("InfoSchool") String infoScool,
             @RequestParam(value = "file", required = false) MultipartFile urlFile) throws IOException {
-//        System.out.println("------------------" + urlFile.getOriginalFilename() + "-----------------------------------------");
 
             ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
             InfoSchool inf = objectMapper.readValue(infoScool, InfoSchool.class);
-//            log.info("Store JSON converted: {}", inf);
 
         if (urlFile != null && !urlFile.isEmpty()) {
             return infoScool_service.update(inf, urlFile);
@@ -100,24 +95,24 @@ public class Auth_controller {
             return infoScool_service.update(inf, null); // Vous devez implémenter la gestion de cas sans fichier dans votre service
         }
     }
-//    ----------------------------add annee scolaire
+    //add annee scolaire
     @PostMapping("/add-annee-scolaire/{idAdmin}")
     public Object add_annee_scolaire(@RequestBody AnneeScolaire scolaire, @PathVariable long idAdmin){
         return promotionAutomaticAdd_service.createSchoolYearAndClassesWithUes(scolaire, idAdmin);
     }
 
-//    ---------------------------get all annee scolaire
+    //get all annee scolaire
     @GetMapping("/get-all-annee")
     public List<AnneeScolaire> getAllAnnee(){
         return infoScool_service.readAll_anne();
     }
-//    -----------------------update annee scolaire
+    //update annee scolaire
     @PutMapping("/updat-anne-scolaire")
     public Object update_anne_scolaire(@RequestBody AnneeScolaire scolaire){
         return infoScool_service.update_AnneeScolaire(scolaire);
     }
 
-//    ----------------------delete annee scolaire
+    //delete annee scolaire
     @DeleteMapping("/delete-annee-scolaire/{idAnnee}")
     public Object delete_annee_scolaire(@PathVariable long idAnnee){
         return infoScool_service.delete_annee(idAnnee);

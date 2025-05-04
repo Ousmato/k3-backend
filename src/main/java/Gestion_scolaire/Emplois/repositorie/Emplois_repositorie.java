@@ -1,6 +1,7 @@
 package Gestion_scolaire.Emplois.repositorie;
 
 import Gestion_scolaire.Emplois.entity.Emplois;
+import Gestion_scolaire.EnumClasse.Seance_type;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,11 +12,8 @@ import java.util.List;
 
 @Repository
 public interface Emplois_repositorie extends JpaRepository<Emplois, Long> {
-    Emplois findByIdClasseIdAndDateDebutAndDateFin(long idclasse, LocalDate dateDebit, LocalDate dateFin);
-//    Emplois findByIdClasseId(long idClass);
     Emplois findById(long id);
-    @Query("select e from Emplois AS e where e.dateFin > :date")
-    List<Emplois> findAllEmploisActif(LocalDate date);
+
 
     @Query("select e from Emplois AS e where e.idClasse.id =:idClass and e.idSemestre.id =:idSemestre and e.dateFin > :date")
     List<Emplois> findAllOldEmploisOfClassBySemestre( @Param("idClass") long idClass, @Param("idSemestre") long idSemestre, @Param("date") LocalDate date);
@@ -26,20 +24,26 @@ public interface Emplois_repositorie extends JpaRepository<Emplois, Long> {
     @Query("select e from Emplois AS e where e.dateFin > :date AND e.idClasse.id = :idClasse")
     List<Emplois> findEmploisActifByIdClass(LocalDate date, long idClasse);
 
-    Emplois getEmploisByDateFinAfterAndId(LocalDate date, long id);
-
-    @Query("SELECT e from Emplois e inner JOIN Journee j on e.id =j.idEmplois.id and j.idTeacher.idEnseignant =:idTeacher and e.idClasse.idAnneeScolaire.id =:idAnnee")
+    @Query("SELECT e from Emplois e inner JOIN Journee j on e.id =j.idEmplois.id and j.intervenant.id =:idTeacher and e.idClasse.idAnneeScolaire.id =:idAnnee")
     List<Emplois> getAllEmploiByOfTeacherAndIdAnnee(@Param("idAnnee") long idAnnee, @Param("idTeacher") long idTeacher);
 
+    @Query("SELECT e from Emplois e inner JOIN Journee j on e.id =j.idEmplois.id and e.idClasse.idAnneeScolaire.id =:idAnnee")
+    List<Emplois> getAllEmploiByOfTeachersByIdAnnee(@Param("idAnnee") long idAnnee);
+
+
     Emplois findByIdClasseId(long idClasse);
-
-    Emplois getEmploisByIdClasseIdFiliereIdAndIdSemestreIdAndIdModuleId(long idClasse, long idSemestre, long idModule);
-
-    @Query("select e from Emplois e inner JOIN Journee j on j.idEmplois.id = e.id where j.idTeacher.idEnseignant =:idTeacher")
+    @Query("select e from Emplois e inner JOIN Journee j on j.idEmplois.id = e.id where j.intervenant.id =:idTeacher")
     List<Emplois> getByAllEmploiByIdTeacher(@Param("idTeacher") long idTeacher);
 
+    @Query("select e from Emplois e where not exists " +
+            "(select j from Journee j where j.idEmplois.id = e.id and j.seanceType =:exam) " +
+            "and exists (select jr from Journee jr where jr.idEmplois.id = e.id)and e.dateDebut > current_date ")
+    List<Emplois> findEmploisActifWithouExam(@Param("exam") Seance_type exam);
 
-    boolean existsByIdClasseIdAndDateFinIsAfter(long id, LocalDate dateFin);
+    @Query("select e from Emplois e where exists (select j from Journee j where j.idEmplois.id = e.id)")
+    List<Emplois> findEmploisWithAtLeastOneJournee();
 
-    Emplois findByIdClasseIdAndDateFinIsAfter(long id, LocalDate dateFin);
+    @Query("select e from Emplois e where not exists (select j from Journee j where j.idEmplois.id = e.id)")
+    List<Emplois> findEmploisWithoutJournee();
+
 }

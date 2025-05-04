@@ -1,6 +1,6 @@
 package Gestion_scolaire.Teachers.entity;
 
-import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,5 +19,5 @@ public class Specialites {
 
     @NotNull(message = "L'admin est obligatoire")
     @ManyToOne
-    private Admin idAdmin;
+    private AdministrationUsers idAdministrationUsers;
 }

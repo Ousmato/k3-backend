@@ -3,6 +3,7 @@ package Gestion_scolaire.Classes.services;
 import Gestion_scolaire.Classes.dtos.UeReadJsonDto;
 import Gestion_scolaire.Classes.entity.UE;
 import Gestion_scolaire.Dto_classe.SallesDTO;
+import Gestion_scolaire.EnumClasse.Facultes;
 import Gestion_scolaire.Niveaux_Filieres.dtos.FiliereDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,6 +13,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class JsonDataService {
@@ -68,11 +71,21 @@ public class JsonDataService {
             if (inputStream == null) {
                 throw new RuntimeException("Fichier JSON introuvable : /data/FilieresNames/name.json");
             }
-            return mapper.readValue(inputStream, new TypeReference<List<FiliereDTO>>() {});
+           return   mapper.readValue(inputStream, new TypeReference<List<FiliereDTO>>() {});
+            // On filtre selon la faculté spécifiée
+//            return allFilieres.stream()
+//                    .filter(f -> f.getFaculte().equals(faculte))
+//                    .collect(Collectors.toList());
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException("Erreur lors de la lecture du fichier JSON des noms des filieres.", e);
         }
+    }
+
+    public Map<Facultes, List<FiliereDTO>> readAllFilieresGroupedByFaculte() {
+        List<FiliereDTO> allFilieres = readJsonFilieres(); // méthode existante qui lit tout
+        return allFilieres.stream()
+                .collect(Collectors.groupingBy(FiliereDTO::getFaculte));
     }
 
 }

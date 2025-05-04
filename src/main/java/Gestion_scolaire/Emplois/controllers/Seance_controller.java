@@ -19,9 +19,6 @@ import java.util.List;
 @RequestMapping("/api-seance")
 public class Seance_controller {
 
-
-    @Autowired
-    private Common_service common_service;
     @Autowired
     private SharedControllers sharedControllers;
 

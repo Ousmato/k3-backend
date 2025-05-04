@@ -20,7 +20,7 @@ public class Jury {
 
     @NotNull
     @ManyToOne
-    private Teachers idTeacher;
+    private Personne encadrant;
 
     @NotNull
     @ManyToOne

@@ -1,6 +1,6 @@
 package Gestion_scolaire.Models;
 
-import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -23,5 +23,5 @@ public class AnneeScolaire {
 
     @NotNull(message = "Admin est obligatoire")
     @ManyToOne
-    private Admin idAdmin;
+    private AdministrationUsers idAdministrationUsers;
 }

@@ -33,6 +33,8 @@ public interface Classe_repositorie extends JpaRepository<StudentsClasse, Long> 
 
     List<StudentsClasse> findByIdFiliereId(long idFiliere);
 
+
+
     StudentsClasse findByIdFiliereIdAndIdAnneeScolaireId(long idFiliereId, long idAnneeScolaireId);
 
     @Query("SELECT c  FROM StudentsClasse c WHERE :currentDate BETWEEN c.idAnneeScolaire.debutAnnee and c.idAnneeScolaire.finAnnee")

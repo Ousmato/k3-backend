@@ -1,5 +1,6 @@
 package Gestion_scolaire.Emplois.controllers;
 
+import Gestion_scolaire.Emplois.dtos.DtoEmploiByWeeks;
 import Gestion_scolaire.Emplois.dtos.TeacherEmploiDTO;
 import Gestion_scolaire.Emplois.entity.Emplois;
 import Gestion_scolaire.Emplois.services.Emplois_service;
@@ -28,48 +29,46 @@ public class Emplois_controller {
         }
             return emplois_service.add(emplois);
     }
-//    ------------------------get emplois by idClasse--------------------------------------
+    //get emplois by idClasse--------------------------------------
     @GetMapping("/read/{idEmploi}")
     public Emplois readByIdClass(@PathVariable long idEmploi){
             return emplois_service.getById(idEmploi);
     }
-//    -----------------------------method update emplois-----------------------------------
+    //method update emplois-----------------------------------
     @PutMapping("/update")
     public Object update(@RequestBody Emplois emplois){
             return emplois_service.update(emplois);
     }
-//    --------------------------methode get all emplois- teacher--------------------
-//    @GetMapping("/list/{idTeacher}")
-//    public List<Emplois> getAllByIdTeacher(@PathVariable long idTeacher){
-//        return emplois_service.findAllEmploisByTeacher(idTeacher);
-//
-//    }
-//    -------------------------------------get emplois by id ----------------------
+
+    //get emplois by id ----------------------
     @GetMapping("/emplois/{id}")
     public Emplois getById(@PathVariable long id){
             return emplois_service.getById(id);
     }
-//    ------------------------------------------verifier l'existence d'un emplois pour la classe
-//        ---------------------------------method for validated
-    @GetMapping("/valid/{idEmplois}")
-    public Boolean validEmplois(@PathVariable long idEmplois) {
-          return emplois_service.validated(idEmplois);
-    }
-//    ----------------------------------method to verifier emplois is valid or no
-    @GetMapping("/is-valid/{idEmplois}")
-    public Boolean isValid(@PathVariable long idEmplois){
-            return emplois_service.isValid(idEmplois);
-    }
-//    --------------------------------get all emplois actif
+
+
+    //get all emplois actifs
     @GetMapping("/all-actifs-emplois-of-classe/{idClasse}")
     public List<Emplois> emploisActif(@PathVariable long idClasse){
             return emplois_service.listEmploisActifs(idClasse);
     }
 
-//    ------------------------------------------all-actifs-emplois-with-seances
-    @GetMapping("/all-actifs-emplois/{idAdmin}")
-    public List<Emplois> allEmploisActif( @PathVariable long idAdmin){
-        return emplois_service.listEmploisActifOfAllClasses(idAdmin);
+    //all-actifs-emplois-with-seances
+//    @GetMapping("/all-actifs-emplois/{idAdmin}")
+//    public List<Emplois> allEmploisActif( @PathVariable long idAdmin){
+//        return emplois_service.listEmploisActifOfAllClasses(idAdmin);
+//    }
+
+    @GetMapping("/all-actifs-emplois-with-seances-without-exam")
+    @Operation(summary = "Recuperer les emploi du temps actif sans examen")
+    public List<Emplois> allEmploisActifWithoutExam(){
+       return emplois_service.currentEmploiWithoutExamWithSeance();
+    }
+
+    @GetMapping("/all-actifs-emplois-with-journee")
+    @Operation(summary = "Recuperer les emploi du temps actif pour tous les classes qui ont au moins une journne")
+    public List<DtoEmploiByWeeks> allEmploisActifWithouHaveJourne(@RequestParam String value){
+        return emplois_service.currentEmploiHaveJourne(value);
     }
 
 

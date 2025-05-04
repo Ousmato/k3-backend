@@ -1,16 +1,11 @@
 package Gestion_scolaire.students.services;
 
-import Gestion_scolaire.Administrators.entity.Admin;
+import Gestion_scolaire.Administrators.entity.AdministrationUsers;
 import Gestion_scolaire.Dto_classe.DTO_response_string;
-import Gestion_scolaire.Classes.repositories.Classe_repositorie;
 import Gestion_scolaire.Models.AnneeScolaire;
-import Gestion_scolaire.Niveaux_Filieres.entity.Niveau;
 import Gestion_scolaire.Niveaux_Filieres.entity.SousFilieres;
-import Gestion_scolaire.Repositories.AnneeScolaire_repositorie;
-import Gestion_scolaire.Services.Common_service;
 import Gestion_scolaire.Shareds.Shared_methods_service;
 import Gestion_scolaire.Shareds.Shared_repositories;
-import Gestion_scolaire.Shareds.Shared_services;
 import Gestion_scolaire.configuration.NoteFundException;
 import Gestion_scolaire.students.dtos.DTO_scolarite;
 import Gestion_scolaire.students.dtos.GetInscriptionDto;
@@ -18,8 +13,6 @@ import Gestion_scolaire.students.dtos.InscriptionDTO;
 import Gestion_scolaire.students.dtos.Student_DTO;
 import Gestion_scolaire.students.entity.*;
 import Gestion_scolaire.students.enumClass.StudentDiplome;
-import Gestion_scolaire.students.repositories.Inscription_repositorie;
-import Gestion_scolaire.students.repositories.Students_repositorie;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -90,7 +83,7 @@ public class Inscription_service {
                 newIncription.setIdClasse(inscrit.getIdClasse());
                 newIncription.setIdEtudiant(newStudent);
                 newIncription.setPayer(false);
-                newIncription.setIdAdmin(inscrit.getIdAdmin());
+                newIncription.setIdAdministrationUsers(inscrit.getIdAdministrationUsers());
                 shared_repositories.getInscription_repositorie().save(newIncription);
 
 //                PendingEmail emailPend = new PendingEmail();
@@ -180,15 +173,15 @@ public class Inscription_service {
             System.out.println("--------------me voila" + student.getNom());
 
           // Trouver l'étudiant
-            Students studentExist = shared_repositories.getStudents_repositorie().findByIdEtudiant(student.getIdEtudiant());
+            Students studentExist = shared_repositories.getStudents_repositorie().findById(student.getId());
             if (studentExist == null) {
                 throw new NoteFundException("L'étudiant est introuvable");
             }
 
 
 
-            Admin adminExist = shared_repositories.getAdminRepositorie().findByIdAdministra(idAdmin);
-            if (adminExist == null) {
+            AdministrationUsers administrationUsersExist = shared_repositories.getAdminRepositorie().findById(idAdmin);
+            if (administrationUsersExist == null) {
                 throw new NoteFundException("L'administrateur est introuvable");
 
             }
@@ -200,7 +193,7 @@ public class Inscription_service {
                 throw new NoteFundException("L'année scolaire est introuvable");
             }
             // Création d'un nouvel étudiant pour la réinscription
-            String numInscrit = shared_methods_service.getNumInscription(student.getIdEtudiant());
+            String numInscrit = shared_methods_service.getNumInscription(student.getId());
 //
 //            newClass.setEffectifs(newClass.getEffectifs() + 1);
             StudentsClasse classSaved = shared_repositories.getClasse_repositorie().save(newClass);
@@ -211,7 +204,7 @@ public class Inscription_service {
             newInscription.setDate(classSaved.getIdAnneeScolaire().getDebutAnnee());
             newInscription.setIdClasse(classSaved);
 
-            newInscription.setIdAdmin(adminExist);
+            newInscription.setIdAdministrationUsers(administrationUsersExist);
             shared_repositories.getInscription_repositorie().save(newInscription);
         }
 
